@@ -1,0 +1,111 @@
+<html>
+<head>
+<title>JS Unicode Thing</title>
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<style>
+input {
+	font-size: 50px;
+}
+.suggestion:hover {
+	background-color: #fdd;
+}
+input[type=text] {
+	width: 100%;
+}
+</style>
+</head>
+<body>
+<input type="button" id="help" value="?">
+<input type="text" id="input">
+<br>
+<input type="text" id="output">
+<br>
+<p id="suggestions"></p>
+<script>
+
+function utf16Encode(input) {
+	var output = [], i = 0, len = input.length, value;
+	while (i < len) {
+		value = input[i++];
+		if ( (value & 0xF800) === 0xD800 ) {
+			throw new RangeError("UTF-16(encode): Illegal UTF-16 value");
+		}
+		if (value > 0xFFFF) {
+			value -= 0x10000;
+			output.push(String.fromCharCode(((value >>>10) & 0x3FF) | 0xD800));
+			value = 0xDC00 | (value & 0x3FF);
+		}
+		output.push(String.fromCharCode(value));
+	}
+	return output.join("");
+}
+function getCompletions(data, text) {
+	var suggestions = [];
+	for (var i in data) {
+		var line = data[i];
+		var fields = line.split(';');
+		if (fields[1].includes(text.toUpperCase()) || fields[10].includes(text.toUpperCase())) {
+			suggestions.push(fields);
+			if (suggestions.length >= 200) {
+				return suggestions;
+			}
+		}
+	}
+	return suggestions;
+}
+function output(codepoint) {
+	$('#output').val($('#output').val() + utf16Encode([codepoint]));
+}
+
+$('#suggestions').on('click', '.suggestion', function(e) {
+	var text = e.currentTarget.textContent;
+	if (text.startsWith('0x')) {
+		output(parseInt(text));
+	}
+});
+
+var client = new XMLHttpRequest();
+client.open('GET', 'data.txt');
+client.onreadystatechange = function() { if (client.readyState == 4 && client.status == 200) {
+
+	var data = client.responseText.split('\n');
+
+	$('#input').on('keyup', function(e) {
+		var input = $('#input').val();
+		if (e.keyCode == 13) {
+			var outputs = [];
+			if (isNaN(parseInt(input))) {
+				document.body.style.backgroundColor = '#fdd';
+				window.setTimeout(function() {
+					document.body.style.backgroundColor = '#fff';
+				}, 1000);
+			} else {
+				output(parseInt(input));
+				$('#input').val('');
+			}
+		} else {
+			var suggestions = getCompletions(data, input);
+			var sstrings = [];
+			for (var i in suggestions) {
+				var arr = suggestions[i];
+				var str = '0x' + arr[0] + ' - ' + arr[1];
+				if (arr[10].length > 0)
+					str += ' (' + arr[10] + ')';
+				str += ' ' + utf16Encode(['0x' + arr[0]]);
+				sstrings.push(str);
+			}
+			if (suggestions.length >= 200)
+				sstrings.push('...');
+			$('#suggestions').html('<div class="suggestion">' + sstrings.join('</div><div class="suggestion">') + '</div>');
+		}
+	});
+} }
+client.send();
+
+$('#help').on('click', function() {
+	alert('JS Unicode Thing:\n\nThis tool allows you to create unicode strings. Enter codepoints either as a number (123), as hex (0x123) or by clicking on one of the autocomplete suggestions.\nNote that Chrome\'s unicode handling of nontrivial combining characters is a bit wonky. I\'ve found Safari to work quite well. Firefox is also a bit broken for some character combinations.');
+});
+
+</script>
+</body>
+</html>
