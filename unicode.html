@@ -20,8 +20,32 @@ input[type=text] {
 <br>
 <input type="text" id="output">
 <br>
+<p id="info">
+	Codepoints: <span id="numCodepoints">0</span>
+	<br>
+	UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
+	<br>
+	<p id="codepointlist"></p>
+</p>
 <p id="suggestions"></p>
 <script>
+
+var data = [];
+
+var entityMap = {
+	"&": "&amp;",
+	"<": "&lt;",
+	">": "&gt;",
+	'"': '&quot;',
+	"'": '&#39;',
+	"/": '&#x2F;'
+};
+
+function escapeHtml(string) {
+	return String(string).replace(/[&<>"'\/]/g, function (s) {
+		return entityMap[s];
+	});
+}
 
 function utf16Encode(input) {
 	var output = [], i = 0, len = input.length, value;
@@ -39,15 +63,43 @@ function utf16Encode(input) {
 	}
 	return output.join("");
 }
+function utf16Decode(string) {
+	var output = [],
+	    counter = 0,
+	    length = string.length,
+	    value,
+	    extra;
+	while (counter < length) {
+		value = string.charCodeAt(counter++);
+		if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+			// high surrogate, and there is a next character
+			extra = string.charCodeAt(counter++);
+			if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+				output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+			} else {
+				// unmatched surrogate; only append this code unit, in case the next
+				// code unit is the high surrogate of a surrogate pair
+				output.push(value);
+				counter--;
+			}
+		} else {
+			output.push(value);
+		}
+	}
+	return output;
+}
+
 function getCompletions(data, text) {
 	var suggestions = [];
-	for (var i in data) {
-		var line = data[i];
-		var fields = line.split(';');
-		if (fields[1].includes(text.toUpperCase()) || fields[10].includes(text.toUpperCase())) {
-			suggestions.push(fields);
-			if (suggestions.length >= 200) {
-				return suggestions;
+	if (text != '') {
+		for (var i in data) {
+			var line = data[i];
+			var fields = line.split(';');
+			if (fields[1].includes(text.toUpperCase()) || fields[10].includes(text.toUpperCase())) {
+				suggestions.push(fields);
+				if (suggestions.length >= 200) {
+					return suggestions;
+				}
 			}
 		}
 	}
@@ -55,6 +107,7 @@ function getCompletions(data, text) {
 }
 function output(codepoint) {
 	$('#output').val($('#output').val() + utf16Encode([codepoint]));
+	updateInfo(data);
 }
 
 $('#suggestions').on('click', '.suggestion', function(e) {
@@ -64,16 +117,64 @@ $('#suggestions').on('click', '.suggestion', function(e) {
 	}
 });
 
+function updateSuggestions(data) {
+	var input = $('#input').val();
+	var suggestions = getCompletions(data, input);
+	if (suggestions.length == 0) {
+		$('#suggestions').html('');
+		return;
+	}
+	var sstrings = [];
+	for (var i in suggestions) {
+		var arr = suggestions[i];
+		var str = '0x' + escapeHtml(arr[0]) + ' - ' + escapeHtml(arr[1]);
+		if (arr[10].length > 0)
+			str += ' (' + escapeHtml(arr[10]) + ')';
+		str += ' ' + escapeHtml(utf16Encode(['0x' + arr[0]]));
+		sstrings.push(str);
+	}
+	if (suggestions.length >= 200)
+		sstrings.push('...');
+	$('#suggestions').html('<div class="suggestion">' + sstrings.join('</div><div class="suggestion">') + '</div>');
+}
+
+function updateInfo(data) {
+	var input = $('#output').val();
+	$('#numCodepoints').text(utf16Decode(input).length);
+	$('#numUtf16CodeUnits').text(input.length);
+	var codepoints = utf16Decode(input);
+	var codepointinfo = '';
+	for (var i in codepoints) {
+		var codepoint = codepoints[i];
+		var str = codepoint.toString(16).toUpperCase();
+		while (str.length < 4)
+			str = '0' + str;
+		var line = '';
+		for (var j in data) {
+			var currentline = data[j];
+			if (currentline.startsWith(str)) {
+				line = currentline;
+				break;
+			}
+		}
+		if (line == '') {
+			codepointinfo += 'Unknown character U+' + str + '<br>';
+		} else {
+			codepointinfo += escapeHtml(line.split(';')[1]) + '<br>';
+		}
+	}
+	$('#codepointlist').html(codepointinfo);
+}
+
 var client = new XMLHttpRequest();
 client.open('GET', 'data.txt');
 client.onreadystatechange = function() { if (client.readyState == 4 && client.status == 200) {
 
-	var data = client.responseText.split('\n');
+	data = client.responseText.split('\n');
 
 	$('#input').on('keyup', function(e) {
-		var input = $('#input').val();
 		if (e.keyCode == 13) {
-			var outputs = [];
+			var input = $('#input').val();
 			if (isNaN(parseInt(input))) {
 				document.body.style.backgroundColor = '#fdd';
 				window.setTimeout(function() {
@@ -81,25 +182,16 @@ client.onreadystatechange = function() { if (client.readyState == 4 && client.st
 				}, 1000);
 			} else {
 				output(parseInt(input));
+				updateInfo(data);
 				$('#input').val('');
 			}
-		} else {
-			var suggestions = getCompletions(data, input);
-			var sstrings = [];
-			for (var i in suggestions) {
-				var arr = suggestions[i];
-				var str = '0x' + arr[0] + ' - ' + arr[1];
-				if (arr[10].length > 0)
-					str += ' (' + arr[10] + ')';
-				str += ' ' + utf16Encode(['0x' + arr[0]]);
-				sstrings.push(str);
-			}
-			if (suggestions.length >= 200)
-				sstrings.push('...');
-			$('#suggestions').html('<div class="suggestion">' + sstrings.join('</div><div class="suggestion">') + '</div>');
 		}
+		updateSuggestions(data);
 	});
-} }
+	$('#output').on('keyup', function(e) {
+		updateInfo(data);
+	});
+} };
 client.send();
 
 $('#help').on('click', function() {
