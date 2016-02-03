@@ -34,7 +34,9 @@
 	<textarea id="output"></textarea>
 </p>
 <p id="info">
-	String: <span id="string"></span>
+	String:
+	<br>
+	<div id="string"></div>
 	<br>
 	Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
 	<br>
@@ -179,7 +181,7 @@ function updateInfo() {
 			numUtf8CodeUnits = 0;
 	}
 	$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
-	$('#string').text(escapeHtml($('#output').val()));
+	$('#string').html(escapeHtml($('#output').val()).replace('\n', '<br>'));
 
 	var codepointinfo = '';
 	for (var i in codepoints) {
