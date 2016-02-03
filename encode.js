@@ -115,16 +115,3 @@ function encodeOutput(encoding, format, joiner, codepoints) {
 	var chars = bytesToText(format, bytes);
 	return joinBytes(joiner, chars);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
