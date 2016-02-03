@@ -74,6 +74,10 @@ function updateSuggestions() {
 }
 
 function normalizeString(form) {
+	if (!String.prototype.normalize) {
+		alert('Your browser does not yet support string normalization');
+		return;
+	}
 	$('#output').val($('#output').val().normalize(form));
 	updateInfo();
 }
