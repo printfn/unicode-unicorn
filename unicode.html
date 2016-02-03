@@ -61,6 +61,8 @@ function updateSuggestions() {
 	}
 	if (suggestions.length >= 200)
 		suggestions.push('...');
+	for (var i in suggestions)
+		suggestions[i] = escapeHtml(suggestions[i]);
 	$('#suggestions').html('<div class="suggestion">' + suggestions.join('</div><div class="suggestion">') + '</div>');
 }
 
@@ -99,7 +101,7 @@ function updateInfo() {
 	var codepointinfo = '';
 	for (var i in codepoints) {
 		codepointinfo += '<div class="deletion" onclick="deleteAtIndex(' + i + ');">';
-		codepointinfo += getUnicodeData(codepoints[i]);
+		codepointinfo += escapeHtml(getUnicodeData(codepoints[i]));
 		codepointinfo += '</div>';
 	}
 	$('#codepointlist').html(codepointinfo);
