@@ -1,21 +1,20 @@
 <html>
 <head>
-<title>JS Unicode Thing</title>
-<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-<style>
-input {
-	font-size: 50px;
-}
-.suggestion:hover {
-	background-color: #dfd;
-}
-.deletion:hover {
-	background-color: #fdd;
-}
-input[type=text] {
-	width: 100%;
-}
-</style>
+	<title>JS Unicode Thing</title>
+	<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+	<script src="data.js"></script>
+	<script src="encode.js"></script>
+	<style>
+		.suggestion:hover {
+			background-color: #dfd;
+		}
+		.deletion:hover {
+			background-color: #fdd;
+		}
+		input[type=text] {
+			width: 100%;
+		}
+	</style>
 </head>
 <body>
 <input type="button" id="help" value="?">
@@ -23,7 +22,6 @@ input[type=text] {
 <input type="button" onclick="normalizeString('NFD')" value="NFD">
 <input type="button" onclick="normalizeString('NFKC')" value="NFKC">
 <input type="button" onclick="normalizeString('NFKD')" value="NFKD">
-<input type="text" id="input">
 <br>
 <input type="text" id="output">
 <br>
@@ -32,93 +30,19 @@ input[type=text] {
 	<br>
 	Codepoints: <span id="numCodepoints">0</span>
 	<br>
-	UTF-16 code units (16-bit): <span id="numUtf16CodeUnits">0</span>
+	UTF-16: code units (16-bit): <span id="numUtf16CodeUnits">0</span>
 	<br>
 	UTF-8 code units (8-bit): <span id="numUtf8CodeUnits">0</span>
 	<br>
 	<p id="codepointlist"></p>
 </p>
-<p id="suggestions"></p>
+<input type="text" id="input" placeholder="Search for a character...">
+<div id="suggestions"></div>
 <script>
 
-var data = [];
-
-var entityMap = {
-	"&": "&amp;",
-	"<": "&lt;",
-	">": "&gt;",
-	'"': '&quot;',
-	"'": '&#39;',
-	"/": '&#x2F;'
-};
-
-function escapeHtml(string) {
-	return String(string).replace(/[&<>"'\/]/g, function (s) {
-		return entityMap[s];
-	});
-}
-
-function utf16Encode(input) {
-	var output = [], i = 0, len = input.length, value;
-	while (i < len) {
-		value = input[i++];
-		if ( (value & 0xF800) === 0xD800 ) {
-			throw new RangeError("UTF-16(encode): Illegal UTF-16 value");
-		}
-		if (value > 0xFFFF) {
-			value -= 0x10000;
-			output.push(String.fromCharCode(((value >>>10) & 0x3FF) | 0xD800));
-			value = 0xDC00 | (value & 0x3FF);
-		}
-		output.push(String.fromCharCode(value));
-	}
-	return output.join("");
-}
-function utf16Decode(string) {
-	var output = [],
-	    counter = 0,
-	    length = string.length,
-	    value,
-	    extra;
-	while (counter < length) {
-		value = string.charCodeAt(counter++);
-		if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-			// high surrogate, and there is a next character
-			extra = string.charCodeAt(counter++);
-			if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-				output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-			} else {
-				// unmatched surrogate; only append this code unit, in case the next
-				// code unit is the high surrogate of a surrogate pair
-				output.push(value);
-				counter--;
-			}
-		} else {
-			output.push(value);
-		}
-	}
-	return output;
-}
-
-function getCompletions(data, text) {
-	var suggestions = [];
-	if (text != '') {
-		for (var i in data) {
-			var line = data[i];
-			var fields = line.split(';');
-			if (fields[1].includes(text.toUpperCase()) || fields[10].includes(text.toUpperCase())) {
-				suggestions.push(fields);
-				if (suggestions.length >= 200) {
-					return suggestions;
-				}
-			}
-		}
-	}
-	return suggestions;
-}
 function output(codepoint) {
-	$('#output').val($('#output').val() + utf16Encode([codepoint]));
-	updateInfo(data);
+	$('#output').val($('#output').val() + ctos([codepoint]));
+	updateInfo();
 }
 
 $('#suggestions').on('click', '.suggestion', function(e) {
@@ -128,35 +52,29 @@ $('#suggestions').on('click', '.suggestion', function(e) {
 	}
 });
 
-function updateSuggestions(data) {
+function updateSuggestions() {
 	var input = $('#input').val();
-	var suggestions = getCompletions(data, input);
+	var suggestions = searchCodepoints(input);
 	if (suggestions.length == 0) {
 		$('#suggestions').html('');
 		return;
 	}
-	var sstrings = [];
-	for (var i in suggestions) {
-		var arr = suggestions[i];
-		var str = 'U+' + escapeHtml(arr[0]) + ' - ' + escapeHtml(arr[1]);
-		if (arr[10].length > 0)
-			str += ' (' + escapeHtml(arr[10]) + ')';
-		str += ' ' + escapeHtml(utf16Encode(['0x' + arr[0]]));
-		sstrings.push(str);
-	}
 	if (suggestions.length >= 200)
-		sstrings.push('...');
-	$('#suggestions').html('<div class="suggestion">' + sstrings.join('</div><div class="suggestion">') + '</div>');
+		suggestions.push('...');
+	$('#suggestions').html('<div class="suggestion">' + suggestions.join('</div><div class="suggestion">') + '</div>');
 }
 
 function normalizeString(form) {
 	$('#output').val($('#output').val().normalize(form));
-	updateInfo(data);
+	updateInfo();
 }
 
-function updateInfo(data) {
+window.prevInput = '';
+function updateInfo() {
 	var input = $('#output').val();
-	var codepoints = utf16Decode(input);
+	if (input == window.prevInput)
+		return;
+	var codepoints = stoc(input);
 
 	$('#numCodepoints').text(codepoints.length);
 	$('#numUtf16CodeUnits').text(input.length);
@@ -181,73 +99,48 @@ function updateInfo(data) {
 	var codepointinfo = '';
 	for (var i in codepoints) {
 		codepointinfo += '<div class="deletion" onclick="deleteAtIndex(' + i + ');">';
-		var codepoint = codepoints[i];
-		var str = codepoint.toString(16).toUpperCase();
-		while (str.length < 4)
-			str = '0' + str;
-		var line = '';
-		for (var j in data) {
-			var currentline = data[j];
-			if (currentline.startsWith(str)) {
-				line = currentline;
-				break;
-			}
-		}
-		if (line == '') {
-			codepointinfo += 'Unknown character U+' + str;
-		} else {
-			var arr = line.split(';');
-			codepointinfo += 'U+' + str + ' - ' + escapeHtml(arr[1]);
-			if (arr[10].length > 0)
-				codepointinfo += ' (' + escapeHtml(arr[10]) + ')';
-			codepointinfo += ' ' + escapeHtml(utf16Encode(['0x' + arr[0]]));
-		}
+		codepointinfo += getUnicodeData(codepoints[i]);
 		codepointinfo += '</div>';
 	}
-	if (codepointinfo != '')
-		codepointinfo += '</div>';
 	$('#codepointlist').html(codepointinfo);
+	window.prevInput = input;
 }
 
 function deleteAtIndex(index) {
 	var input = $('#output').val();
-	var codepoints = utf16Decode(input);
+	var codepoints = stoc(input);
 	codepoints.splice(index, 1);
-	var output = utf16Encode(codepoints);
+	var output = ctos(codepoints);
 	$('#output').val(output);
-	updateInfo(data);
+	updateInfo();
 }
 
-var client = new XMLHttpRequest();
-client.open('GET', 'data.txt');
-client.onreadystatechange = function() { if (client.readyState == 4 && client.status == 200) {
-
-	data = client.responseText.split('\n');
-
-	$('#input').on('keyup', function(e) {
-		if (e.keyCode == 13) {
-			var input = $('#input').val();
-			if (isNaN(parseInt(input))) {
-				document.body.style.backgroundColor = '#fdd';
-				window.setTimeout(function() {
-					document.body.style.backgroundColor = '#fff';
-				}, 1000);
-			} else {
-				output(parseInt(input));
-				updateInfo(data);
-				$('#input').val('');
+$(document).ready(function() {
+	initUnicodeData(function() {
+		$('#input').on('keyup', function(e) {
+			if (e.keyCode == 13) {
+				var input = $('#input').val();
+				if (isNaN(parseInt(input))) {
+					document.body.style.backgroundColor = '#fdd';
+					window.setTimeout(function() {
+						document.body.style.backgroundColor = '#fff';
+					}, 1000);
+				} else {
+					output(parseInt(input));
+					updateInfo();
+					$('#input').val('');
+				}
 			}
-		}
-		updateSuggestions(data);
+			updateSuggestions();
+		});
+		$('#output').on('keyup', function(e) {
+			updateInfo();
+		});
+		window.setInterval(function() {
+			updateInfo();
+		}, 1000);
 	});
-	$('#output').on('keyup', function(e) {
-		updateInfo(data);
-	});
-	window.setInterval(function() {
-		updateInfo(data);
-	}, 1000);
-} };
-client.send();
+});
 
 $('#help').on('click', function() {
 	alert('JS Unicode Thing:\n\nThis tool allows you to create unicode strings. Enter codepoints either as a number (123), as hex (0x123) or by clicking on one of the autocomplete suggestions.\nNote that Chrome\'s unicode handling of nontrivial combining characters is a bit wonky. I\'ve found Safari to work quite well. Firefox is also a bit broken for some character combinations.');
