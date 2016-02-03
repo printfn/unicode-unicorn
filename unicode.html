@@ -7,6 +7,9 @@ input {
 	font-size: 50px;
 }
 .suggestion:hover {
+	background-color: #dfd;
+}
+.deletion:hover {
 	background-color: #fdd;
 }
 input[type=text] {
@@ -16,14 +19,22 @@ input[type=text] {
 </head>
 <body>
 <input type="button" id="help" value="?">
+<input type="button" onclick="normalizeString('NFC')" value="NFC">
+<input type="button" onclick="normalizeString('NFD')" value="NFD">
+<input type="button" onclick="normalizeString('NFKC')" value="NFKC">
+<input type="button" onclick="normalizeString('NFKD')" value="NFKD">
 <input type="text" id="input">
 <br>
 <input type="text" id="output">
 <br>
 <p id="info">
+	String: <span id="string"></span>
+	<br>
 	Codepoints: <span id="numCodepoints">0</span>
 	<br>
-	UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
+	UTF-16 code units (16-bit): <span id="numUtf16CodeUnits">0</span>
+	<br>
+	UTF-8 code units (8-bit): <span id="numUtf8CodeUnits">0</span>
 	<br>
 	<p id="codepointlist"></p>
 </p>
@@ -112,8 +123,8 @@ function output(codepoint) {
 
 $('#suggestions').on('click', '.suggestion', function(e) {
 	var text = e.currentTarget.textContent;
-	if (text.startsWith('0x')) {
-		output(parseInt(text));
+	if (text.startsWith('U+')) {
+		output(parseInt(text.replace('U+', '0x')));
 	}
 });
 
@@ -127,7 +138,7 @@ function updateSuggestions(data) {
 	var sstrings = [];
 	for (var i in suggestions) {
 		var arr = suggestions[i];
-		var str = '0x' + escapeHtml(arr[0]) + ' - ' + escapeHtml(arr[1]);
+		var str = 'U+' + escapeHtml(arr[0]) + ' - ' + escapeHtml(arr[1]);
 		if (arr[10].length > 0)
 			str += ' (' + escapeHtml(arr[10]) + ')';
 		str += ' ' + escapeHtml(utf16Encode(['0x' + arr[0]]));
@@ -138,13 +149,38 @@ function updateSuggestions(data) {
 	$('#suggestions').html('<div class="suggestion">' + sstrings.join('</div><div class="suggestion">') + '</div>');
 }
 
+function normalizeString(form) {
+	$('#output').val($('#output').val().normalize(form));
+	updateInfo(data);
+}
+
 function updateInfo(data) {
 	var input = $('#output').val();
-	$('#numCodepoints').text(utf16Decode(input).length);
-	$('#numUtf16CodeUnits').text(input.length);
 	var codepoints = utf16Decode(input);
+
+	$('#numCodepoints').text(codepoints.length);
+	$('#numUtf16CodeUnits').text(input.length);
+
+	var numUtf8CodeUnits = 0;
+	for (var i in codepoints) {
+		var c = codepoints[i];
+		if (c < 0x80)
+			numUtf8CodeUnits += 1;
+		else if (c < 0x800)
+			numUtf8CodeUnits += 2;
+		else if (c < 0x10000)
+			numUtf8CodeUnits += 3;
+		else if (c < 0x10FFFF)
+			numUtf8CodeUnits += 4;
+		else
+			numUtf8CodeUnits = 0;
+	}
+	$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
+	$('#string').text(escapeHtml($('#output').val()));
+
 	var codepointinfo = '';
 	for (var i in codepoints) {
+		codepointinfo += '<div class="deletion" onclick="deleteAtIndex(' + i + ');">';
 		var codepoint = codepoints[i];
 		var str = codepoint.toString(16).toUpperCase();
 		while (str.length < 4)
@@ -158,12 +194,28 @@ function updateInfo(data) {
 			}
 		}
 		if (line == '') {
-			codepointinfo += 'Unknown character U+' + str + '<br>';
+			codepointinfo += 'Unknown character U+' + str;
 		} else {
-			codepointinfo += escapeHtml(line.split(';')[1]) + '<br>';
+			var arr = line.split(';');
+			codepointinfo += 'U+' + str + ' - ' + escapeHtml(arr[1]);
+			if (arr[10].length > 0)
+				codepointinfo += ' (' + escapeHtml(arr[10]) + ')';
+			codepointinfo += ' ' + escapeHtml(utf16Encode(['0x' + arr[0]]));
 		}
+		codepointinfo += '</div>';
 	}
+	if (codepointinfo != '')
+		codepointinfo += '</div>';
 	$('#codepointlist').html(codepointinfo);
+}
+
+function deleteAtIndex(index) {
+	var input = $('#output').val();
+	var codepoints = utf16Decode(input);
+	codepoints.splice(index, 1);
+	var output = utf16Encode(codepoints);
+	$('#output').val(output);
+	updateInfo(data);
 }
 
 var client = new XMLHttpRequest();
@@ -191,6 +243,9 @@ client.onreadystatechange = function() { if (client.readyState == 4 && client.st
 	$('#output').on('keyup', function(e) {
 		updateInfo(data);
 	});
+	window.setInterval(function() {
+		updateInfo(data);
+	}, 1000);
 } };
 client.send();
 
