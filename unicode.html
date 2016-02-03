@@ -15,6 +15,11 @@
 		input[type=text] {
 			width: 100%;
 		}
+		textarea {
+			width: 100%;
+			height: 30%;
+			font-size: 30pt;
+		}
 	</style>
 </head>
 <body>
@@ -24,7 +29,7 @@
 <input type="button" onclick="normalizeString('NFKC')" value="NFKC">
 <input type="button" onclick="normalizeString('NFKD')" value="NFKD">
 <br>
-<input type="text" id="output">
+<textarea id="output"></textarea>
 <br>
 <p id="info">
 	String: <span id="string"></span>
@@ -43,6 +48,28 @@
 	<br>
 	<p id="codepointlist"></p>
 </p>
+<p>
+	<select id="outputEncoding">
+		<option>Unicode UTF-8</option>
+		<option>Unicode UTF-16 BE</option>
+		<option>Unicode UTF-16 LE</option>
+		<option>Unicode UTF-32 BE</option>
+		<option>Unicode UTF-32 LE</option>
+	</select>
+	<select id="outputFormat">
+		<option>Binary</option>
+		<option>Octal</option>
+		<option selected="selected">Decimal</option>
+		<option>Hexadecimal</option>
+	</select>
+	<select id="outputJoiner">
+		<option>Space-separated</option>
+		<option>Comma-separated</option>
+		<option>Linebreak-separated</option>
+	</select>
+</p>
+<code id="encodedOutput">
+</code>
 <input type="text" id="input" placeholder="Search for a character...">
 <div id="suggestions"></div>
 <script>
@@ -82,10 +109,17 @@ function normalizeString(form) {
 	updateInfo();
 }
 
-window.prevInput = '';
+function uiState() {
+	return $('#output').val()
+		+ $('#outputEncoding option:selected').text()
+		+ $('#outputFormat option:selected').text()
+		+ $('#outputJoiner option:selected').text();
+}
+
+window.prevUIState = '';
 function updateInfo() {
 	var input = $('#output').val();
-	if (input == window.prevInput)
+	if (uiState() == window.prevUIState)
 		return;
 	var codepoints = stoc(input);
 
@@ -118,13 +152,22 @@ function updateInfo() {
 		codepointinfo += '</div>';
 	}
 	$('#codepointlist').html(codepointinfo);
+
 	var url = window.location.href.indexOf('?') == -1
 		? window.location.href
 		: window.location.href.substring(0, window.location.href.indexOf('?'));
 	url += '?c=' + codepoints.join(',');
 	$('#url').text(url);
 	$('#url').attr('href', url);
-	window.prevInput = input;
+
+	$('#encodedOutput').html(encodeOutput(
+		$('#outputEncoding option:selected').text(),
+		$('#outputFormat option:selected').text(),
+		$('#outputJoiner option:selected').text(),
+		codepoints
+	));
+
+	window.prevUIState = uiState();
 }
 
 function deleteAtIndex(index) {
@@ -167,7 +210,10 @@ $(document).ready(function() {
 				}
 				updateSuggestions();
 			});
-			$('#output').on('keyup', function(e) {
+			$('#output').on('keyup', function() {
+				updateInfo();
+			});
+			$('select').change(function() {
 				updateInfo();
 			});
 			window.setInterval(function() {

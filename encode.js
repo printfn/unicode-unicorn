@@ -60,3 +60,71 @@ function stoc(string) {
 	}
 	return output;
 }
+
+function codepointsToEncoding(encoding, codepoints) {
+	var codeUnits = [];
+	for (var i in codepoints) {
+		var c = codepoints[i];
+		if (encoding == 'Unicode UTF-8') {
+			if (c < 0x80) {
+				codeUnits.push(c);
+			} else if (c < 0x800) {
+				codeUnits.push(c >> 6 & 0x1F | 0xC0)
+				codeUnits.push(c >> 0 & 0x3F | 0x80)
+			} else if (c < 0x10000) {
+				codeUnits.push(c >> 12 & 0x0F | 0xE0)
+				codeUnits.push(c >>  6 & 0x3F | 0x80)
+				codeUnits.push(c >>  0 & 0x3F | 0x80)
+			} else if (c < 0x10FFFF) {
+				codeUnits.push(c >> 18 & 0x07 | 0xF0)
+				codeUnits.push(c >> 12 & 0x3F | 0x80)
+				codeUnits.push(c >>  6 & 0x3F | 0x80)
+				codeUnits.push(c >>  0 & 0x3F | 0x80)
+			} else {
+				return [];
+			}
+		}
+	}
+	return codeUnits;
+}
+
+function bytesToText(format, bytes) {
+	var chars = [];
+	for (var i in bytes) {
+		var b = bytes[i];
+		if (format == 'Decimal') {
+			chars.push(b);
+		}
+	}
+	return chars;
+}
+
+function joinBytes(joiner, bytes) {
+	switch (joiner) {
+		case 'Space-separated':
+			return bytes.join(' ');
+		case 'Comma-separated':
+			return bytes.join(', ');
+		case 'Linebreak-separated':
+			return bytes.join('<br>');
+	}
+}
+
+function encodeOutput(encoding, format, joiner, codepoints) {
+	var bytes = codepointsToEncoding(encoding, codepoints);
+	var chars = bytesToText(format, bytes);
+	return joinBytes(joiner, chars);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
