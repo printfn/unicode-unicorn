@@ -39,6 +39,8 @@
 	<br>
 	UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
 	<br>
+	Use this URL to share the unicode sequence: <a id="url"></a>
+	<br>
 	<p id="codepointlist"></p>
 </p>
 <input type="text" id="input" placeholder="Search for a character...">
@@ -112,6 +114,12 @@ function updateInfo() {
 		codepointinfo += '</div>';
 	}
 	$('#codepointlist').html(codepointinfo);
+	var url = window.location.href.indexOf('?') == -1
+		? window.location.href
+		: window.location.href.substring(0, window.location.href.indexOf('?'));
+	url += '?c=' + codepoints.join(',');
+	$('#url').text(url);
+	$('#url').attr('href', url);
 	window.prevInput = input;
 }
 
@@ -124,9 +132,21 @@ function deleteAtIndex(index) {
 	updateInfo();
 }
 
+var loaded = false;
 $(document).ready(function() {
+	if (loaded)
+		return;
+	loaded = true;
+	var args = window.location.search.substring(1).split('&');
+	for (var i in args) {
+		var arg = args[i].split('=');
+		if (arg[0] == 'c') {
+			$('#output').val(ctos(arg[1].split(',')));
+		}
+	}
 	initUnicodeData(function() {
 		initGraphemeData(function() {
+			updateInfo();
 			$('#input').on('keyup', function(e) {
 				if (e.keyCode == 13) {
 					var input = $('#input').val();
