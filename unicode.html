@@ -51,6 +51,10 @@
 	<p id="codepointlist"></p>
 </p>
 <p>
+	<select id="byteOrderMark">
+		<option>Use a byte order mark (U+FEFF)</option>
+		<option selected="selected">Don't use a byte order mark</option>
+	</select>
 	<select id="outputEncoding">
 		<option>Unicode UTF-8</option>
 		<option>Unicode UTF-16 (16-bit code units)</option>
@@ -144,7 +148,8 @@ function uiState() {
 	return $('#output').val()
 		+ $('#outputEncoding option:selected').text()
 		+ $('#outputFormat option:selected').text()
-		+ $('#outputJoiner option:selected').text();
+		+ $('#outputJoiner option:selected').text()
+		+ $('#byteOrderMark option:selected').text();
 }
 
 window.prevUIState = '';
@@ -193,6 +198,7 @@ function updateInfo() {
 	$('#url').attr('href', url);
 
 	$('#encodedOutput').html(encodeOutput(
+		$('#byteOrderMark option:selected').text(),
 		$('#outputEncoding option:selected').text(),
 		$('#outputFormat option:selected').text(),
 		$('#outputJoiner option:selected').text(),

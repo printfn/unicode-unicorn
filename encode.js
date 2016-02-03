@@ -173,7 +173,10 @@ function hexadecimalPaddingFromEncoding(encoding) {
 		return 8;
 }
 
-function encodeOutput(encoding, format, joiner, codepoints) {
+function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
+	var useBOM = byteOrderMark.startsWith('Use');
+	if (useBOM)
+		codepoints.unshift(0xFEFF);
 	var bytes = codepointsToEncoding(encoding, codepoints);
 	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
 	return joinBytes(joiner, chars);
