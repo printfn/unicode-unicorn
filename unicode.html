@@ -154,13 +154,13 @@ $(document).ready(function() {
 			$('#input').on('keyup', function(e) {
 				if (e.keyCode == 13) {
 					var input = $('#input').val();
-					if (isNaN(parseInt(input))) {
+					if (isNaN(parseInt(input.replace('U+', '0x')))) {
 						document.body.style.backgroundColor = '#fdd';
 						window.setTimeout(function() {
 							document.body.style.backgroundColor = '#fff';
 						}, 1000);
 					} else {
-						output(parseInt(input));
+						output(parseInt(input.replace('U+', '0x')));
 						updateInfo();
 						$('#input').val('');
 					}
