@@ -23,14 +23,16 @@
 	</style>
 </head>
 <body>
-<input type="button" id="help" value="?">
-<input type="button" onclick="normalizeString('NFC')" value="NFC">
-<input type="button" onclick="normalizeString('NFD')" value="NFD">
-<input type="button" onclick="normalizeString('NFKC')" value="NFKC">
-<input type="button" onclick="normalizeString('NFKD')" value="NFKD">
-<br>
-<textarea id="output"></textarea>
-<br>
+<p>
+	<input type="button" id="help" value="?">
+	<input type="button" onclick="normalizeString('NFC')" value="NFC">
+	<input type="button" onclick="normalizeString('NFD')" value="NFD">
+	<input type="button" onclick="normalizeString('NFKC')" value="NFKC">
+	<input type="button" onclick="normalizeString('NFKD')" value="NFKD">
+</p>
+<p>
+	<textarea id="output"></textarea>
+</p>
 <p id="info">
 	String: <span id="string"></span>
 	<br>
@@ -91,10 +93,16 @@
 		<option>Linebreak-separated</option>
 	</select>
 </p>
-<code id="encodedOutput">
-</code>
-<input type="text" id="input" placeholder="Search for a character...">
-<div id="suggestions"></div>
+<p>
+	<code id="encodedOutput">
+	</code>
+</p>
+<p>
+	<input type="text" id="input" placeholder="Search for a character...">
+</p>
+<p>
+	<div id="suggestions"></div>
+</p>
 <script>
 
 function output(codepoint) {
