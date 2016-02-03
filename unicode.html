@@ -4,6 +4,7 @@
 	<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
 	<script src="data.js"></script>
 	<script src="encode.js"></script>
+	<script src="graphemes.js"></script>
 	<style>
 		.suggestion:hover {
 			background-color: #dfd;
@@ -28,11 +29,13 @@
 <p id="info">
 	String: <span id="string"></span>
 	<br>
+	Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
+	<br>
 	Codepoints: <span id="numCodepoints">0</span>
 	<br>
-	UTF-16: code units (16-bit): <span id="numUtf16CodeUnits">0</span>
+	UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
 	<br>
-	UTF-8 code units (8-bit): <span id="numUtf8CodeUnits">0</span>
+	UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
 	<br>
 	<p id="codepointlist"></p>
 </p>
@@ -78,6 +81,7 @@ function updateInfo() {
 		return;
 	var codepoints = stoc(input);
 
+	$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints));
 	$('#numCodepoints').text(codepoints.length);
 	$('#numUtf16CodeUnits').text(input.length);
 
@@ -119,28 +123,30 @@ function deleteAtIndex(index) {
 
 $(document).ready(function() {
 	initUnicodeData(function() {
-		$('#input').on('keyup', function(e) {
-			if (e.keyCode == 13) {
-				var input = $('#input').val();
-				if (isNaN(parseInt(input))) {
-					document.body.style.backgroundColor = '#fdd';
-					window.setTimeout(function() {
-						document.body.style.backgroundColor = '#fff';
-					}, 1000);
-				} else {
-					output(parseInt(input));
-					updateInfo();
-					$('#input').val('');
+		initGraphemeData(function() {
+			$('#input').on('keyup', function(e) {
+				if (e.keyCode == 13) {
+					var input = $('#input').val();
+					if (isNaN(parseInt(input))) {
+						document.body.style.backgroundColor = '#fdd';
+						window.setTimeout(function() {
+							document.body.style.backgroundColor = '#fff';
+						}, 1000);
+					} else {
+						output(parseInt(input));
+						updateInfo();
+						$('#input').val('');
+					}
 				}
-			}
-			updateSuggestions();
+				updateSuggestions();
+			});
+			$('#output').on('keyup', function(e) {
+				updateInfo();
+			});
+			window.setInterval(function() {
+				updateInfo();
+			}, 1000);
 		});
-		$('#output').on('keyup', function(e) {
-			updateInfo();
-		});
-		window.setInterval(function() {
-			updateInfo();
-		}, 1000);
 	});
 });
 

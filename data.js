@@ -9,7 +9,7 @@ function getRangeFunctionForName(name) {
 
 function initUnicodeData(completion) {
 	var client = new XMLHttpRequest();
-	client.open('GET', 'data.txt');
+	client.open('GET', 'UnicodeData.txt');
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
 			var dataStrings = client.responseText.split('\n');
