@@ -72,7 +72,7 @@ function graphemeBreakValueForCodepoint(codepoint) {
 	return 'Other';
 }
 
-function countGraphemesForCodepoints(codepoints) {
+function countGraphemesForCodepoints(codepoints, useExtended) {
 	// codepoints [1, 2, 3, 4, 5]
 	// break before [true, true, true, true, true, true]
 	var values = [];
@@ -83,11 +83,13 @@ function countGraphemesForCodepoints(codepoints) {
 	for (var i = 0; i <= codepoints.length; ++i) // GB10
 		breaks.push(true);
 
-	for (var i in values) {
-		if (values[i] == 'SpacingMark')
-			breaks[i] = false; // GB9a
-		if (values[i] == 'Prepend')
-			breaks[parseInt(i)+1] = false; // GB9b
+	if (useExtended) {
+		for (var i in values) {
+			if (values[i] == 'SpacingMark')
+				breaks[i] = false; // GB9a
+			if (values[i] == 'Prepend')
+				breaks[parseInt(i)+1] = false; // GB9b
+		}
 	}
 
 	for (var i in values) {

@@ -31,6 +31,8 @@
 	<br>
 	Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
 	<br>
+	Legacy grapheme clusters: <span id="legacyGraphemeClusters">0</span>
+	<br>
 	Codepoints: <span id="numCodepoints">0</span>
 	<br>
 	UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
@@ -81,7 +83,8 @@ function updateInfo() {
 		return;
 	var codepoints = stoc(input);
 
-	$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints));
+	$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
+	$('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
 	$('#numCodepoints').text(codepoints.length);
 	$('#numUtf16CodeUnits').text(input.length);
 
