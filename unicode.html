@@ -179,7 +179,8 @@ function updateInfo() {
 	var url = window.location.href.indexOf('?') == -1
 		? window.location.href
 		: window.location.href.substring(0, window.location.href.indexOf('?'));
-	url += '?c=' + codepoints.join(',');
+	if (codepoints.length > 0)
+		url += '?c=' + codepoints.join(',');
 	$('#url').text(url);
 	$('#url').attr('href', url);
 
