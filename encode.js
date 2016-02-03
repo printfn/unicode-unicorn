@@ -63,9 +63,9 @@ function stoc(string) {
 
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
-	for (var i in codepoints) {
-		var c = codepoints[i];
-		if (encoding == 'Unicode UTF-8') {
+	if (encoding == 'Unicode UTF-8') {
+		for (var i in codepoints) {
+			var c = codepoints[i];
 			if (c < 0x80) {
 				codeUnits.push(c);
 			} else if (c < 0x800) {
@@ -84,16 +84,66 @@ function codepointsToEncoding(encoding, codepoints) {
 				return [];
 			}
 		}
+	} else if (encoding.includes('UTF-16')) {
+		var inputStr = ctos(codepoints);
+		for (var i in inputStr) {
+			var x = inputStr.charCodeAt(i);
+			if (encoding.includes('16-bit code units')) {
+				codeUnits.push(x);
+			} else {
+				var highByte = x >> 8;
+				var lowByte = x & 0xFF;
+				if (encoding.includes('LE')) {
+					codeUnits.push(lowByte);
+					codeUnits.push(highByte);
+				} else {
+					codeUnits.push(highByte);
+					codeUnits.push(lowByte);
+				}
+			}
+		}
+	} else if (encoding.includes('UTF-32')) {
+		for (var i in codepoints) {
+			var c = codepoints[i];
+			if (encoding.includes('32-bit code units')) {
+				codeUnits.push(c);
+			} else {
+				var bytesBE = [c >> 24, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF];
+				if (encoding.includes('LE')) {
+					codeUnits = codeUnits.concat(bytesBE.reverse());
+				} else {
+					codeUnits = codeUnits.concat(bytesBE);
+				}
+			}
+		}
 	}
 	return codeUnits;
 }
 
-function bytesToText(format, bytes) {
+function bytesToText(format, bytes, hexadecimalPadding) {
 	var chars = [];
 	for (var i in bytes) {
 		var b = bytes[i];
-		if (format == 'Decimal') {
-			chars.push(b);
+		var str = '';
+		if (format.includes('Binary')) {
+			str = b.toString(2);
+			if (format.includes('Padded'))
+				str = (Array(hexadecimalPadding * 4 + 1).join('0') + str).substring(str.length);
+		} else if (format.includes('Octal')) {
+			str = b.toString(8);
+		} else if (format.includes('Decimal')) {
+			str = b.toString(10);
+		} else if (format.includes('Hexadecimal')) {
+			str = b.toString(16).toUpperCase();
+			if (format.includes('Padded'))
+				str = (Array(hexadecimalPadding + 1).join('0') + str).substring(str.length);
+		}
+		chars.push(str);
+	}
+	if (format.includes('Prefixed with ')) {
+		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
+		for (var i in chars) {
+			chars[i] = prefix + chars[i];
 		}
 	}
 	return chars;
@@ -101,6 +151,8 @@ function bytesToText(format, bytes) {
 
 function joinBytes(joiner, bytes) {
 	switch (joiner) {
+		case 'Unseparated':
+			return bytes.join('');
 		case 'Space-separated':
 			return bytes.join(' ');
 		case 'Comma-separated':
@@ -110,8 +162,19 @@ function joinBytes(joiner, bytes) {
 	}
 }
 
+function hexadecimalPaddingFromEncoding(encoding) {
+	if (encoding == 'Unicode UTF-8')
+		return 2;
+	if (encoding.includes('8-bit code units'))
+		return 2;
+	if (encoding.includes('16-bit code units'))
+		return 4;
+	if (encoding.includes('32-bit code units'))
+		return 8;
+}
+
 function encodeOutput(encoding, format, joiner, codepoints) {
 	var bytes = codepointsToEncoding(encoding, codepoints);
-	var chars = bytesToText(format, bytes);
+	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
 	return joinBytes(joiner, chars);
 }

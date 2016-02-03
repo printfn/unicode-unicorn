@@ -51,20 +51,43 @@
 <p>
 	<select id="outputEncoding">
 		<option>Unicode UTF-8</option>
-		<option>Unicode UTF-16 BE</option>
-		<option>Unicode UTF-16 LE</option>
-		<option>Unicode UTF-32 BE</option>
-		<option>Unicode UTF-32 LE</option>
+		<option>Unicode UTF-16 (16-bit code units)</option>
+		<option>Unicode UTF-16 BE (8-bit code units)</option>
+		<option>Unicode UTF-16 LE (8-bit code units)</option>
+		<option>Unicode UTF-32 (32-bit code units)</option>
+		<option>Unicode UTF-32 BE (8-bit code units)</option>
+		<option>Unicode UTF-32 LE (8-bit code units)</option>
 	</select>
 	<select id="outputFormat">
-		<option>Binary</option>
-		<option>Octal</option>
-		<option selected="selected">Decimal</option>
-		<option>Hexadecimal</option>
+		<option>Binary (Unpadded, Unprefixed)</option>
+		<option>Binary (Padded, Unprefixed)</option>
+		<option>Binary (Unpadded, Prefixed with '0b')</option>
+		<option>Binary (Padded, Prefixed with '0b')</option>
+		<option>Octal (Unprefixed)</option>
+		<option>Octal (Prefixed with '0o')</option>
+		<option>Octal (Prefixed with '0')</option>
+		<option>Decimal</option>
+		<option>Hexadecimal (Unpadded, Unprefixed)</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '0x')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '0X')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '\x')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '\X')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '\u')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with '\U')</option>
+		<option>Hexadecimal (Unpadded, Prefixed with 'U+')</option>
+		<option>Hexadecimal (Padded, Unprefixed)</option>
+		<option selected="selected">Hexadecimal (Padded, Prefixed with '0x')</option>
+		<option>Hexadecimal (Padded, Prefixed with '0X')</option>
+		<option>Hexadecimal (Padded, Prefixed with '\x')</option>
+		<option>Hexadecimal (Padded, Prefixed with '\X')</option>
+		<option>Hexadecimal (Padded, Prefixed with '\u')</option>
+		<option>Hexadecimal (Padded, Prefixed with '\U')</option>
+		<option>Hexadecimal (Padded, Prefixed with 'U+')</option>
 	</select>
 	<select id="outputJoiner">
+		<option>Unseparated</option>
 		<option>Space-separated</option>
-		<option>Comma-separated</option>
+		<option selected="selected">Comma-separated</option>
 		<option>Linebreak-separated</option>
 	</select>
 </p>
@@ -194,6 +217,7 @@ $(document).ready(function() {
 	initUnicodeData(function() {
 		initGraphemeData(function() {
 			updateInfo();
+			updateSuggestions();
 			$('#input').on('keyup', function(e) {
 				if (e.keyCode == 13) {
 					var input = $('#input').val();

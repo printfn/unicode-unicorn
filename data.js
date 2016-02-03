@@ -50,8 +50,6 @@ function getUnicodeData(codepoint) {
 }
 
 function searchCodepoints(str) {
-	if (str == '')
-		return [];
 	var names = [];
 
 	str = str.toUpperCase();
@@ -60,7 +58,7 @@ function searchCodepoints(str) {
 		var name = getUnicodeData(codepoint);
 		if (name.includes(str)) {
 			names.push(name);
-			if (names.length >= 200)
+			if (names.length >= 256)
 				break;
 		}
 	}
