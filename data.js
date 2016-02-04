@@ -1,9 +1,20 @@
 window.data = [];
 window.ranges = [];
 
+function getCodepointDescription(codepoint, name) {
+	codepoint = parseInt(codepoint);
+	return 'U+' + codepoint.toString(16).toUpperCase() + ' (' + codepoint + ') - ' + name + ' ' + ctos([codepoint]);
+}
+
+function mergeNewAndLegacyNames(data_file_name, data_file_legacy_name) {
+	if (data_file_legacy_name && data_file_legacy_name != '')
+		return data_file_name + ' (' + data_file_legacy_name + ')';
+	return data_file_name;
+}
+
 function getRangeFunctionForName(name) {
 	return function(codepoint) {
-		return 'U+' + codepoint.toString(16).toUpperCase() + ' - ' + name + ' ' + ctos(['0x' + codepoint.toString(16)]);
+		return getCodepointDescription(codepoint, name);
 	}
 }
 
@@ -25,11 +36,10 @@ function initUnicodeData(completion) {
 				} else if (data_line[1].endsWith(', Last>')) {
 					continue;
 				} else {
-					var name = 'U+' + data_line[0] + ' - ' + data_line[1];
-					if (data_line[10].length > 0)
-						name += ' (' + data_line[10] + ')';
-					name += ' ' + ctos(['0x' + data_line[0]]);
-					window.data[parseInt('0x' + data_line[0])] = name;
+					window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
+						'0x' + data_line[0],
+						mergeNewAndLegacyNames(data_line[1], data_line[10])
+					);
 				}
 			}
 			completion();
@@ -46,13 +56,13 @@ function getUnicodeData(codepoint) {
 		if (codepoint >= range[0] && codepoint <= range[1])
 			return range[2](codepoint);
 	}
-	return 'U+' + codepoint.toString(16).toUpperCase() + ' - Unassigned';
+	return getCodepointDescription(codepoint, 'Unknown');
 }
 
 function searchCodepoints(str) {
 	// if (str == '')
 	// 	return [];
-	
+
 	var names = [];
 
 	str = str.toUpperCase();

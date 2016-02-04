@@ -26,6 +26,16 @@
 		}
 		td {
 			vertical-align: top;
+		    -ms-word-break: break-all;
+    		    word-break: break-all;
+
+ /* Non standard for webkit */
+     word-break: break-word;
+
+    -webkit-hyphens: auto;
+       -moz-hyphens: auto;
+        -ms-hyphens: auto;
+            hyphens: auto;
 		}
 	</style>
 </head>
@@ -218,7 +228,7 @@ function updateInfo() {
 		: window.location.href.substring(0, window.location.href.indexOf('?'));
 	if (codepoints.length > 0)
 		url += '?c=' + codepoints.join(',');
-	$('#url').html(url.split('').join('&shy;'));
+	$('#url').html(url.split('').join('&shy;')); // needed for the browser to not prefer word boundaries
 	$('#url').attr('href', url);
 
 	$('#encodedOutput').html(encodeOutput(
