@@ -73,6 +73,9 @@ function graphemeBreakValueForCodepoint(codepoint) {
 }
 
 function countGraphemesForCodepoints(codepoints, useExtended) {
+	if (codepoints.length == 0)
+		return 0;
+	
 	var breaks = 0;
 	for (var i = 1; i < codepoints.length; ++i) {
 		// increment `breaks` if we should break between codepoints[i-1] and codepoints[i]

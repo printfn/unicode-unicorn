@@ -158,7 +158,7 @@ function joinBytes(joiner, bytes) {
 		case 'Comma-separated':
 			return bytes.join(', ');
 		case 'Linebreak-separated':
-			return bytes.join('<br>');
+			return bytes.join('\n');
 	}
 }
 
