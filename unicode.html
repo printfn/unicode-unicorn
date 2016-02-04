@@ -253,13 +253,15 @@ function deleteAtIndex(index) {
 }
 
 function initData(completion) {
-	initHanData(function() {
-		initGraphemeData(function() {
-			initUnicodeData(function() {
-				completion();
-			});
-		});
-	});
+	var completeCount = 0;
+	var onComplete = function() {
+		++completeCount;
+		if (completeCount == 3)
+			completion();
+	}
+	initHanData(onComplete);
+	initGraphemeData(onComplete);
+	initUnicodeData(onComplete);
 }
 
 var loaded = false;
