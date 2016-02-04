@@ -3,7 +3,10 @@ window.ranges = [];
 
 function getCodepointDescription(codepoint, name) {
 	codepoint = parseInt(codepoint);
-	return 'U+' + codepoint.toString(16).toUpperCase() + ' (' + codepoint + ') - ' + name + ' ' + ctos([codepoint]);
+	var hexCodepointString = codepoint.toString(16).toUpperCase();
+	while (hexCodepointString.length < 4)
+		hexCodepointString = '0' + hexCodepointString;
+	return 'U+' + hexCodepointString + ' (' + codepoint + ') - ' + name + ' ' + ctos([codepoint]);
 }
 
 function mergeNewAndLegacyNames(data_file_name, data_file_legacy_name) {
@@ -50,30 +53,42 @@ function initUnicodeData(completion) {
 
 function getUnicodeData(codepoint) {
 	if (window.data[codepoint])
-		return window.data[codepoint];
+		return window.data[codepoint] + getHanEntry(codepoint);
 	for (var i in window.ranges) {
 		var range = window.ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1])
-			return range[2](codepoint);
+			return range[2](codepoint) + getHanEntry(codepoint);
 	}
-	return getCodepointDescription(codepoint, 'Unknown');
+	return getCodepointDescription(codepoint, 'Unknown') + getHanEntry(codepoint);
 }
 
 function searchCodepoints(str) {
-	// if (str == '')
-	// 	return [];
-
-	var names = [];
+	var results = [];
+	var count = 0;
 
 	str = str.toUpperCase();
 
 	for (var codepoint in window.data) {
 		var name = getUnicodeData(codepoint);
 		if (name.includes(str)) {
-			names.push(name);
-			if (names.length >= 256)
+			results[codepoint] = name;
+			if (++count >= 256)
 				break;
 		}
 	}
-	return names;
+	if (count < 256) {
+		for (var codepoint in window.han_meanings) {
+			var name = getUnicodeData(codepoint);
+			if (name.toUpperCase().includes(str)) {
+				results[codepoint] = name;
+				if (++count >= 256)
+					break;
+			}
+		}
+	}
+	var returnValues = [];
+	for (var codepoint in results) {
+		returnValues.push(results[codepoint]);
+	}
+	return returnValues;
 }

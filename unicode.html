@@ -5,6 +5,7 @@
 	<script src="data.js"></script>
 	<script src="encode.js"></script>
 	<script src="graphemes.js"></script>
+	<script src="han.js"></script>
 	<style>
 		.suggestion:hover {
 			background-color: #dfd;
@@ -251,6 +252,16 @@ function deleteAtIndex(index) {
 	updateInfo();
 }
 
+function initData(completion) {
+	initHanData(function() {
+		initGraphemeData(function() {
+			initUnicodeData(function() {
+				completion();
+			});
+		});
+	});
+}
+
 var loaded = false;
 $(document).ready(function() {
 	if (loaded)
@@ -263,36 +274,34 @@ $(document).ready(function() {
 			$('#output').val(ctos(arg[1].split(',')));
 		}
 	}
-	initUnicodeData(function() {
-		initGraphemeData(function() {
-			updateInfo();
-			updateSuggestions();
-			$('#input').on('keyup', function(e) {
-				if (e.keyCode == 13) {
-					var input = $('#input').val();
-					if (isNaN(parseInt(input.replace('U+', '0x')))) {
-						document.body.style.backgroundColor = '#fdd';
-						window.setTimeout(function() {
-							document.body.style.backgroundColor = '#fff';
-						}, 1000);
-					} else {
-						output(parseInt(input.replace('U+', '0x')));
-						updateInfo();
-						$('#input').val('');
-					}
+	initData(function() {
+		updateInfo();
+		updateSuggestions();
+		$('#input').on('keyup', function(e) {
+			if (e.keyCode == 13) {
+				var input = $('#input').val();
+				if (isNaN(parseInt(input.replace('U+', '0x')))) {
+					document.body.style.backgroundColor = '#fdd';
+					window.setTimeout(function() {
+						document.body.style.backgroundColor = '#fff';
+					}, 1000);
+				} else {
+					output(parseInt(input.replace('U+', '0x')));
+					updateInfo();
+					$('#input').val('');
 				}
-				updateSuggestions();
-			});
-			$('#output').on('keyup', function() {
-				updateInfo();
-			});
-			$('select').change(function() {
-				updateInfo();
-			});
-			window.setInterval(function() {
-				updateInfo();
-			}, 1000);
+			}
+			updateSuggestions();
 		});
+		$('#output').on('keyup', function() {
+			updateInfo();
+		});
+		$('select').change(function() {
+			updateInfo();
+		});
+		window.setInterval(function() {
+			updateInfo();
+		}, 1000);
 	});
 });
 
