@@ -50,6 +50,9 @@ function getUnicodeData(codepoint) {
 }
 
 function searchCodepoints(str) {
+	if (str == '')
+		return [];
+	
 	var names = [];
 
 	str = str.toUpperCase();

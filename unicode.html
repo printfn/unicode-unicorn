@@ -17,21 +17,20 @@
 		}
 		textarea {
 			width: 100%;
-			height: 30%;
+			height: 300px;
 			font-size: 30pt;
 		}
 	</style>
 </head>
 <body>
 <p>
-	<input type="button" id="help" value="?">
-	<input type="button" onclick="normalizeString('NFC')" value="NFC">
-	<input type="button" onclick="normalizeString('NFD')" value="NFD">
-	<input type="button" onclick="normalizeString('NFKC')" value="NFKC">
-	<input type="button" onclick="normalizeString('NFKD')" value="NFKD">
+	<textarea id="output"></textarea>
 </p>
 <p>
-	<textarea id="output"></textarea>
+	<input type="text" id="input" placeholder="Search for a character...">
+</p>
+<p>
+	<div id="suggestions"></div>
 </p>
 <p id="info">
 	String:
@@ -104,10 +103,15 @@
 	</code>
 </p>
 <p>
-	<input type="text" id="input" placeholder="Search for a character...">
-</p>
-<p>
-	<div id="suggestions"></div>
+	Unicode String Normalization:
+	<br>
+	<input type="button" onclick="normalizeString('NFD')" value="NFD (Normalization Form D: Canonical Decomposition)">
+	<br>
+	<input type="button" onclick="normalizeString('NFC')" value="NFC (Normalization Form C: Canonical Decomposition, followed by Canonical Composition)">
+	<br>
+	<input type="button" onclick="normalizeString('NFKD')" value="NFKD (Normalization Form KD: Compatibility Decomposition)">
+	<br>
+	<input type="button" onclick="normalizeString('NFKC')" value="NFKC (Normalization Form KC: Compatibility Decomposition, followed by Canonical Composition)">
 </p>
 <script>
 
@@ -196,7 +200,7 @@ function updateInfo() {
 		: window.location.href.substring(0, window.location.href.indexOf('?'));
 	if (codepoints.length > 0)
 		url += '?c=' + codepoints.join(',');
-	$('#url').text(url);
+	$('#url').html(url.split('').join('&shy;'));
 	$('#url').attr('href', url);
 
 	$('#encodedOutput').html(encodeOutput(
@@ -262,10 +266,6 @@ $(document).ready(function() {
 			}, 1000);
 		});
 	});
-});
-
-$('#help').on('click', function() {
-	alert('JS Unicode Thing:\n\nThis tool allows you to create unicode strings. Enter codepoints either as a number (123), as hex (0x123) or by clicking on one of the autocomplete suggestions.\nNote that Chrome\'s unicode handling of nontrivial combining characters is a bit wonky. I\'ve found Safari to work quite well. Firefox is also a bit broken for some character combinations.');
 });
 
 </script>
