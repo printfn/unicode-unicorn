@@ -20,99 +20,117 @@
 			height: 300px;
 			font-size: 30pt;
 		}
+		table {
+			width: 100%;
+			table-layout: fixed;
+		}
+		td {
+			vertical-align: top;
+		}
 	</style>
 </head>
 <body>
-<p>
-	<textarea id="output"></textarea>
-</p>
-<p>
-	<input type="text" id="input" placeholder="Search for a character...">
-</p>
-<p>
-	<div id="suggestions"></div>
-</p>
-<p id="info">
-	String:
-	<br>
-	<div id="string"></div>
-	<br>
-	Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
-	<br>
-	Legacy grapheme clusters: <span id="legacyGraphemeClusters">0</span>
-	<br>
-	Codepoints: <span id="numCodepoints">0</span>
-	<br>
-	UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
-	<br>
-	UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
-	<br>
-	Use this URL to share the unicode sequence: <a id="url"></a>
-	<br>
-	<p id="codepointlist"></p>
-</p>
-<p>
-	<select id="byteOrderMark">
-		<option>Use a byte order mark (U+FEFF)</option>
-		<option selected="selected">Don't use a byte order mark</option>
-	</select>
-	<select id="outputEncoding">
-		<option>Unicode UTF-8</option>
-		<option>Unicode UTF-16 (16-bit code units)</option>
-		<option>Unicode UTF-16 BE (8-bit code units)</option>
-		<option>Unicode UTF-16 LE (8-bit code units)</option>
-		<option>Unicode UTF-32 (32-bit code units)</option>
-		<option>Unicode UTF-32 BE (8-bit code units)</option>
-		<option>Unicode UTF-32 LE (8-bit code units)</option>
-	</select>
-	<select id="outputFormat">
-		<option>Binary (Unpadded, Unprefixed)</option>
-		<option>Binary (Padded, Unprefixed)</option>
-		<option>Binary (Unpadded, Prefixed with '0b')</option>
-		<option>Binary (Padded, Prefixed with '0b')</option>
-		<option>Octal (Unprefixed)</option>
-		<option>Octal (Prefixed with '0o')</option>
-		<option>Octal (Prefixed with '0')</option>
-		<option>Decimal</option>
-		<option>Hexadecimal (Unpadded, Unprefixed)</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '0x')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '0X')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '\x')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '\X')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '\u')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with '\U')</option>
-		<option>Hexadecimal (Unpadded, Prefixed with 'U+')</option>
-		<option>Hexadecimal (Padded, Unprefixed)</option>
-		<option selected="selected">Hexadecimal (Padded, Prefixed with '0x')</option>
-		<option>Hexadecimal (Padded, Prefixed with '0X')</option>
-		<option>Hexadecimal (Padded, Prefixed with '\x')</option>
-		<option>Hexadecimal (Padded, Prefixed with '\X')</option>
-		<option>Hexadecimal (Padded, Prefixed with '\u')</option>
-		<option>Hexadecimal (Padded, Prefixed with '\U')</option>
-		<option>Hexadecimal (Padded, Prefixed with 'U+')</option>
-	</select>
-	<select id="outputJoiner">
-		<option>Unseparated</option>
-		<option>Space-separated</option>
-		<option selected="selected">Comma-separated</option>
-		<option>Linebreak-separated</option>
-	</select>
-</p>
-<p>
-	<code id="encodedOutput">
-	</code>
-</p>
-<p>
-	Unicode String Normalization:
-	<br>
-	<input type="button" onclick="normalizeString('NFD')" value="NFD (Normalization Form D: Canonical Decomposition)">
-	<br>
-	<input type="button" onclick="normalizeString('NFC')" value="NFC (Normalization Form C: Canonical Decomposition, followed by Canonical Composition)">
-	<br>
-	<input type="button" onclick="normalizeString('NFKD')" value="NFKD (Normalization Form KD: Compatibility Decomposition)">
-	<br>
-	<input type="button" onclick="normalizeString('NFKC')" value="NFKC (Normalization Form KC: Compatibility Decomposition, followed by Canonical Composition)">
-</p>
+<table>
+	<tr>
+		<td>
+			<p>
+				<textarea id="output"></textarea>
+			</p>
+			<p id="info">
+				String:
+				<br>
+				<div id="string"></div>
+				<br>
+				Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
+				<br>
+				Legacy grapheme clusters: <span id="legacyGraphemeClusters">0</span>
+				<br>
+				Codepoints: <span id="numCodepoints">0</span>
+				<br>
+				UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
+				<br>
+				UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
+				<br>
+				Use this URL to share the unicode sequence: <a id="url"></a>
+				<br>
+				<p id="codepointlist"></p>
+			</p>
+			<p>
+				<select id="byteOrderMark">
+					<option>Use a byte order mark (U+FEFF)</option>
+					<option selected="selected">Don't use a byte order mark</option>
+				</select>
+				<br>
+				<select id="outputEncoding">
+					<option>Unicode UTF-8</option>
+					<option>Unicode UTF-16 (16-bit code units)</option>
+					<option>Unicode UTF-16 BE (8-bit code units)</option>
+					<option>Unicode UTF-16 LE (8-bit code units)</option>
+					<option>Unicode UTF-32 (32-bit code units)</option>
+					<option>Unicode UTF-32 BE (8-bit code units)</option>
+					<option>Unicode UTF-32 LE (8-bit code units)</option>
+				</select>
+				<br>
+				<select id="outputFormat">
+					<option>Binary (Unpadded, Unprefixed)</option>
+					<option>Binary (Padded, Unprefixed)</option>
+					<option>Binary (Unpadded, Prefixed with '0b')</option>
+					<option>Binary (Padded, Prefixed with '0b')</option>
+					<option>Octal (Unprefixed)</option>
+					<option>Octal (Prefixed with '0o')</option>
+					<option>Octal (Prefixed with '0')</option>
+					<option>Decimal</option>
+					<option>Hexadecimal (Unpadded, Unprefixed)</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '0x')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '0X')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '\x')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '\X')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '\u')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with '\U')</option>
+					<option>Hexadecimal (Unpadded, Prefixed with 'U+')</option>
+					<option>Hexadecimal (Padded, Unprefixed)</option>
+					<option selected="selected">Hexadecimal (Padded, Prefixed with '0x')</option>
+					<option>Hexadecimal (Padded, Prefixed with '0X')</option>
+					<option>Hexadecimal (Padded, Prefixed with '\x')</option>
+					<option>Hexadecimal (Padded, Prefixed with '\X')</option>
+					<option>Hexadecimal (Padded, Prefixed with '\u')</option>
+					<option>Hexadecimal (Padded, Prefixed with '\U')</option>
+					<option>Hexadecimal (Padded, Prefixed with 'U+')</option>
+				</select>
+				<br>
+				<select id="outputJoiner">
+					<option>Unseparated</option>
+					<option>Space-separated</option>
+					<option selected="selected">Comma-separated</option>
+					<option>Linebreak-separated</option>
+				</select>
+			</p>
+			<p>
+				<code id="encodedOutput">
+				</code>
+			</p>
+			<p>
+				Unicode String Normalization:
+				<br>
+				<input type="button" onclick="normalizeString('NFD')" value="NFD (Normalization Form D: Canonical Decomposition)">
+				<br>
+				<input type="button" onclick="normalizeString('NFC')" value="NFC (Normalization Form C: Canonical Decomposition, followed by Canonical Composition)">
+				<br>
+				<input type="button" onclick="normalizeString('NFKD')" value="NFKD (Normalization Form KD: Compatibility Decomposition)">
+				<br>
+				<input type="button" onclick="normalizeString('NFKC')" value="NFKC (Normalization Form KC: Compatibility Decomposition, followed by Canonical Composition)">
+			</p>
+		</td>
+		<td>
+			<p>
+				<input type="text" id="input" placeholder="Search for a character...">
+			</p>
+			<p>
+				<div id="suggestions"></div>
+			</p>
+		</td>
+	</tr>
+</table>
 <script>
 
 function output(codepoint) {

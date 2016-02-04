@@ -50,8 +50,8 @@ function getUnicodeData(codepoint) {
 }
 
 function searchCodepoints(str) {
-	if (str == '')
-		return [];
+	// if (str == '')
+	// 	return [];
 	
 	var names = [];
 
