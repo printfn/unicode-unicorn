@@ -73,61 +73,38 @@ function graphemeBreakValueForCodepoint(codepoint) {
 }
 
 function countGraphemesForCodepoints(codepoints, useExtended) {
-	// codepoints [1, 2, 3, 4, 5]
-	// break before [true, true, true, true, true, true]
-	var values = [];
-	for (var i in codepoints) {
-		values.push(graphemeBreakValueForCodepoint(codepoints[i]));
-	}
-	var breaks = [];
-	for (var i = 0; i <= codepoints.length; ++i) // GB10
-		breaks.push(true);
+	var breaks = 0;
+	for (var i = 1; i < codepoints.length; ++i) {
+		// increment `breaks` if we should break between codepoints[i-1] and codepoints[i]
+		var value1 = graphemeBreakValueForCodepoint(codepoints[i-1]);
+		var value2 = graphemeBreakValueForCodepoint(codepoints[i]);
 
-	if (useExtended) {
-		for (var i in values) {
-			if (values[i] == 'SpacingMark')
-				breaks[i] = false; // GB9a
-			if (values[i] == 'Prepend')
-				breaks[parseInt(i)+1] = false; // GB9b
+		// see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
+		// skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string
+
+		if (value1 == 'CR' && value2 == 'LF') { // GB3
+
+		} else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') { // GB4
+			++breaks;
+		} else if (value2 == 'Control' || value2 == 'CR' || value2 == 'LF') { // GB5
+			++breaks;
+		} else if (value1 == 'L' && (value2 == 'L' || value2 == 'V' || value2 == 'LV' || value2 == 'LVT')) { // GB6
+
+		} else if ((value1 == 'LV' || value1 == 'V') && (value2 == 'V' || value2 == 'T')) { // GB7
+
+		} else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') { // GB8
+
+		} else if (value1 == 'Regional_Indicator' && value2 == 'Regional_Indicator') { // GB8a
+
+		} else if (value2 == 'Extend') { // GB9
+
+		} else if (useExtended && value2 == 'SpacingMark') { // GB9a
+
+		} else if (useExtended && value1 == 'Prepend') { // GB9b
+
+		} else { // GB10
+			++breaks;
 		}
 	}
-
-	for (var i in values) {
-		if (values[i] == 'Extend')
-			breaks[i] = false; // GB9
-	}
-
-	for (var i in values) {
-		if (values[i] == 'Regional_Indicator' 
-			&& parseInt(i) + 1 < values.length 
-			&& values[parseInt(i)+1] == 'Regional_Indicator')
-			breaks[parseInt(i)+1] = false; // GB8a
-	}
-
-	for (var i in values) {
-		if (values[i] == 'L' && parseInt(i) + 1 < values.length && 
-			      (values[parseInt(i)+1] == 'L' 
-				|| values[parseInt(i)+1] == 'V' 
-				|| values[parseInt(i)+1] == 'LV' 
-				|| values[parseInt(i)+1] == 'LVT'))
-			breaks[parseInt(i)+1] = false; // GB8
-		if ((values[i] == 'LV' || values[i] == 'V') && parseInt(i) + 1 < values.length && 
-			      (values[parseInt(i)+1] == 'V' 
-				|| values[parseInt(i)+1] == 'T'))
-			breaks[parseInt(i)+1] = false; // GB7
-		if ((values[i] == 'LVT' || values[i] == 'T') && parseInt(i) + 1 < values.length && 
-			      (values[parseInt(i)+1] == 'T'))
-			breaks[parseInt(i)+1] = false; // GB6
-	}
-	for (var i in values) {
-		if (values[i] == 'CR' && parseInt(i) + 1 < values.length && values[parseInt(i)+1] == 'LF')
-			breaks[parseInt(i)+1] = false; // GB3
-	}
-
-	var count = -1;
-	for (var i in breaks) {
-		if (breaks[i])
-			++count;
-	}
-	return count;
+	return breaks + 1;
 }
