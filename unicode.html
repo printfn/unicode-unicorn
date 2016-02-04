@@ -50,6 +50,9 @@
 				<a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Text/Character Info</a>
 			</li>
 			<li role="presentation">
+				<a href="#codepoints" aria-controls="codepoints" role="tab" data-toggle="tab">Codepoints</a>
+			</li>
+			<li role="presentation">
 				<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encoded Text</a>
 			</li>
 			<li role="presentation">
@@ -85,8 +88,10 @@
 					<br>
 					Use this URL to share the unicode sequence: <a id="url"></a>
 					<br>
-					<p id="codepointlist"></p>
 				</p>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="codepoints">
+				<p id="codepointlist"></p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="encode">
 				<p>
@@ -134,9 +139,13 @@
 					<br>
 					<select id="outputJoiner">
 						<option>Unseparated</option>
-						<option>Space-separated</option>
-						<option selected="selected">Comma-separated</option>
-						<option>Linebreak-separated</option>
+						<option>Separated using spaces</option>
+						<option >Separated using commas</option>
+						<option selected="selected">Separated using commas and spaces</option>
+						<option>Separated using semicolons</option>
+						<option>Separated using semicolons and spaces</option>
+						<option>Separated using linebreaks</option>
+						<option>Separated using commas and linebreaks</option>
 					</select>
 				</p>
 				<p>

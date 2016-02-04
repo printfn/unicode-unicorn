@@ -153,12 +153,20 @@ function joinBytes(joiner, bytes) {
 	switch (joiner) {
 		case 'Unseparated':
 			return bytes.join('');
-		case 'Space-separated':
+		case 'Separated using spaces':
 			return bytes.join(' ');
-		case 'Comma-separated':
+		case 'Separated using commas':
+			return bytes.join(',');
+		case 'Separated using commas and spaces':
 			return bytes.join(', ');
-		case 'Linebreak-separated':
+		case 'Separated using semicolons':
+			return bytes.join(';');
+		case 'Separated using semicolons and spaces':
+			return bytes.join('; ');
+		case 'Separated using linebreaks':
 			return bytes.join('\n');
+		case 'Separated using commas and linebreaks':
+			return bytes.join(',\n');
 	}
 }
 
