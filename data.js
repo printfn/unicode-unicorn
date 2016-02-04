@@ -70,13 +70,13 @@ function searchCodepoints(str) {
 
 	for (var codepoint in window.data) {
 		var name = getUnicodeData(codepoint);
-		if (name.includes(str)) {
+		if (name.toUpperCase().includes(str)) {
 			results[codepoint] = name;
 			if (++count >= 256)
 				break;
 		}
 	}
-	if (count < 256) {
+	if (count < 256 || codepoint > 0x3400) {
 		for (var codepoint in window.han_meanings) {
 			var name = getUnicodeData(codepoint);
 			if (name.toUpperCase().includes(str)) {
