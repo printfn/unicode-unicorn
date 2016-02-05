@@ -65,35 +65,48 @@ function getSearchString(codepoint) {
 
 function searchCodepoints(str) {
 	var results = [];
-	var count = 0;
+
+	var deduplicate = function(a) {
+		var temp = {};
+		for (var i = 0; i < a.length; i++)
+			temp[a[i]] = true;
+		var r = [];
+		for (var k in temp)
+			r.push(parseInt(k));
+		return r;
+	}
+	var reachedMaxResults = function() {
+		if (results.length < 256)
+			return false;
+		results = deduplicate(results);
+		if (results.length < 256)
+			return false;
+		return true;
+	}
 
 	str = str.toUpperCase();
-	if (str.indexOf('U+') != -1) {
-		results.push(parseInt(str.replace('U+', '0x')));
-		++count;
-	} else if (!isNaN(parseInt('0x' + str))) {
-		results.push(parseInt('0x' + str));
-		results.push(parseInt(str));
-		count += 2;
+	if (str.startsWith('U+')) {
+		str = str.replace('U+', '');
 	}
 
 	for (var codepoint in window.data) {
-		var name = getSearchString(codepoint);
-		if (name.includes(str)) {
+		var searchString = getSearchString(codepoint);
+		if (searchString.includes(str) || codepoint.includes(str)) {
 			results.push(parseInt(codepoint));
-			if (++count >= 256)
+			if (reachedMaxResults())
 				break;
 		}
 	}
-	if (count < 256 || codepoint > 0x3400) {
+	if (!reachedMaxResults() || codepoint > 0x3400) {
 		for (var codepoint in window.han_meanings) {
-			var name = getSearchString(codepoint);
-			if (name.includes(str)) {
+			var searchString = getSearchString(codepoint);
+			if (searchString.includes(str) || codepoint.includes(str)) {
 				results.push(parseInt(codepoint));
-				if (++count >= 256)
+				if (reachedMaxResults())
 					break;
 			}
 		}
 	}
+	results = deduplicate(results);
 	return results;
 }
