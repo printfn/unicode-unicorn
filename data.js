@@ -60,7 +60,7 @@ function getUnicodeData(codepoint) {
 }
 
 function getSearchString(codepoint) {
-	return 'U+' + itos(codepoint, 16, 4) + ' (' + codepoint + ') - ' + getUnicodeData(codepoint).toUpperCase();
+	return getUnicodeData(codepoint).toUpperCase();
 }
 
 function searchCodepoints(str) {
@@ -68,11 +68,19 @@ function searchCodepoints(str) {
 	var count = 0;
 
 	str = str.toUpperCase();
+	if (str.indexOf('U+') != -1) {
+		results.push(parseInt(str.replace('U+', '0x')));
+		++count;
+	} else if (!isNaN(parseInt('0x' + str))) {
+		results.push(parseInt('0x' + str));
+		results.push(parseInt(str));
+		count += 2;
+	}
 
 	for (var codepoint in window.data) {
 		var name = getSearchString(codepoint);
 		if (name.includes(str)) {
-			results.push(codepoint);
+			results.push(parseInt(codepoint));
 			if (++count >= 256)
 				break;
 		}
@@ -81,7 +89,7 @@ function searchCodepoints(str) {
 		for (var codepoint in window.han_meanings) {
 			var name = getSearchString(codepoint);
 			if (name.includes(str)) {
-				results.push(codepoint);
+				results.push(parseInt(codepoint));
 				if (++count >= 256)
 					break;
 			}
