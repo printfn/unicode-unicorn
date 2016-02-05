@@ -3,10 +3,7 @@ window.ranges = [];
 
 function getCodepointDescription(codepoint, name) {
 	codepoint = parseInt(codepoint);
-	var hexCodepointString = codepoint.toString(16).toUpperCase();
-	while (hexCodepointString.length < 4)
-		hexCodepointString = '0' + hexCodepointString;
-	return 'U+' + hexCodepointString + ' (' + codepoint + ') - ' + name + ' ' + ctos([codepoint]);
+	return name + ' ' + ctos([codepoint]);
 }
 
 function mergeNewAndLegacyNames(data_file_name, data_file_legacy_name) {
@@ -62,6 +59,10 @@ function getUnicodeData(codepoint) {
 	return getCodepointDescription(codepoint, 'Unknown') + getHanEntry(codepoint);
 }
 
+function getSearchString(codepoint) {
+	return 'U+' + itos(codepoint, 16, 4) + ' (' + codepoint + ') - ' + getUnicodeData(codepoint).toUpperCase();
+}
+
 function searchCodepoints(str) {
 	var results = [];
 	var count = 0;
@@ -69,18 +70,18 @@ function searchCodepoints(str) {
 	str = str.toUpperCase();
 
 	for (var codepoint in window.data) {
-		var name = getUnicodeData(codepoint);
-		if (name.toUpperCase().includes(str)) {
-			results[codepoint] = name;
+		var name = getSearchString(codepoint);
+		if (name.includes(str)) {
+			results[codepoint] = getUnicodeData(codepoint);
 			if (++count >= 256)
 				break;
 		}
 	}
 	if (count < 256 || codepoint > 0x3400) {
 		for (var codepoint in window.han_meanings) {
-			var name = getUnicodeData(codepoint);
-			if (name.toUpperCase().includes(str)) {
-				results[codepoint] = name;
+			var name = getSearchString(codepoint);
+			if (name.includes(str)) {
+				results[codepoint] = getUnicodeData(codepoint);
 				if (++count >= 256)
 					break;
 			}
@@ -90,5 +91,5 @@ function searchCodepoints(str) {
 	for (var codepoint in results) {
 		returnValues.push(results[codepoint]);
 	}
-	return returnValues;
+	return results;
 }

@@ -12,7 +12,7 @@
 	<script src="graphemes.js"></script>
 	<script src="han.js"></script>
 
-	<link href="bootstrap.css" rel="stylesheet">
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<style>
 		.suggestion:hover {
 			background-color: #dfd;
@@ -25,50 +25,62 @@
 		}
 		textarea {
 			width: 100%;
-			height: 300px;
 			font-size: 30pt;
 		}
-		code {
+		pre {
 			white-space: pre-line;
+			word-break: normal;
 		}
+		.fixed {
+			position: fixed;
+			background-color: white;
+			width: calc(100% - 30px);
+		}
+		.spacer {
+			background-color: white;
+		}
+
 	</style>
 </head>
 <body>
-	<script src="bootstrap.min.js"></script>
-	<div>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<div style="width: 100%; height: 15px; position: fixed; background-color: white"></div>
+	<div style="padding: 15px">
+		<div class="fixed" data-spacer-id="nav-spacer">
+			<p>
+				<textarea id="output"></textarea>
+			</p>
 
-		<p>
-			<textarea id="output"></textarea>
-		</p>
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active">
+					<a href="#search" aria-controls="search" role="tab" data-toggle="tab">Search and Insert</a>
+				</li>
+				<li role="presentation">
+					<a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Text/Character Info</a>
+				</li>
+				<li role="presentation">
+					<a href="#codepoints" aria-controls="codepoints" role="tab" data-toggle="tab">Codepoints</a>
+				</li>
+				<li role="presentation">
+					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encoded Text</a>
+				</li>
+				<li role="presentation">
+					<a href="#normalization" aria-controls="normalization" role="tab" data-toggle="tab">Unicode Normalization</a>
+				</li>
+			</ul>
+		</div>
 
-		<!-- Nav tabs -->
-		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active">
-				<a href="#search" aria-controls="search" role="tab" data-toggle="tab">Search and Insert</a>
-			</li>
-			<li role="presentation">
-				<a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Text/Character Info</a>
-			</li>
-			<li role="presentation">
-				<a href="#codepoints" aria-controls="codepoints" role="tab" data-toggle="tab">Codepoints</a>
-			</li>
-			<li role="presentation">
-				<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encoded Text</a>
-			</li>
-			<li role="presentation">
-				<a href="#normalization" aria-controls="normalization" role="tab" data-toggle="tab">Unicode Normalization</a>
-			</li>
-		</ul>
+		<div id="nav-spacer" class="spacer"></div>
 
 		<!-- Tab panes -->
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="search">
-				<p>
-					<input type="text" id="input" placeholder="Search for a character...">
-				</p>
-				<p>
-					<div id="suggestions"></div>
-				</p>
+				<div class="fixed" data-spacer-id="input-spacer">
+						<input type="text" id="input" placeholder="Search for a character...">
+				</div>
+				<div id="input-spacer" class="spacer"></div>
+				<table class="table table-striped table-scrollable" id="searchResults"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="stats">
 				<p id="info">
@@ -86,7 +98,7 @@
 					<br>
 					UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
 					<br>
-					Use this URL to share the unicode sequence: <a id="url"></a>
+					Use this URL to share the unicode sequence: <a id="url" style="word-break: break-all;"></a>
 					<br>
 				</p>
 			</div>
@@ -149,7 +161,7 @@
 					</select>
 				</p>
 				<p>
-					<pre><code id="encodedOutput"></code></pre>
+					<pre id="encodedOutput"></pre>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="normalization">
@@ -172,25 +184,21 @@
 			updateInfo();
 		}
 
-		$('#suggestions').on('click', '.suggestion', function(e) {
-			var text = e.currentTarget.textContent;
-			if (text.startsWith('U+')) {
-				output(parseInt(text.replace('U+', '0x')));
-			}
-		});
-
 		function updateSuggestions() {
 			var input = $('#input').val();
-			var suggestions = searchCodepoints(input);
-			if (suggestions.length == 0) {
-				$('#suggestions').html('');
+			var results = searchCodepoints(input);
+			if (results.length == 0) {
+				$('#searchResults').html('');
 				return;
 			}
-			if (suggestions.length >= 200)
-				suggestions.push('...');
-			for (var i in suggestions)
-				suggestions[i] = escapeHtml(suggestions[i]);
-			$('#suggestions').html('<div class="suggestion">' + suggestions.join('</div><div class="suggestion">') + '</div>');
+			var html = '<thead><tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Description</th></tr></thead><tbody>';
+			for (var codepoint in results) {
+				html += '<tr><td><button onclick="output(' + codepoint + ')">Append</button></td><td>U+' + itos(parseInt(codepoint), 16, 4) + '</td><td>' + parseInt(codepoint) + '</td><td>' + escapeHtml(results[codepoint]) + '</td></tr>';
+			}
+			if (results.length >= 256)
+				html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
+			html += '</tbody>';
+			$('#searchResults').html(html);
 		}
 
 		function normalizeString(form) {
@@ -252,7 +260,7 @@
 				: window.location.href.substring(0, window.location.href.indexOf('?'));
 			if (codepoints.length > 0)
 				url += '?c=' + codepoints.join(',');
-			$('#url').html(url.split('').join('&shy;')); // needed for the browser to not prefer word boundaries
+			$('#url').text(url);
 			$('#url').attr('href', url);
 
 			$('#encodedOutput').text(encodeOutput(
@@ -287,6 +295,18 @@
 			initUnicodeData(onComplete);
 		}
 
+		function updateSpacerHeights() {
+			$('.fixed').each(function(i, e) {
+				var spacerId = $(e).attr('data-spacer-id');
+				var spacer = $('#' + spacerId);
+				if (spacer.attr('data-extra-height'))
+					var extraHeight = parseFloat($(spacer).attr('data-extra-height'));
+				else
+					var extraHeight = 0;
+				spacer.height($(e).height() + extraHeight);
+			});
+		}
+
 		var loaded = false;
 		$(document).ready(function() {
 			if (loaded)
@@ -299,6 +319,7 @@
 					$('#output').val(ctos(arg[1].split(',')));
 				}
 			}
+			updateSpacerHeights();
 			initData(function() {
 				updateInfo();
 				updateSuggestions();
@@ -326,6 +347,7 @@
 				});
 				window.setInterval(function() {
 					updateInfo();
+					updateSpacerHeights();
 				}, 1000);
 			});
 		});

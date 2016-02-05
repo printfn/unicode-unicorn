@@ -61,6 +61,16 @@ function stoc(string) {
 	return output;
 }
 
+function itos(int, base, padding) {
+	var res = int.toString(base).toUpperCase();
+	if (padding) {
+		while (res.length < padding) {
+			res = '0' + res;
+		}
+	}
+	return res;
+}
+
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
 	if (encoding == 'Unicode UTF-8') {
