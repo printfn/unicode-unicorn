@@ -115,9 +115,14 @@ function searchCodepoints(str) {
 	}
 
 	str = str.toUpperCase();
-	if (str.startsWith('U+')) {
-		str = str.replace('U+', '');
-	}
+	if (/^U\+[0-9A-F]+$/.test(str))
+		results.push(parseInt(str.replace('U+', '0x')));
+	if (/^0X[0-9A-F]+$/.test(str))
+		results.push(parseInt(str.toLowerCase()));
+	if (/^[0-9A-F]+$/.test(str))
+		results.push(parseInt('0x' + str));
+	if (/^[0-9]+$/.test(str))
+		results.push(parseInt(str));
 
 	for (var i = 0; i < window.aliases.length; ++i) {
 		var searchString = window.aliases[i].alias;
@@ -129,7 +134,7 @@ function searchCodepoints(str) {
 	}
 	for (var codepoint in window.data) {
 		var searchString = getSearchString(codepoint);
-		if (searchString.includes(str) || codepoint.includes(str)) {
+		if (searchString.includes(str)) {
 			results.push(parseInt(codepoint));
 			if (reachedMaxResults())
 				break;
@@ -138,7 +143,7 @@ function searchCodepoints(str) {
 	if (!reachedMaxResults() || codepoint > 0x3400) {
 		for (var codepoint in window.han_meanings) {
 			var searchString = getSearchString(codepoint);
-			if (searchString.includes(str) || codepoint.includes(str)) {
+			if (searchString.includes(str)) {
 				results.push(parseInt(codepoint));
 				if (reachedMaxResults())
 					break;
