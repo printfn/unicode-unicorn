@@ -73,7 +73,16 @@ function itos(int, base, padding) {
 
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
-	if (encoding == 'Unicode UTF-8') {
+	if (encoding == 'ASCII' || encoding.includes('ISO 8859-1')) {
+		for (var i in codepoints) {
+			var c = codepoints[i];
+			if ((c < 0x80 && encoding == 'ASCII') || (c < 0x100 && encoding.includes('ISO 8859-1'))) {
+				codeUnits.push(c);
+			} else {
+				return parseInt(c);
+			}
+		}
+	} else if (encoding == 'Unicode UTF-8') {
 		for (var i in codepoints) {
 			var c = codepoints[i];
 			if (c < 0x80) {
@@ -91,13 +100,16 @@ function codepointsToEncoding(encoding, codepoints) {
 				codeUnits.push(c >>  6 & 0x3F | 0x80)
 				codeUnits.push(c >>  0 & 0x3F | 0x80)
 			} else {
-				return [];
+				return parseInt(c); // can never be reached in a compliant browser
 			}
 		}
-	} else if (encoding.includes('UTF-16')) {
+	} else if (encoding.includes('UTF-16') || encoding.includes('UCS-2')) {
 		var inputStr = ctos(codepoints);
 		for (var i in inputStr) {
 			var x = inputStr.charCodeAt(i);
+			if (encoding.includes('UCS-2') && x >= 0xD800 && x <= 0xDFFF) {
+				return stoc(String.fromCharCode(x, inputStr.charCodeAt(parseInt(i)+1)))[0];
+			}
 			if (encoding.includes('16-bit code units')) {
 				codeUnits.push(x);
 			} else {
@@ -181,7 +193,7 @@ function joinBytes(joiner, bytes) {
 }
 
 function hexadecimalPaddingFromEncoding(encoding) {
-	if (encoding == 'Unicode UTF-8')
+	if (encoding == 'Unicode UTF-8' || encoding == 'ASCII' || encoding.includes('ISO 8859-1'))
 		return 2;
 	if (encoding.includes('8-bit code units'))
 		return 2;
@@ -196,6 +208,15 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 	if (useBOM)
 		codepoints.unshift(0xFEFF);
 	var bytes = codepointsToEncoding(encoding, codepoints);
+	if (typeof bytes == 'number') {
+		// input contains codepoints incompatible with the selected encoding
+		var invalidCodepoint = bytes;
+		return '<span style="color: red">Text cannot be encoded in ' 
+		    + encoding 
+		    + ' because it contains incompatible characters.\nThe first such incompatible character is U+' 
+		    + itos(invalidCodepoint, 16, 4).toUpperCase()
+		    + ' (' + getUnicodeData(invalidCodepoint) + ').</span>';
+	}
 	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
-	return joinBytes(joiner, chars);
+	return escapeHtml(joinBytes(joiner, chars));
 }
