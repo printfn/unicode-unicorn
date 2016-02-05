@@ -72,7 +72,7 @@ function searchCodepoints(str) {
 	for (var codepoint in window.data) {
 		var name = getSearchString(codepoint);
 		if (name.includes(str)) {
-			results[codepoint] = getUnicodeData(codepoint);
+			results.push(codepoint);
 			if (++count >= 256)
 				break;
 		}
@@ -81,15 +81,11 @@ function searchCodepoints(str) {
 		for (var codepoint in window.han_meanings) {
 			var name = getSearchString(codepoint);
 			if (name.includes(str)) {
-				results[codepoint] = getUnicodeData(codepoint);
+				results.push(codepoint);
 				if (++count >= 256)
 					break;
 			}
 		}
-	}
-	var returnValues = [];
-	for (var codepoint in results) {
-		returnValues.push(results[codepoint]);
 	}
 	return results;
 }

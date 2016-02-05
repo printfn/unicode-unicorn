@@ -2,7 +2,6 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<title>JS Unicode Thing</title>
@@ -11,6 +10,7 @@
 	<script src="encode.js"></script>
 	<script src="graphemes.js"></script>
 	<script src="han.js"></script>
+	<script src="ui.js"></script>
 
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<style>
@@ -77,10 +77,10 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="search">
 				<div class="fixed" data-spacer-id="input-spacer">
-						<input type="text" id="input" placeholder="Search for a character...">
+					<input type="text" id="input" placeholder="Search for a character...">
 				</div>
 				<div id="input-spacer" class="spacer"></div>
-				<table class="table table-striped table-scrollable" id="searchResults"></table>
+				<table class="table table-striped" id="searchResults"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="stats">
 				<p id="info">
@@ -103,7 +103,7 @@
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
-				<p id="codepointlist"></p>
+				<table id="codepointlist" class="table table-striped"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="encode">
 				<p>
@@ -187,23 +187,12 @@
 		function updateSuggestions() {
 			var input = $('#input').val();
 			var results = searchCodepoints(input);
-			if (results.length == 0) {
-				$('#searchResults').html('');
-				return;
-			}
-			var html = '<thead><tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Description</th></tr></thead><tbody>';
-			for (var codepoint in results) {
-				html += '<tr><td><button onclick="output(' + codepoint + ')">Append</button></td><td>U+' + itos(parseInt(codepoint), 16, 4) + '</td><td>' + parseInt(codepoint) + '</td><td>' + escapeHtml(results[codepoint]) + '</td></tr>';
-			}
-			if (results.length >= 256)
-				html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
-			html += '</tbody>';
-			$('#searchResults').html(html);
+			renderCodepointsInTable(results, 'searchResults', [{displayName: 'Insert', functionName: 'output'}]);
 		}
 
 		function normalizeString(form) {
 			if (!String.prototype.normalize) {
-				alert('Your browser does not yet support string normalization');
+				alert('Your browser currently does not support string normalization.');
 				return;
 			}
 			$('#output').val($('#output').val().normalize(form));
@@ -247,13 +236,18 @@
 			$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
 			$('#string').html(escapeHtml($('#output').val()).replace('\n', '<br>'));
 
-			var codepointinfo = '';
-			for (var i in codepoints) {
-				codepointinfo += '<div class="deletion" onclick="deleteAtIndex(' + i + ');">';
-				codepointinfo += escapeHtml(getUnicodeData(codepoints[i]));
-				codepointinfo += '</div>';
-			}
-			$('#codepointlist').html(codepointinfo);
+			renderCodepointsInTable(codepoints, 'codepointlist', [{
+				displayName: 'Delete',
+				functionName: 'deleteAtIndex'
+			}, {
+				displayName: 'Move up',
+				functionName: 'moveUp',
+				require: function(i, length) { return i != 0; }
+			}, {
+				displayName: 'Move down',
+				functionName: 'moveDown',
+				require: function(i, length) { return i != length - 1; }
+			}]);
 
 			var url = window.location.href.indexOf('?') == -1
 				? window.location.href
@@ -274,10 +268,32 @@
 			window.prevUIState = uiState();
 		}
 
-		function deleteAtIndex(index) {
+		function deleteAtIndex(codepoint, index) {
 			var input = $('#output').val();
 			var codepoints = stoc(input);
 			codepoints.splice(index, 1);
+			var output = ctos(codepoints);
+			$('#output').val(output);
+			updateInfo();
+		}
+
+		function moveUp(codepoint, index) {
+			var input = $('#output').val();
+			var codepoints = stoc(input);
+			var c = codepoints[index];
+			codepoints[index] = codepoints[index-1];
+			codepoints[index-1] = c;
+			var output = ctos(codepoints);
+			$('#output').val(output);
+			updateInfo();
+		}
+
+		function moveDown(codepoint, index) {
+			var input = $('#output').val();
+			var codepoints = stoc(input);
+			var c = codepoints[index];
+			codepoints[index] = codepoints[index+1];
+			codepoints[index+1] = c;
 			var output = ctos(codepoints);
 			$('#output').val(output);
 			updateInfo();
