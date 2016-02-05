@@ -20,12 +20,13 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		var buttonStr = '';
 		for (var j in buttons) {
 			var buttonDescription = buttons[j];
+			var disabled = '';
 			if (buttonDescription.require) {
 				if (!buttonDescription.require(parseInt(i), codepoints.length)) {
-					continue;
+					disabled = 'disabled="disabled"'
 				}
 			}
-			buttonStr += '<button onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')">'
+			buttonStr += '<button ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')">'
 			    + buttonDescription.displayName 
 			    + '</button>';
 		}
