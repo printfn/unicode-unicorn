@@ -62,9 +62,10 @@ function initUnicodeData(completion) {
 								name.push(window.controlAliases[j].alias);
 							}
 						}
+						var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>'
 						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
 							'0x' + data_line[0],
-							'<control> (' + name.join(' / ') + ')'
+							nameString
 						);
 					} else {
 						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
