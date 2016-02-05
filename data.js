@@ -21,6 +21,8 @@ function initAliasData(completion) {
 			window.aliases = [];
 			window.controlAliases = [];
 			for (var i = 0; i < dataStrings.length; ++i) {
+				if (dataStrings[i].length == 0 || dataStrings[i][0] == '#')
+					continue;
 				var splitLine = dataStrings[i].split(';');
 				var codepoint = parseInt('0x' + splitLine[0]);
 				var alias = splitLine[1];
@@ -116,6 +118,14 @@ function searchCodepoints(str) {
 		str = str.replace('U+', '');
 	}
 
+	for (var i = 0; i < window.aliases.length; ++i) {
+		var searchString = window.aliases[i].alias;
+		if (searchString.includes(str)) {
+			results.push(window.aliases[i].codepoint);
+			if (reachedMaxResults())
+				break;
+		}
+	}
 	for (var codepoint in window.data) {
 		var searchString = getSearchString(codepoint);
 		if (searchString.includes(str) || codepoint.includes(str)) {
