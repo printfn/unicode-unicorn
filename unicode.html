@@ -349,6 +349,9 @@
 					updateInfo();
 					updateSpacerHeights();
 				}, 1000);
+				$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+					updateSpacerHeights();
+				})
 			});
 		});
 
