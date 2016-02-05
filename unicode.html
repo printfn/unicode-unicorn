@@ -82,11 +82,13 @@
 				<table class="table table-striped" id="searchResults"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="stats">
-				<p id="info">
+				<p>
 					String:
-					<br>
+				</p>
+				<p>
 					<div id="string"></div>
-					<br>
+				</p>
+				<p>
 					Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
 					<br>
 					Legacy grapheme clusters: <span id="legacyGraphemeClusters">0</span>
@@ -95,10 +97,12 @@
 					<br>
 					UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
 					<br>
-					UTF-8 code units: <span id="numUtf8CodeUnits">0</span>
+					UTF-16 bytes: <span id="numUtf16Bytes">0</span>
 					<br>
+					UTF-8 code units/bytes: <span id="numUtf8CodeUnits">0</span>
+				</p>
+				<p>
 					Use this URL to share the unicode sequence: <a id="url" style="word-break: break-all;"></a>
-					<br>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
@@ -228,6 +232,7 @@
 			$('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
 			$('#numCodepoints').text(codepoints.length);
 			$('#numUtf16CodeUnits').text(input.length);
+			$('#numUtf16Bytes').text(input.length * 2);
 
 			var numUtf8CodeUnits = 0;
 			for (var i in codepoints) {
@@ -244,6 +249,7 @@
 					numUtf8CodeUnits = 0;
 			}
 			$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
+			$('#numUtf8Bytes').text(numUtf8CodeUnits);
 			$('#string').html(escapeHtml($('#output').val()).replace('\n', '<br>'));
 
 			renderCodepointsInTable(codepoints, 'codepointlist', [{
