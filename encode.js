@@ -74,7 +74,7 @@ function itos(int, base, padding) {
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
 	if (encoding == 'ASCII' || encoding.includes('ISO 8859-1')) {
-		for (var i in codepoints) {
+		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
 			if ((c < 0x80 && encoding == 'ASCII') || (c < 0x100 && encoding.includes('ISO 8859-1'))) {
 				codeUnits.push(c);
@@ -83,7 +83,7 @@ function codepointsToEncoding(encoding, codepoints) {
 			}
 		}
 	} else if (encoding == 'Unicode UTF-8') {
-		for (var i in codepoints) {
+		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
 			if (c < 0x80) {
 				codeUnits.push(c);
@@ -105,7 +105,7 @@ function codepointsToEncoding(encoding, codepoints) {
 		}
 	} else if (encoding.includes('UTF-16') || encoding.includes('UCS-2')) {
 		var inputStr = ctos(codepoints);
-		for (var i in inputStr) {
+		for (var i = 0; i < inputStr.length; ++i) {
 			var x = inputStr.charCodeAt(i);
 			if (encoding.includes('UCS-2') && x >= 0xD800 && x <= 0xDFFF) {
 				return stoc(String.fromCharCode(x, inputStr.charCodeAt(parseInt(i)+1)))[0];
@@ -125,7 +125,7 @@ function codepointsToEncoding(encoding, codepoints) {
 			}
 		}
 	} else if (encoding.includes('UTF-32')) {
-		for (var i in codepoints) {
+		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
 			if (encoding.includes('32-bit code units')) {
 				codeUnits.push(c);
@@ -144,7 +144,7 @@ function codepointsToEncoding(encoding, codepoints) {
 
 function bytesToText(format, bytes, hexadecimalPadding) {
 	var chars = [];
-	for (var i in bytes) {
+	for (var i = 0; i < bytes.length; ++i) {
 		var b = bytes[i];
 		var str = '';
 		if (format.includes('Binary')) {
@@ -164,7 +164,7 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 	}
 	if (format.includes('Prefixed with ')) {
 		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-		for (var i in chars) {
+		for (var i = 0; i < chars.length; ++i) {
 			chars[i] = prefix + chars[i];
 		}
 	}

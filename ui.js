@@ -15,14 +15,14 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 	var html = ('<thead>'
 	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Description</th></tr>'
 	    + '</thead><tbody>');
-	for (var i in codepoints) {
+	for (var i = 0; i < codepoints.length; ++i) {
 		var codepoint = codepoints[i];
 		var buttonStr = '';
 		for (var j in buttons) {
 			var buttonDescription = buttons[j];
 			var disabled = '';
 			if (buttonDescription.require) {
-				if (!buttonDescription.require(parseInt(i), codepoints.length)) {
+				if (!buttonDescription.require(i, codepoints.length)) {
 					disabled = 'disabled '
 				}
 			}

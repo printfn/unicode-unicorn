@@ -235,7 +235,7 @@
 			$('#numUtf16Bytes').text(input.length * 2);
 
 			var numUtf8CodeUnits = 0;
-			for (var i in codepoints) {
+			for (var i = 0; i < codepoints.length; ++i) {
 				var c = codepoints[i];
 				if (c < 0x80)
 					numUtf8CodeUnits += 1;
@@ -345,7 +345,7 @@
 				return;
 			loaded = true;
 			var args = window.location.search.substring(1).split('&');
-			for (var i in args) {
+			for (var i = 0; i < args.length; ++i) {
 				var arg = args[i].split('=');
 				if (arg[0] == 'c') {
 					$('#output').val(ctos(arg[1].split(',')));

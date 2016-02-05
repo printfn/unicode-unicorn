@@ -44,12 +44,12 @@ function initUnicodeData(completion) {
 			if (client.readyState == 4 && client.status == 200) {
 				var dataStrings = client.responseText.split('\n');
 				window.data = [];
-				for (var i in dataStrings) {
+				for (var i = 0; i < dataStrings.length; ++i) {
 					var data_line = dataStrings[i].split(';');
 					if (data_line[1].endsWith(', First>')) {
 						window.ranges.push([
 							parseInt('0x' + data_line[0]),
-							parseInt('0x' + dataStrings[parseInt(i)+1].split(';')[0]),
+							parseInt('0x' + dataStrings[i+1].split(';')[0]),
 							getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
 						]);
 					} else if (data_line[1].endsWith(', Last>')) {
@@ -81,7 +81,7 @@ function initUnicodeData(completion) {
 function getUnicodeData(codepoint) {
 	if (window.data[codepoint])
 		return window.data[codepoint] + getHanEntry(codepoint);
-	for (var i in window.ranges) {
+	for (var i = 0; i < window.ranges.length; ++i) {
 		var range = window.ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1])
 			return range[2](codepoint) + getHanEntry(codepoint);
