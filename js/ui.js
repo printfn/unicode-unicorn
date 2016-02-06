@@ -4,8 +4,7 @@
 //   displayName: "Display name",
 //   functionName: "function name",
 //   require: function(idx, length) -> bool
-// },
-//   where each function name refers to a function taking a codepoint and an index into `codepoints`
+// }, where each function name refers to a function taking a codepoint and an index into `codepoints`
 function renderCodepointsInTable(codepoints, tableId, buttons) {
 	var table = $('#' + tableId);
 	if (codepoints.length == 0) {

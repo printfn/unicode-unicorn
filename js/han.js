@@ -1,20 +1,14 @@
 function initHanData(completion) {
-	var client = new XMLHttpRequest();
-	client.open('GET', 'Unihan/Unihan_Readings.txt');
-	client.onreadystatechange = function() { 
-		if (client.readyState == 4 && client.status == 200) {
-			var dataStrings = client.responseText.split('\n');
-			window.han_meanings = [];
-			for (var i = 0; i < dataStrings.length; ++i) {
-				var fields = dataStrings[i].split('\t');
-				if (fields[1] != 'kDefinition')
-					continue;
-				window.han_meanings[parseInt('0x' + fields[0].substring(2))] = fields[2];
-			}
-			completion();
+	requestAsync('Unihan/Unihan_Readings.txt', function(lines) {
+		window.han_meanings = [];
+		for (var i = 0; i < lines.length; ++i) {
+			var fields = lines[i].split('\t');
+			if (fields[1] != 'kDefinition')
+				continue;
+			window.han_meanings[parseInt('0x' + fields[0].substring(2))] = fields[2];
 		}
-	}
-	client.send();
+		completion();
+	});
 }
 
 function getHanEntry(codepoint) {
