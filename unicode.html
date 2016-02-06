@@ -179,7 +179,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="loadingModal" role="dialog">
+	<div class="modal fade" data-backdrop="static" data-keyboard="false" id="loadingModal" role="dialog">
 		<div style="height: 30%">
 		</div>
 		<div class="modal-dialog">
@@ -373,8 +373,10 @@
 			}
 			$('#loadingModal').modal('show');
 			updateSpacerHeights();
-			window.setTimeout(function() {
-				initData(function() {
+			var startTime = new Date();
+			initData(function() {
+				var loadDuration = new Date() - startTime; // in ms
+				window.setTimeout(function() {
 					updateInfo();
 					updateSuggestions();
 					$('#input').on('keyup', function(e) {
@@ -407,8 +409,9 @@
 						updateSpacerHeights();
 					});
 					$('#loadingModal').modal('hide');
-				});
-			}, 500);
+				}, loadDuration < 500 ? 500 - loadDuration : 100);
+				console.log('Loaded in ' + loadDuration + 'ms');
+			});
 		});
 
 	</script>
