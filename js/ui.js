@@ -29,7 +29,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 			    + buttonDescription.displayName 
 			    + '">';
 		}
-		html += '<tr>'
+		html += '<tr style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">'
 		    + '<td>' + buttonStr + '</td>'
 		    + '<td>U+' + itos(codepoint, 16, 4) + '</td>'
 		    + '<td>' + codepoint + '</td>'
