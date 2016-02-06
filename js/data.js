@@ -63,50 +63,48 @@ function initGeneralCategoryNames(completion) {
 }
 
 function initUnicodeData(completion) {
-	initAliasData(function() {
-		initGeneralCategoryNames(function() {
-			requestAsync('UCD/UnicodeData.txt', function(lines) {
-				window.data = [];
-				for (var i = 0; i < lines.length; ++i) {
-					if (lines[i].length == 0)
-						continue;
-					var data_line = lines[i].split(';');
-					if (data_line[1].endsWith(', First>')) {
-						var startCodePoint = parseInt('0x' + data_line[0]);
-						var endCodePoint = parseInt('0x' + lines[i+1].split(';')[0]);
-						window.ranges.push([
-							startCodePoint,
-							endCodePoint,
-							getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
-						]);
-						window.categoryRanges.push([
-							startCodePoint,
-							endCodePoint,
-							window.generalCategoryNames[data_line[2]]
-						]);
-					} else if (data_line[1].endsWith(', Last>')) {
-						continue;
-					} else if (data_line[1] == '<control>') {
-						var name = [];
-						var codepoint = parseInt('0x' + data_line[0]);
-						for (var j = 0; j < window.controlAliases.length; ++j) {
-							if (window.controlAliases[j].codepoint == codepoint) {
-								name.push(window.controlAliases[j].alias);
-							}
+	callMultipleAsync([initAliasData, initGeneralCategoryNames], function() {
+		requestAsync('UCD/UnicodeData.txt', function(lines) {
+			window.data = [];
+			for (var i = 0; i < lines.length; ++i) {
+				if (lines[i].length == 0)
+					continue;
+				var data_line = lines[i].split(';');
+				if (data_line[1].endsWith(', First>')) {
+					var startCodePoint = parseInt('0x' + data_line[0]);
+					var endCodePoint = parseInt('0x' + lines[i+1].split(';')[0]);
+					window.ranges.push([
+						startCodePoint,
+						endCodePoint,
+						getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
+					]);
+					window.categoryRanges.push([
+						startCodePoint,
+						endCodePoint,
+						window.generalCategoryNames[data_line[2]]
+					]);
+				} else if (data_line[1].endsWith(', Last>')) {
+					continue;
+				} else if (data_line[1] == '<control>') {
+					var name = [];
+					var codepoint = parseInt('0x' + data_line[0]);
+					for (var j = 0; j < window.controlAliases.length; ++j) {
+						if (window.controlAliases[j].codepoint == codepoint) {
+							name.push(window.controlAliases[j].alias);
 						}
-						var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>'
-						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
-							'0x' + data_line[0],
-							nameString
-						);
-						window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
-					} else {
-						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
-						window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
 					}
+					var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>'
+					window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
+						'0x' + data_line[0],
+						nameString
+					);
+					window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
+				} else {
+					window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
+					window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
 				}
-				completion();
-			});
+			}
+			completion();
 		});
 	});
 }

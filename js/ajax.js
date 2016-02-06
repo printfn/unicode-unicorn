@@ -9,3 +9,16 @@ function requestAsync(url, completion) {
 	}
 	client.send();
 }
+
+function callMultipleAsync(functions, completion) {
+	var length = 0;
+	var callback = function() {
+		++length;
+		if (length == functions.length) {
+			completion();
+		}
+	}
+	for (var i = 0; i < functions.length; ++i) {
+		functions[i](callback);
+	}
+}

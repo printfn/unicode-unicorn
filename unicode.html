@@ -338,15 +338,7 @@
 		}
 
 		function initData(completion) {
-			var completeCount = 0;
-			var onComplete = function() {
-				++completeCount;
-				if (completeCount == 3)
-					completion();
-			}
-			initHanData(onComplete);
-			initGraphemeData(onComplete);
-			initUnicodeData(onComplete);
+			callMultipleAsync([initHanData, initGraphemeData, initUnicodeData], completion);
 		}
 
 		function updateSpacerHeights() {
