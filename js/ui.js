@@ -13,7 +13,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		return;
 	}
 	var html = ('<thead>'
-	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Description</th></tr>'
+	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Category</th><th>Description</th></tr>'
 	    + '</thead><tbody>');
 	for (var i = 0; i < codepoints.length; ++i) {
 		var codepoint = codepoints[i];
@@ -34,11 +34,12 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		    + '<td>' + buttonStr + '</td>'
 		    + '<td>U+' + itos(codepoint, 16, 4) + '</td>'
 		    + '<td>' + codepoint + '</td>'
+		    + '<td>' + getCharacterCategoryName(codepoint) + '</td>'
 		    + '<td>' + escapeHtml(getUnicodeData(codepoint)) + '</td>'
 		    + '</tr>';
 	}
 	if (i >= 256) {
-		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
+		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
 	}
 	html += '</tbody>';
 	table.html(html);
@@ -74,10 +75,7 @@ function updateRenderedCodepage() {
 			var byte = (i << 4) + j;
 			var codepoint = codepointForByteUsingMapping(mapping, byte);
 			var str = escapeHtml(ctos([codepoint]));
-			var category = window.category[codepoint];
-			if (!category)
-				category = 'Unknown Category'; // assume ideograph
-			var color = randomColorForKey(category);
+			var color = randomColorForKey(getCharacterCategoryName(codepoint));
 			html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
 				+ i.toString(16).toUpperCase() 
 				+ j.toString(16).toUpperCase() 
@@ -94,7 +92,7 @@ function updateRenderedCodepage() {
 function showCodepageDetail(codepoint) {
 	$('#detail-codepoint').text(itos(codepoint, 16, 4));
 	$('#detail-name').text(getUnicodeData(codepoint));
-	$('#detail-category').text(window.category[codepoint]);
+	$('#detail-category').text(getCharacterCategoryName(codepoint));
 	var aliases = [];
 	for (var i = 0; i < window.aliases.length; ++i) {
 		if (window.aliases[i].codepoint == codepoint)

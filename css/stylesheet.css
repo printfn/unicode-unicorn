@@ -1,0 +1,30 @@
+.modal-open {
+	/* needed for iOS to not zoom in when modals are opened */
+	overflow-y: auto;
+}
+input[type=text] {
+	width: 100%;
+}
+textarea {
+	width: 100%;
+	font-size: 30pt;
+}
+pre {
+	white-space: pre-line;
+	word-break: normal;
+}
+.fixed {
+	position: fixed;
+	width: 100%;
+	width: calc(100% - 30px);
+	background-color: white;
+}
+.spacer {
+	background-color: white;
+}
+#codepage td {
+	text-align: center;   
+}
+#codepage th {
+	text-align: center;   
+}

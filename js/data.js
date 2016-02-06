@@ -1,6 +1,18 @@
 window.data = [];
 window.ranges = [];
 window.category = [];
+window.categoryRanges = [];
+
+function getCharacterCategoryName(codepoint) {
+	if (window.category[codepoint])
+		return window.category[codepoint];
+	for (var i = 0; i < window.categoryRanges.length; ++i) {
+		var range = window.categoryRanges[i];
+		if (codepoint >= range[0] && codepoint <= range[1])
+			return range[2];
+	}
+	return 'Unknown';
+}
 
 function getCodepointDescription(codepoint, name) {
 	codepoint = parseInt(codepoint);
@@ -15,7 +27,7 @@ function getRangeFunctionForName(name) {
 
 function initAliasData(completion) {
 	var client = new XMLHttpRequest();
-	client.open('GET', 'NameAliases.txt');
+	client.open('GET', 'UCD/NameAliases.txt');
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
 			var dataStrings = client.responseText.split('\n');
@@ -39,7 +51,7 @@ function initAliasData(completion) {
 
 function initGeneralCategoryNames(completion) {
 	var client = new XMLHttpRequest();
-	client.open('GET', 'PropertyValueAliases.txt');
+	client.open('GET', 'UCD/PropertyValueAliases.txt');
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
 			var dataStrings = client.responseText.split('\n');
@@ -66,18 +78,27 @@ function initUnicodeData(completion) {
 	initAliasData(function() {
 		initGeneralCategoryNames(function() {
 			var client = new XMLHttpRequest();
-			client.open('GET', 'UnicodeData.txt');
+			client.open('GET', 'UCD/UnicodeData.txt');
 			client.onreadystatechange = function() { 
 				if (client.readyState == 4 && client.status == 200) {
 					var dataStrings = client.responseText.split('\n');
 					window.data = [];
 					for (var i = 0; i < dataStrings.length; ++i) {
+						if (dataStrings[i].length == 0)
+							continue;
 						var data_line = dataStrings[i].split(';');
 						if (data_line[1].endsWith(', First>')) {
+							var startCodePoint = parseInt('0x' + data_line[0]);
+							var endCodePoint = parseInt('0x' + dataStrings[i+1].split(';')[0]);
 							window.ranges.push([
-								parseInt('0x' + data_line[0]),
-								parseInt('0x' + dataStrings[i+1].split(';')[0]),
+								startCodePoint,
+								endCodePoint,
 								getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
+							]);
+							window.categoryRanges.push([
+								startCodePoint,
+								endCodePoint,
+								window.generalCategoryNames[data_line[2]]
 							]);
 						} else if (data_line[1].endsWith(', Last>')) {
 							continue;

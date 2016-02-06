@@ -2,7 +2,7 @@ window.graphemeBreakData = [];
 
 function initGraphemeData(completion) {
 	var client = new XMLHttpRequest();
-	client.open('GET', 'GraphemeBreakProperty.txt');
+	client.open('GET', 'UCD/auxiliary/GraphemeBreakProperty.txt');
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
 			var lines = client.responseText.split('\n');
