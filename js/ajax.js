@@ -11,10 +11,10 @@ function requestAsync(url, completion) {
 }
 
 function callMultipleAsync(functions, completion) {
-	var length = 0;
+	var count = 0;
 	var callback = function() {
-		++length;
-		if (length == functions.length) {
+		++count;
+		if (count == functions.length) {
 			completion();
 		}
 	}

@@ -4,14 +4,17 @@ window.category = [];
 window.categoryRanges = [];
 
 function getCharacterCategoryName(codepoint) {
-	if (window.category[codepoint])
-		return window.category[codepoint];
-	for (var i = 0; i < window.categoryRanges.length; ++i) {
-		var range = window.categoryRanges[i];
-		if (codepoint >= range[0] && codepoint <= range[1])
-			return range[2];
+	var categoryCode = window.category[codepoint];
+	if (!categoryCode) {
+		for (var i = 0; i < window.categoryRanges.length; ++i) {
+			var range = window.categoryRanges[i];
+			if (codepoint >= range[0] && codepoint <= range[1]) {
+				categoryCode = range[2];
+				break;
+			}
+		}
 	}
-	return 'Unknown';
+	return window.generalCategoryNames[categoryCode] || 'Unknown';
 }
 
 function getCodepointDescription(codepoint, name) {
@@ -63,7 +66,7 @@ function initGeneralCategoryNames(completion) {
 }
 
 function initUnicodeData(completion) {
-	callMultipleAsync([initAliasData, initGeneralCategoryNames], function() {
+	callMultipleAsync([initAliasData], function() {
 		requestAsync('UCD/UnicodeData.txt', function(lines) {
 			window.data = [];
 			for (var i = 0; i < lines.length; ++i) {
@@ -98,10 +101,10 @@ function initUnicodeData(completion) {
 						'0x' + data_line[0],
 						nameString
 					);
-					window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
+					window.category[parseInt('0x' + data_line[0])] = data_line[2];
 				} else {
 					window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
-					window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
+					window.category[parseInt('0x' + data_line[0])] = data_line[2];
 				}
 			}
 			completion();
