@@ -71,15 +71,54 @@ function itos(int, base, padding) {
 	return res;
 }
 
+function applySingleByteMapping(mapping, codepoint) {
+	codepoint = parseInt(codepoint);
+	if (mapping[codepoint])
+		return mapping[codepoint];
+	if (codepoint > 0xFF)
+		return; // Non-ISO-8859-1 codepoints not included in `mapping` can't be encoded
+	for (var x in mapping) {
+		// x is a codepoint
+		if (mapping[x] == codepoint)
+			return; // another codepoint as assigned to the 8-bit version of `codepoint`
+	}
+	return codepoint;
+}
+
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
-	if (encoding == 'ASCII' || encoding.includes('ISO 8859-1')) {
+	if (encoding == 'ASCII' || encoding.startsWith('ISO-8859-')) {
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
-			if ((c < 0x80 && encoding == 'ASCII') || (c < 0x100 && encoding.includes('ISO 8859-1'))) {
-				codeUnits.push(c);
-			} else {
-				return parseInt(c);
+			if (encoding == 'ASCII') {
+				if (c < 0x80) {
+					codeUnits.push(c);
+				} else {
+					return parseInt(c);
+				}
+			} else if (encoding == 'ISO-8859-1 ("Latin-1")') {
+				if (c < 0x100) {
+					codeUnits.push(c);
+				} else {
+					return parseInt(c);
+				}
+			} else if (encoding == 'ISO-8859-15 ("Latin-9")') {
+				var mapping = {
+					8364: 0xA4,
+					352: 0xA6,
+					353: 0xA8,
+					381: 0xB4,
+					382: 0xB8,
+					338: 0xBC,
+					339: 0xBD,
+					376: 0xBE
+				};
+				var codeUnit = applySingleByteMapping(mapping, c);
+				if (codeUnit) {
+					codeUnits.push(codeUnit);
+				} else {
+					return parseInt(c);
+				}
 			}
 		}
 	} else if (encoding == 'Unicode UTF-8') {
@@ -193,7 +232,7 @@ function joinBytes(joiner, bytes) {
 }
 
 function hexadecimalPaddingFromEncoding(encoding) {
-	if (encoding == 'Unicode UTF-8' || encoding == 'ASCII' || encoding.includes('ISO 8859-1'))
+	if (encoding == 'Unicode UTF-8' || encoding == 'ASCII' || encoding.startsWith('ISO-8859'))
 		return 2;
 	if (encoding.includes('8-bit code units'))
 		return 2;
