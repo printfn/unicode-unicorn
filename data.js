@@ -101,8 +101,11 @@ function searchCodepoints(str) {
 		for (var i = 0; i < a.length; i++)
 			temp[a[i]] = true;
 		var r = [];
-		for (var k in temp)
-			r.push(parseInt(k));
+		for (var k in temp) {
+			if (r.length < 256) {
+				r.push(parseInt(k));
+			}
+		}
 		return r;
 	}
 	var reachedMaxResults = function() {
@@ -124,20 +127,18 @@ function searchCodepoints(str) {
 	if (/^[0-9]+$/.test(str))
 		results.push(parseInt(str));
 
-	for (var i = 0; i < window.aliases.length; ++i) {
-		var searchString = window.aliases[i].alias;
-		if (searchString.includes(str)) {
-			results.push(window.aliases[i].codepoint);
-			if (reachedMaxResults())
-				break;
-		}
-	}
 	for (var codepoint in window.data) {
 		var searchString = getSearchString(codepoint);
 		if (searchString.includes(str)) {
 			results.push(parseInt(codepoint));
 			if (reachedMaxResults())
 				break;
+		}
+	}
+	for (var i = 0; i < window.aliases.length; ++i) {
+		var searchString = window.aliases[i].alias;
+		if (searchString.includes(str)) {
+			results.push(window.aliases[i].codepoint);
 		}
 	}
 	if (!reachedMaxResults() || codepoint > 0x3400) {
