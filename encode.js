@@ -96,23 +96,22 @@ function codepointsToEncoding(encoding, codepoints) {
 				} else {
 					return parseInt(c);
 				}
-			} else if (encoding == 'ISO-8859-1 ("Latin-1")') {
-				if (c < 0x100) {
-					codeUnits.push(c);
-				} else {
-					return parseInt(c);
+			} else {
+				var mapping;
+				if (encoding == 'ISO-8859-1 ("Latin-1")') {
+					mapping = {};
+				} else if (encoding == 'ISO-8859-15 ("Latin-9")') {
+					var mapping = {
+						8364: 0xA4,
+						352: 0xA6,
+						353: 0xA8,
+						381: 0xB4,
+						382: 0xB8,
+						338: 0xBC,
+						339: 0xBD,
+						376: 0xBE
+					};
 				}
-			} else if (encoding == 'ISO-8859-15 ("Latin-9")') {
-				var mapping = {
-					8364: 0xA4,
-					352: 0xA6,
-					353: 0xA8,
-					381: 0xB4,
-					382: 0xB8,
-					338: 0xBC,
-					339: 0xBD,
-					376: 0xBE
-				};
 				var codeUnit = applySingleByteMapping(mapping, c);
 				if (codeUnit) {
 					codeUnits.push(codeUnit);
