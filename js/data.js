@@ -22,12 +22,6 @@ function getCodepointDescription(codepoint, name) {
 	return name + ' ' + ctos([codepoint]);
 }
 
-function getRangeFunctionForName(name) {
-	return function(codepoint) {
-		return getCodepointDescription(codepoint, name);
-	}
-}
-
 function initAliasData(completion) {
 	requestAsync('UCD/NameAliases.txt', function(lines) {
 		window.aliases = [];
@@ -78,7 +72,7 @@ function initUnicodeData(completion) {
 				window.ranges.push([
 					startCodePoint,
 					endCodePoint,
-					getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
+					data_line[1].substring(1, data_line[1].length - 8)
 				]);
 				window.categoryRanges.push([
 					startCodePoint,
@@ -117,7 +111,7 @@ function getUnicodeData(codepoint) {
 	for (var i = 0; i < window.ranges.length; ++i) {
 		var range = window.ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1])
-			return range[2](codepoint) + getHanEntry(codepoint);
+			return getCodepointDescription(codepoint, range[2]) + getHanEntry(codepoint);
 	}
 	return getCodepointDescription(codepoint, 'Unknown') + getHanEntry(codepoint);
 }
