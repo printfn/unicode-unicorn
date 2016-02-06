@@ -1,5 +1,6 @@
 window.data = [];
 window.ranges = [];
+window.category = [];
 
 function getCodepointDescription(codepoint, name) {
 	codepoint = parseInt(codepoint);
@@ -36,45 +37,74 @@ function initAliasData(completion) {
 	client.send();
 }
 
+function initGeneralCategoryNames(completion) {
+	var client = new XMLHttpRequest();
+	client.open('GET', 'PropertyValueAliases.txt');
+	client.onreadystatechange = function() { 
+		if (client.readyState == 4 && client.status == 200) {
+			var dataStrings = client.responseText.split('\n');
+			window.generalCategoryNames = [];
+			for (var i = 0; i < dataStrings.length; ++i) {
+				if (dataStrings[i].length == 0)
+					continue;
+				var splitLine = dataStrings[i].split('#');
+				splitLine = splitLine[0];
+				splitLine = splitLine.split(';');
+				if (splitLine[0].trim() != 'gc')
+					continue;
+				var gc = splitLine[1].trim();
+				var gcAlias = splitLine[2].trim();
+				window.generalCategoryNames[gc] = gcAlias.replace('_', ' ');
+			}
+			completion();
+		}
+	}
+	client.send();
+}
+
 function initUnicodeData(completion) {
 	initAliasData(function() {
-		var client = new XMLHttpRequest();
-		client.open('GET', 'UnicodeData.txt');
-		client.onreadystatechange = function() { 
-			if (client.readyState == 4 && client.status == 200) {
-				var dataStrings = client.responseText.split('\n');
-				window.data = [];
-				for (var i = 0; i < dataStrings.length; ++i) {
-					var data_line = dataStrings[i].split(';');
-					if (data_line[1].endsWith(', First>')) {
-						window.ranges.push([
-							parseInt('0x' + data_line[0]),
-							parseInt('0x' + dataStrings[i+1].split(';')[0]),
-							getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
-						]);
-					} else if (data_line[1].endsWith(', Last>')) {
-						continue;
-					} else if (data_line[1] == '<control>') {
-						var name = [];
-						var codepoint = parseInt('0x' + data_line[0]);
-						for (var j = 0; j < window.controlAliases.length; ++j) {
-							if (window.controlAliases[j].codepoint == codepoint) {
-								name.push(window.controlAliases[j].alias);
+		initGeneralCategoryNames(function() {
+			var client = new XMLHttpRequest();
+			client.open('GET', 'UnicodeData.txt');
+			client.onreadystatechange = function() { 
+				if (client.readyState == 4 && client.status == 200) {
+					var dataStrings = client.responseText.split('\n');
+					window.data = [];
+					for (var i = 0; i < dataStrings.length; ++i) {
+						var data_line = dataStrings[i].split(';');
+						if (data_line[1].endsWith(', First>')) {
+							window.ranges.push([
+								parseInt('0x' + data_line[0]),
+								parseInt('0x' + dataStrings[i+1].split(';')[0]),
+								getRangeFunctionForName(data_line[1].substring(1, data_line[1].length - 8))
+							]);
+						} else if (data_line[1].endsWith(', Last>')) {
+							continue;
+						} else if (data_line[1] == '<control>') {
+							var name = [];
+							var codepoint = parseInt('0x' + data_line[0]);
+							for (var j = 0; j < window.controlAliases.length; ++j) {
+								if (window.controlAliases[j].codepoint == codepoint) {
+									name.push(window.controlAliases[j].alias);
+								}
 							}
+							var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>'
+							window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
+								'0x' + data_line[0],
+								nameString
+							);
+							window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
+						} else {
+							window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
+							window.category[parseInt('0x' + data_line[0])] = window.generalCategoryNames[data_line[2]];
 						}
-						var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>'
-						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription(
-							'0x' + data_line[0],
-							nameString
-						);
-					} else {
-						window.data[parseInt('0x' + data_line[0])] = getCodepointDescription('0x' + data_line[0], data_line[1]);
 					}
+					completion();
 				}
-				completion();
 			}
-		}
-		client.send();
+			client.send();
+		});
 	});
 }
 

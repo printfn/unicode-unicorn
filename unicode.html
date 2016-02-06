@@ -10,6 +10,7 @@
 	<script src="graphemes.js"></script>
 	<script src="han.js"></script>
 	<script src="ui.js"></script>
+	<script src="randomColor.js"></script>
 
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<style>
@@ -36,6 +37,12 @@
 		.spacer {
 			background-color: white;
 		}
+		#codepage td {
+			text-align: center;   
+		}
+		#codepage th {
+			text-align: center;   
+		}
 
 	</style>
 </head>
@@ -60,10 +67,13 @@
 					<a href="#codepoints" aria-controls="codepoints" role="tab" data-toggle="tab">List of Codepoints</a>
 				</li>
 				<li role="presentation">
-					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encoded Text</a>
+					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encode</a>
 				</li>
 				<li role="presentation">
 					<a href="#normalization" aria-controls="normalization" role="tab" data-toggle="tab">Unicode Normalization</a>
+				</li>
+				<li role="presentation">
+					<a href="#codepages" aria-controls="codepages" role="tab" data-toggle="tab">View Codepages</a>
 				</li>
 			</ul>
 		</div>
@@ -189,6 +199,15 @@
 					<input type="button" onclick="normalizeString('NFKC')" value="NFKC (Normalization Form KC: Compatibility Decomposition, followed by Canonical Composition)">
 				</p>
 			</div>
+			<div role="tabpanel" class="tab-pane active" id="codepages">
+				<select id="codepageEncoding">
+					<option>ASCII</option>
+					<option selected="selected">ISO-8859-1 ("Latin-1")</option>
+					<option>ISO-8859-15 ("Latin-9")</option>
+					<option>Windows-1252</option>
+				</select>
+				<table class="table" id="codepage"></table>
+			</div>
 		</div>
 	</div>
 	<div class="modal fade" id="loadingModal" role="dialog">
@@ -205,8 +224,25 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="codepoint-detail" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Info for codepoint U+<span id="detail-codepoint">0000</span></h4>
+				</div>
+				<div class="modal-body">
+					<p>Name: <span id="detail-name"></span></p>
+					<p>General Character Category: <span id="detail-category"></span></p>
+					<p id="detail-aliases">Other Names: <span id="detail-aliases-list"></span></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
-
 		function output(codepoint) {
 			$('#output').val($('#output').val() + ctos([codepoint]));
 			updateInfo();
@@ -232,7 +268,8 @@
 				+ $('#outputEncoding option:selected').text()
 				+ $('#outputFormat option:selected').text()
 				+ $('#outputJoiner option:selected').text()
-				+ $('#byteOrderMark option:selected').text();
+				+ $('#byteOrderMark option:selected').text()
+				+ $('#codepageEncoding option:selected').text();
 		}
 
 		window.prevUIState = '';
@@ -240,7 +277,10 @@
 			var input = $('#output').val();
 			if (uiState() == window.prevUIState)
 				return;
+
 			var codepoints = stoc(input);
+
+			updateRenderedCodepage();
 
 			$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
 			$('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));

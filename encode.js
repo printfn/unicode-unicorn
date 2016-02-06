@@ -85,6 +85,64 @@ function applySingleByteMapping(mapping, codepoint) {
 	return codepoint;
 }
 
+function codepointForByteUsingMapping(mapping, byte) {
+	byte = parseInt(byte);
+	if (byte > 0xFF)
+		return;
+	for (var codepoint in mapping) {
+		if (byte == mapping[codepoint])
+			return codepoint;
+	}
+	return byte;
+}
+
+function getSingleByteMappingForEncoding(encoding) {
+	if (encoding == 'ISO-8859-1 ("Latin-1")') {
+		return {};
+	} else if (encoding == 'ISO-8859-15 ("Latin-9")') {
+		return {
+			8364: 0xA4,
+			352: 0xA6,
+			353: 0xA8,
+			381: 0xB4,
+			382: 0xB8,
+			338: 0xBC,
+			339: 0xBD,
+			376: 0xBE
+		};
+	} else if (encoding == 'Windows-1252') {
+		return {
+			0x20AC: 128,
+			0x201A: 130,
+			0x0192: 131,
+			0x201E: 132,
+			0x2026: 133,
+			0x2020: 134,
+			0x2021: 135,
+			0x02C6: 136,
+			0x2030: 137,
+			0x0160: 138,
+			0x2039: 139,
+			0x0152: 140,
+			0x017D: 142,
+			0x2018: 145,
+			0x2019: 146,
+			0x201C: 147,
+			0x201D: 148,
+			0x2022: 149,
+			0x2013: 150,
+			0x2014: 151,
+			0x02DC: 152,
+			0x2122: 153,
+			0x0161: 154,
+			0x203A: 155,
+			0x0153: 156,
+			0x017E: 158,
+			0x0178: 159
+		}
+	}
+}
+
 function codepointsToEncoding(encoding, codepoints) {
 	var codeUnits = [];
 	if (encoding == 'ASCII' || encoding.startsWith('ISO-8859-') || encoding.startsWith('Windows-')) {
@@ -97,51 +155,7 @@ function codepointsToEncoding(encoding, codepoints) {
 					return parseInt(c);
 				}
 			} else {
-				var mapping;
-				if (encoding == 'ISO-8859-1 ("Latin-1")') {
-					mapping = {};
-				} else if (encoding == 'ISO-8859-15 ("Latin-9")') {
-					var mapping = {
-						8364: 0xA4,
-						352: 0xA6,
-						353: 0xA8,
-						381: 0xB4,
-						382: 0xB8,
-						338: 0xBC,
-						339: 0xBD,
-						376: 0xBE
-					};
-				} else if (encoding == 'Windows-1252') {
-					var mapping = {
-						0x20AC: 128,
-						0x201A: 130,
-						0x0192: 131,
-						0x201E: 132,
-						0x2026: 133,
-						0x2020: 134,
-						0x2021: 135,
-						0x02C6: 136,
-						0x2030: 137,
-						0x0160: 138,
-						0x2039: 139,
-						0x0152: 140,
-						0x017D: 142,
-						0x2018: 145,
-						0x2019: 146,
-						0x201C: 147,
-						0x201D: 148,
-						0x2022: 149,
-						0x2013: 150,
-						0x2014: 151,
-						0x02DC: 152,
-						0x2122: 153,
-						0x0161: 154,
-						0x203A: 155,
-						0x0153: 156,
-						0x017E: 158,
-						0x0178: 159
-					}
-				}
+				var mapping = getSingleByteMappingForEncoding(encoding);
 				var codeUnit = applySingleByteMapping(mapping, c);
 				if (codeUnit) {
 					codeUnits.push(codeUnit);

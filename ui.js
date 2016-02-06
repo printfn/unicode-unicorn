@@ -43,3 +43,68 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 	html += '</tbody>';
 	table.html(html);
 }
+
+function randomColorForKey(key) {
+	if (!window.colorMap)
+		window.colorMap = [];
+	if (window.colorMap[key])
+		return window.colorMap[key];
+	var color = randomColor({
+		luminosity: 'light'
+	});
+	window.colorMap[key] = color;
+	return color;
+}
+
+function updateRenderedCodepage() {
+	var encoding = $('#codepageEncoding option:selected').text();
+	var ascii = false;
+	if (encoding == 'ASCII') {
+		encoding = 'ISO-8859-1 ("Latin-1")';
+		ascii = true;
+	}
+	var mapping = getSingleByteMappingForEncoding(encoding);
+	var html = '<thead><th></th>';
+	for (var i = 0; i < 16; ++i)
+		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
+	html += '</thead><tbody>';
+	for (var i = 0; i < (ascii ? 8 : 16); ++i) {
+		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
+		for (var j = 0; j < 16; ++j) {
+			var byte = (i << 4) + j;
+			var codepoint = codepointForByteUsingMapping(mapping, byte);
+			var str = escapeHtml(ctos([codepoint]));
+			var category = window.category[codepoint];
+			if (!category)
+				category = 'Unknown Category'; // assume ideograph
+			var color = randomColorForKey(category);
+			html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
+				+ i.toString(16).toUpperCase() 
+				+ j.toString(16).toUpperCase() 
+				+ '<br>' 
+				+ str 
+				+ '</td>';
+		}
+		html += '</tr>';
+	}
+	html += '</tbody>';
+	$('#codepage').html(html);
+}
+
+function showCodepageDetail(codepoint) {
+	$('#detail-codepoint').text(itos(codepoint, 16, 4));
+	$('#detail-name').text(getUnicodeData(codepoint));
+	$('#detail-category').text(window.category[codepoint]);
+	var aliases = [];
+	for (var i = 0; i < window.aliases.length; ++i) {
+		if (window.aliases[i].codepoint == codepoint)
+			aliases.push(window.aliases[i].alias);
+	}
+	if (aliases.length == 0) {
+		$('#detail-aliases').hide();
+	} else {
+		$('#detail-aliases').show();
+		$('#detail-aliases-list').text(aliases.join(', '));
+	}
+	$('#codepoint-detail').modal('show');
+}
