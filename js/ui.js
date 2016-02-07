@@ -61,10 +61,10 @@ function updateRenderedCodepage() {
 	var encoding = $('#codepageEncoding option:selected').text();
 	var ascii = false;
 	if (encoding == 'ASCII') {
-		encoding = 'ISO-8859-1 ("Latin-1")';
+		encoding = 'ISO-8859-1 (Latin-1)';
 		ascii = true;
 	}
-	var mapping = getSingleByteMappingForEncoding(encoding);
+	var mapping = window.mappings[encoding];
 	var html = '<thead><th></th>';
 	for (var i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';

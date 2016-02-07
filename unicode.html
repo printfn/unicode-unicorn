@@ -96,10 +96,6 @@
 					</select>
 					<br>
 					<select id="outputEncoding">
-						<option>ASCII</option>
-						<option>ISO-8859-1 ("Latin-1")</option>
-						<option>ISO-8859-15 ("Latin-9")</option>
-						<option>Windows-1252</option>
 						<option selected="selected">Unicode UTF-8</option>
 						<option>Unicode UTF-16 (16-bit code units)</option>
 						<option>Unicode UTF-16 BE (8-bit code units)</option>
@@ -110,6 +106,7 @@
 						<option>Unicode UTF-32 (32-bit code units)</option>
 						<option>Unicode UTF-32 BE (8-bit code units)</option>
 						<option>Unicode UTF-32 LE (8-bit code units)</option>
+						<option>ASCII</option>
 					</select>
 					<br>
 					<select id="outputFormat">
@@ -172,9 +169,6 @@
 			<div role="tabpanel" class="tab-pane" id="codepages">
 				<select id="codepageEncoding">
 					<option>ASCII</option>
-					<option selected="selected">ISO-8859-1 ("Latin-1")</option>
-					<option>ISO-8859-15 ("Latin-9")</option>
-					<option>Windows-1252</option>
 				</select>
 				<table class="table" id="codepage"></table>
 			</div>
@@ -360,7 +354,8 @@
 				initBlockData,
 				initHangulSyllableTypes,
 				initShortJamoNames,
-				initScriptData], completion);
+				initScriptData,
+				initializeMappings], completion);
 		}
 
 		function updateSpacerHeights() {
