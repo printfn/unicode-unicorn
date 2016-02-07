@@ -33,7 +33,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		    + '<td>' + buttonStr + '</td>'
 		    + '<td>U+' + itos(codepoint, 16, 4) + '</td>'
 		    + '<td>' + codepoint + '</td>'
-		    + '<td>' + escapeHtml(ctos([renderedCodepoint(codepoint)])) + '</td>'
+		    + '<td>' + displayCodepoint(codepoint) + '</td>'
 		    + '<td>' + getCharacterCategoryName(codepoint) + '</td>'
 		    + '<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>'
 		    + '</tr>';
@@ -74,13 +74,12 @@ function updateRenderedCodepage() {
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
 			var codepoint = codepointForByteUsingMapping(mapping, byte);
-			var str = escapeHtml(ctos([renderedCodepoint(codepoint)]));
 			var color = randomColorForKey(getCharacterCategoryName(codepoint));
 			html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
 				+ i.toString(16).toUpperCase() 
 				+ j.toString(16).toUpperCase() 
 				+ '<br>' 
-				+ str 
+				+ displayCodepoint(codepoint) 
 				+ '</td>';
 		}
 		html += '</tr>';
@@ -93,7 +92,7 @@ function showCodepageDetail(codepoint) {
 	$('#detail-codepoint-hex').text(itos(codepoint, 16, 4));
 	$('#detail-codepoint-decimal').text(codepoint);
 	$('#detail-name').html('"' + getName(codepoint) + '"');
-	$('#detail-character').text(ctos([renderedCodepoint(codepoint)]));
+	$('#detail-character').html(displayCodepoint(codepoint));
 	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace('_', ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace('_', ' '));

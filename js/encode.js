@@ -13,12 +13,15 @@ function escapeHtml(string) {
 	});
 }
 
-function renderedCodepoint(codepoint) {
+function displayCodepoint(codepoint) {
 	if (codepoint < 0x20)
-		return codepoint + 0x2400;
+		codepoint += 0x2400;
 	if (codepoint == 0x7F)
-		return 0x2421;
-	return codepoint;
+		codepoint = 0x2421;
+	codepoints = [codepoint];
+	if (graphemeBreakValueForCodepoint(codepoint) == 'Extend')
+		codepoints = [0x25CC, codepoint];
+	return escapeHtml(ctos(codepoints));
 }
 
 // encoding functions from https://github.com/bestiejs/punycode.js/blob/master/punycode.js
@@ -307,7 +310,7 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 		    + encoding 
 		    + ' because it contains incompatible characters.\nThe first such incompatible character is U+' 
 		    + itos(invalidCodepoint, 16, 4).toUpperCase()
-		    + ' - ' + getHtmlNameDescription(invalidCodepoint) + '.</span>';
+		    + ' - ' + getHtmlNameDescription(invalidCodepoint) + ' (' + displayCodepoint(invalidCodepoint) + ').</span>';
 	}
 	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
 	return escapeHtml(joinBytes(joiner, chars));

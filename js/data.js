@@ -223,10 +223,12 @@ function searchCodepoints(str, completion) {
 		results.push(parseInt(str));
 
 	var plainResults = [];
+	var plainResultsLength = 0;
 	for (var c in window.data) {
 		var searchString = getSearchString(parseInt(c));
 		if (searchString.includes(str)) {
 			plainResults.push(parseInt(c));
+			++plainResultsLength;
 			if (reachedMaxResults(plainResults))
 				break;
 		}
@@ -236,6 +238,8 @@ function searchCodepoints(str, completion) {
 		var range = window.ranges[i];
 		if (range[2].startsWith('Hangul Syllable') || range[2].startsWith('CJK Ideograph')) {
 			for (var c = range[0]; c <= range[1]; ++c) {
+				if (c > plainResults.length && plainResultsLength >= 256)
+					break;
 				var searchString = getSearchString(c);
 				if (searchString.includes(str)) {
 					rangeResults.push(c);
