@@ -14,6 +14,8 @@ function escapeHtml(string) {
 }
 
 function displayCodepoint(codepoint) {
+	if (typeof codepoint == 'undefined')
+		return;
 	if (codepoint < 0x20)
 		codepoint += 0x2400;
 	if (codepoint == 0x7F)
@@ -95,7 +97,6 @@ function codepointForByteUsingMapping(mapping, byte) {
 		if (byte == mapping[codepoint])
 			return parseInt(codepoint);
 	}
-	return byte;
 }
 
 function initializeMappings(completion) {
@@ -139,9 +140,13 @@ function loadEncodingFromURL(url, name, completion) {
 		var mapping = {};
 		for (var i = 0; i < lines.length; ++i) {
 			var line = lines[i];
-			if (line.length == 0 || line[0] == '#')
+			if (line.length == 0
+				|| line[0] == '#'
+				|| (line.length == 1 && line.charCodeAt(0) == 26)) // weird format found in CP857 (and others)
 				continue;
 			var components = line.split('\t');
+			if (components[1].trim() == '')
+				continue;
 			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
 				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
 			mapping[parseInt(components[1])] = parseInt(components[0]);

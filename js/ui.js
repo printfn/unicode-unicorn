@@ -75,12 +75,17 @@ function updateRenderedCodepage() {
 			var byte = (i << 4) + j;
 			var codepoint = codepointForByteUsingMapping(mapping, byte);
 			var color = randomColorForKey(getCharacterCategoryName(codepoint));
-			html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
-				+ i.toString(16).toUpperCase() 
-				+ j.toString(16).toUpperCase() 
-				+ '<br>' 
-				+ displayCodepoint(codepoint) 
-				+ '</td>';
+			var displayedCodepoint = displayCodepoint(codepoint);
+			if (displayedCodepoint) {
+				html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
+					+ i.toString(16).toUpperCase()
+					+ j.toString(16).toUpperCase()
+					+ '<br>'
+					+ displayedCodepoint
+					+ '</td>';
+			} else {
+				html += '<td style="background-color: white">' + i.toString(16).toUpperCase() + j.toString(16).toUpperCase() + '<br>&nbsp;</td>';
+			}
 		}
 		html += '</tr>';
 	}
