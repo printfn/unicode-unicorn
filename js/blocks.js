@@ -21,6 +21,7 @@ function getBlockForCodepoint(codepoint) {
 			return window.blockRanges[i].blockName;
 		}
 	}
+	return 'No_Block';
 }
 
 function initHangulSyllableTypes(completion) {
@@ -79,3 +80,34 @@ function getShortJamoName(codepoint) {
 	return window.shortJamoNames[codepoint];
 }
 
+function initScriptData(completion) {
+	requestAsync('UCD/Scripts.txt', function(lines) {
+		window.scriptRanges = [];
+		for (var i = 0; i < lines.length; ++i) {
+			if (lines[i].length == 0 || lines[i][0] == '#')
+				continue;
+			var line = lines[i].split('#')[0];
+			var splitLine = line.split(';');
+			if (splitLine[0].trim().split('..').length == 2) {
+				var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
+				var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+			} else {
+				var startCodepoint = parseInt('0x' + splitLine[0].trim());
+				var endCodepoint = startCodepoint;
+			}
+			var scriptName = splitLine[1].trim();
+			window.scriptRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, scriptName: scriptName});
+		}
+		completion();
+	});
+}
+
+function getScriptForCodepoint(codepoint) {
+	for (var i = 0; i < window.scriptRanges.length; ++i) {
+		if (codepoint >= window.scriptRanges[i].startCodepoint
+			&& codepoint <= window.scriptRanges[i].endCodepoint) {
+			return window.scriptRanges[i].scriptName;
+		}
+	}
+	return 'Unknown';
+}

@@ -90,9 +90,13 @@ function updateRenderedCodepage() {
 }
 
 function showCodepageDetail(codepoint) {
-	$('#detail-codepoint').text(itos(codepoint, 16, 4));
-	$('#detail-name').html(getHtmlNameDescription(codepoint));
-	$('#detail-category').text(getCharacterCategoryName(codepoint));
+	$('#detail-codepoint-hex').text(itos(codepoint, 16, 4));
+	$('#detail-codepoint-decimal').text(codepoint);
+	$('#detail-name').html('"' + getName(codepoint) + '"');
+	$('#detail-character').text(ctos([renderedCodepoint(codepoint)]));
+	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
+	$('#detail-block').text(getBlockForCodepoint(codepoint).replace('_', ' '));
+	$('#detail-script').text(getScriptForCodepoint(codepoint).replace('_', ' '));
 	var aliases = [];
 	for (var i = 0; i < window.aliases.length; ++i) {
 		if (window.aliases[i].codepoint == codepoint)
@@ -103,6 +107,13 @@ function showCodepageDetail(codepoint) {
 	} else {
 		$('#detail-aliases').show();
 		$('#detail-aliases-list').text(aliases.join(', '));
+	}
+	var meaning = getHanEntry(codepoint, '');
+	if (meaning.length == 0) {
+		$('#detail-meaning').hide();
+	} else {
+		$('#detail-meaning').show();
+		$('#detail-meaning-content').text(meaning);
 	}
 	$('#codepoint-detail').modal('show');
 }

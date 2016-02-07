@@ -11,8 +11,10 @@ function initHanData(completion) {
 	});
 }
 
-function getHanEntry(codepoint) {
+function getHanEntry(codepoint, prefix) {
+	if (typeof prefix == 'undefined')
+		var prefix = ' - ';
 	if (window.han_meanings[codepoint])
-		return ' - ' + window.han_meanings[codepoint];
+		return prefix + window.han_meanings[codepoint];
 	return '';
 }

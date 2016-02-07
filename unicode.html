@@ -201,12 +201,16 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Info for codepoint U+<span id="detail-codepoint">0000</span></h4>
+					<h4 class="modal-title">Info for codepoint U+<span id="detail-codepoint-hex">0000</span> (Decimal: <span id="detail-codepoint-decimal"></span>)</h4>
 				</div>
 				<div class="modal-body">
 					<p>Name: <span id="detail-name"></span></p>
+					<p>Character: <span id="detail-character"></span></p>
 					<p>General Character Category: <span id="detail-category"></span></p>
-					<p id="detail-aliases">Other Names: <span id="detail-aliases-list"></span></p>
+					<p>Block: <span id="detail-block"></span></p>
+					<p>Script: <span id="detail-script"></span></p>
+					<p id="detail-aliases">Aliases: <span id="detail-aliases-list"></span></p>
+					<p id="detail-meaning">Meaning: <span id="detail-meaning-content"></span></p>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -355,7 +359,8 @@
 				initAliasData,
 				initBlockData,
 				initHangulSyllableTypes,
-				initShortJamoNames], completion);
+				initShortJamoNames,
+				initScriptData], completion);
 		}
 
 		function updateSpacerHeights() {
