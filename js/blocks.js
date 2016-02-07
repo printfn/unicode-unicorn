@@ -31,8 +31,13 @@ function initHangulSyllableTypes(completion) {
 				continue;
 			var line = lines[i].split('#')[0];
 			var splitLine = line.split(';');
-			var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
-			var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+			if (splitLine[0].trim().split('..').length == 2) {
+				var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
+				var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+			} else {
+				var startCodepoint = parseInt('0x' + splitLine[0].trim());
+				var endCodepoint = startCodepoint;
+			}
 			var syllableType = splitLine[1].trim();
 			window.syllableRanges.push({
 				startCodepoint: startCodepoint,

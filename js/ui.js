@@ -91,7 +91,7 @@ function updateRenderedCodepage() {
 
 function showCodepageDetail(codepoint) {
 	$('#detail-codepoint').text(itos(codepoint, 16, 4));
-	$('#detail-name').text(getUnicodeData(codepoint));
+	$('#detail-name').html(getHtmlNameDescription(codepoint));
 	$('#detail-category').text(getCharacterCategoryName(codepoint));
 	var aliases = [];
 	for (var i = 0; i < window.aliases.length; ++i) {

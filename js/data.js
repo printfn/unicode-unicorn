@@ -184,37 +184,11 @@ function getUnicodeDataTxtNameField(codepoint) {
 	return 'Unknown';
 }
 
-function getUnicodeData(codepoint) {
-	if (window.data[codepoint]) {
-		var hexCodePoint = '0x' + codepoint.toString(16);
-		if (window.data[codepoint] == '<control>') {
-			var name = [];
-			for (var j = 0; j < window.controlAliases.length; ++j) {
-				if (window.controlAliases[j].codepoint == codepoint) {
-					name.push(window.controlAliases[j].alias);
-				}
-			}
-			var nameString = name.length > 0 ? '<control> (' + name.join(' / ') + ')' : '<control>';
-			return getCodepointDescription(
-				hexCodePoint,
-				nameString
-			);
-		}
-		return getCodepointDescription(hexCodePoint, window.data[codepoint]) + getHanEntry(codepoint);
-	}
-	for (var i = 0; i < window.ranges.length; ++i) {
-		var range = window.ranges[i];
-		if (codepoint >= range[0] && codepoint <= range[1])
-			return getCodepointDescription(codepoint, range[2]) + getHanEntry(codepoint);
-	}
-	return getCodepointDescription(codepoint, 'Unknown') + getHanEntry(codepoint);
-}
-
 function getSearchString(codepoint) {
-	return getUnicodeData(codepoint).toUpperCase() + getName(codepoint).toUpperCase();
+	return getName(codepoint).toUpperCase() + getHanEntry(codepoint).toUpperCase();
 }
 
-function searchCodepoints(str) {
+function searchCodepoints(str, completion) {
 	var results = [];
 
 	var deduplicate = function(a) {
@@ -266,5 +240,5 @@ function searchCodepoints(str) {
 		}
 	}
 	results = deduplicate(results);
-	return results;
+	completion(results);
 }

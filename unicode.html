@@ -222,8 +222,13 @@
 
 		function updateSuggestions() {
 			var input = $('#input').val();
-			var results = searchCodepoints(input);
-			renderCodepointsInTable(results, 'searchResults', [{displayName: 'Insert', functionName: 'output'}]);
+			searchCodepoints(input, function(results) {
+				renderCodepointsInTable(
+					results,
+					'searchResults',
+					[{displayName: 'Insert', functionName: 'output'}]
+				);
+			});
 		}
 
 		function normalizeString(form) {

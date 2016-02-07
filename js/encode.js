@@ -307,7 +307,7 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 		    + encoding 
 		    + ' because it contains incompatible characters.\nThe first such incompatible character is U+' 
 		    + itos(invalidCodepoint, 16, 4).toUpperCase()
-		    + ' - ' + getUnicodeData(invalidCodepoint) + '.</span>';
+		    + ' - ' + getHtmlNameDescription(invalidCodepoint) + '.</span>';
 	}
 	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
 	return escapeHtml(joinBytes(joiner, chars));
