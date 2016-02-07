@@ -3,7 +3,7 @@ window.ranges = [];
 window.category = [];
 window.categoryRanges = [];
 
-function getCharacterCategoryName(codepoint) {
+function getCharacterCategoryCode(codepoint) {
 	var categoryCode = window.category[codepoint];
 	if (!categoryCode) {
 		for (var i = 0; i < window.categoryRanges.length; ++i) {
@@ -14,7 +14,26 @@ function getCharacterCategoryName(codepoint) {
 			}
 		}
 	}
+	return categoryCode;
+}
+
+function getCharacterCategoryName(codepoint) {
+	var categoryCode = getCharacterCategoryCode(codepoint);
 	return window.generalCategoryNames[categoryCode] || 'Unknown';
+}
+
+// see the Unicode Standard, section 3.6 "Combination", "Combining Character Sequences", D50: "Graphic character"
+function isGraphic(codepoint, arePrivateUseCharsGraphic) {
+	var categoryCode = getCharacterCategoryCode(codepoint);
+	if (!categoryCode)
+		return;
+	if (categoryCode.startsWith('L') || categoryCode.startsWith('M')
+		|| categoryCode.startsWith('N') || categoryCode.startsWith('P')
+		|| categoryCode.startsWith('S') || categoryCode == 'Zs')
+		return true;
+	if (categoryCode == 'Co')
+		return arePrivateUseCharsGraphic;
+	return false;
 }
 
 function getCodepointDescription(codepoint, name) {
@@ -90,6 +109,81 @@ function initUnicodeData(completion) {
 	});
 }
 
+function decompomposeHangulSyllable(codepoint) {
+	var syllableType = getSyllableTypeForCodepoint(codepoint);
+	if (syllableType == 'Not_Applicable')
+		return [codepoint];
+
+	// see Unicode Standard, section 3.12 "Conjoining Jamo Behavior", "Hangul Syllable Decomposition"
+	var SBase = 0xAC00;
+	var LBase = 0x1100;
+	var VBase = 0x1161;
+	var TBase = 0x11A7;
+	var LCount = 19;
+	var VCount = 21;
+	var TCount = 28;
+	var NCount = VCount * TCount; // 588
+	var SCount = LCount * NCount; // 11172
+
+	var SIndex = codepoint - SBase;
+
+	var LIndex = Math.floor(SIndex / NCount);
+	var VIndex = Math.floor((SIndex % NCount) / TCount);
+	var TIndex = SIndex % TCount;
+
+	var LPart = LBase + LIndex;
+	var VPart = VBase + VIndex;
+	if (TIndex > 0) {
+		return [LPart, VPart, TBase + TIndex];
+	} else {
+		return [LPart, VPart];
+	}
+}
+
+function getName(codepoint) {
+	if (getUnicodeDataTxtNameField(codepoint).startsWith('Hangul Syllable')) {
+		var decomposedSyllables = decompomposeHangulSyllable(codepoint);
+		var shortJamoNames = [];
+		for (var i = 0; i < decomposedSyllables.length; ++i)
+			shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
+		return 'HANGUL SYLLABLE ' + shortJamoNames.join('');
+	}
+	if (getUnicodeDataTxtNameField(codepoint).startsWith('CJK Ideograph')) {
+		return "CJK UNIFIED IDEOGRAPH-" + itos(codepoint, 16, 4);
+	}
+	if (window.data[codepoint] && window.data[codepoint][0] != '<') {
+		return window.data[codepoint];
+	}
+	return '';
+}
+
+function getHtmlNameDescription(codepoint) {
+	if (getName(codepoint) != '')
+		return getName(codepoint);
+	if (window.data[codepoint] == '<control>') {
+		var name = [];
+		for (var j = 0; j < window.controlAliases.length; ++j) {
+			if (window.controlAliases[j].codepoint == codepoint) {
+				name.push(window.controlAliases[j].alias);
+			}
+		}
+		if (name.length > 0)
+			return '<i>' + name.join(' / ') + '</i>';
+	}
+	return '<i>Unknown-' + itos(codepoint, 16, 4) + '</i>'
+}
+
+function getUnicodeDataTxtNameField(codepoint) {
+	if (window.data[codepoint])
+		return window.data[codepoint];
+	for (var i = 0; i < window.ranges.length; ++i) {
+		var range = window.ranges[i];
+		if (codepoint >= range[0] && codepoint <= range[1])
+			return range[2];
+	}
+	return 'Unknown';
+}
+
 function getUnicodeData(codepoint) {
 	if (window.data[codepoint]) {
 		var hexCodePoint = '0x' + codepoint.toString(16);
@@ -117,7 +211,7 @@ function getUnicodeData(codepoint) {
 }
 
 function getSearchString(codepoint) {
-	return getUnicodeData(codepoint).toUpperCase();
+	return getUnicodeData(codepoint).toUpperCase() + getName(codepoint).toUpperCase();
 }
 
 function searchCodepoints(str) {
@@ -154,28 +248,21 @@ function searchCodepoints(str) {
 	if (/^[0-9]+$/.test(str))
 		results.push(parseInt(str));
 
-	for (var codepoint in window.data) {
-		var searchString = getSearchString(codepoint);
-		if (searchString.includes(str)) {
-			results.push(parseInt(codepoint));
-			if (reachedMaxResults())
-				break;
+	for (var i = 0; i < window.blockRanges.length; ++i) {
+		var block = window.blockRanges[i];
+		for (var c = block.startCodepoint; c <= block.endCodepoint; ++c) {
+			var searchString = getSearchString(c);
+			if (searchString.includes(str)) {
+				results.push(parseInt(c));
+				if (reachedMaxResults())
+					break;
+			}
 		}
 	}
 	for (var i = 0; i < window.aliases.length; ++i) {
 		var searchString = window.aliases[i].alias;
 		if (searchString.includes(str)) {
 			results.push(window.aliases[i].codepoint);
-		}
-	}
-	if (!reachedMaxResults() || codepoint > 0x3400) {
-		for (var codepoint in window.han_meanings) {
-			var searchString = getSearchString(codepoint);
-			if (searchString.includes(str)) {
-				results.push(parseInt(codepoint));
-				if (reachedMaxResults())
-					break;
-			}
 		}
 	}
 	results = deduplicate(results);

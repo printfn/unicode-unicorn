@@ -12,7 +12,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		return;
 	}
 	var html = ('<thead>'
-	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Category</th><th>Description</th></tr>'
+	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Character</th><th>Category</th><th>Name</th></tr>'
 	    + '</thead><tbody>');
 	for (var i = 0; i < codepoints.length; ++i) {
 		var codepoint = codepoints[i];
@@ -29,16 +29,17 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 			    + buttonDescription.displayName 
 			    + '">';
 		}
-		html += '<tr style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">'
+		html += '<tr>'
 		    + '<td>' + buttonStr + '</td>'
 		    + '<td>U+' + itos(codepoint, 16, 4) + '</td>'
 		    + '<td>' + codepoint + '</td>'
+		    + '<td>' + escapeHtml(ctos([renderedCodepoint(codepoint)])) + '</td>'
 		    + '<td>' + getCharacterCategoryName(codepoint) + '</td>'
-		    + '<td>' + escapeHtml(getUnicodeData(codepoint)) + '</td>'
+		    + '<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>'
 		    + '</tr>';
 	}
 	if (i >= 256) {
-		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
+		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
 	}
 	html += '</tbody>';
 	table.html(html);
@@ -73,7 +74,7 @@ function updateRenderedCodepage() {
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
 			var codepoint = codepointForByteUsingMapping(mapping, byte);
-			var str = escapeHtml(ctos([codepoint]));
+			var str = escapeHtml(ctos([renderedCodepoint(codepoint)]));
 			var color = randomColorForKey(getCharacterCategoryName(codepoint));
 			html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
 				+ i.toString(16).toUpperCase() 

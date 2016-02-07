@@ -13,6 +13,14 @@ function escapeHtml(string) {
 	});
 }
 
+function renderedCodepoint(codepoint) {
+	if (codepoint < 0x20)
+		return codepoint + 0x2400;
+	if (codepoint == 0x7F)
+		return 0x2421;
+	return codepoint;
+}
+
 // encoding functions from https://github.com/bestiejs/punycode.js/blob/master/punycode.js
 function ctos(array) {
 	function map(array, fn) {
