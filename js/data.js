@@ -185,7 +185,7 @@ function getUnicodeDataTxtNameField(codepoint) {
 }
 
 function getSearchString(codepoint) {
-	return getName(codepoint).toUpperCase() + getHanEntry(codepoint).toUpperCase();
+	return getName(codepoint) + getHanEntry(codepoint).toUpperCase();
 }
 
 function searchCodepoints(str, completion) {
@@ -203,7 +203,7 @@ function searchCodepoints(str, completion) {
 		}
 		return r;
 	}
-	var reachedMaxResults = function() {
+	var reachedMaxResults = function(results) {
 		if (results.length < 256)
 			return false;
 		results = deduplicate(results);
@@ -222,23 +222,37 @@ function searchCodepoints(str, completion) {
 	if (/^[0-9]+$/.test(str))
 		results.push(parseInt(str));
 
-	for (var i = 0; i < window.blockRanges.length; ++i) {
-		var block = window.blockRanges[i];
-		for (var c = block.startCodepoint; c <= block.endCodepoint; ++c) {
-			var searchString = getSearchString(c);
-			if (searchString.includes(str)) {
-				results.push(parseInt(c));
-				if (reachedMaxResults())
-					break;
+	var plainResults = [];
+	for (var c in window.data) {
+		var searchString = getSearchString(parseInt(c));
+		if (searchString.includes(str)) {
+			plainResults.push(parseInt(c));
+			if (reachedMaxResults(plainResults))
+				break;
+		}
+	}
+	var rangeResults = [];
+	for (var i = 0; i < window.ranges.length; ++i) {
+		var range = window.ranges[i];
+		if (range[2].startsWith('Hangul Syllable') || range[2].startsWith('CJK Ideograph')) {
+			for (var c = range[0]; c <= range[1]; ++c) {
+				var searchString = getSearchString(c);
+				if (searchString.includes(str)) {
+					rangeResults.push(c);
+					if (reachedMaxResults(rangeResults))
+						break;
+				}
 			}
 		}
 	}
+	var aliasResults = [];
 	for (var i = 0; i < window.aliases.length; ++i) {
 		var searchString = window.aliases[i].alias;
 		if (searchString.includes(str)) {
-			results.push(window.aliases[i].codepoint);
+			aliasResults.push(window.aliases[i].codepoint);
 		}
 	}
+	results = results.concat(plainResults, rangeResults, aliasResults);
 	results = deduplicate(results);
 	completion(results);
 }
