@@ -59,12 +59,12 @@ function randomColorForKey(key) {
 
 function updateRenderedCodepage() {
 	var encoding = $('#codepageEncoding option:selected').text();
-	var ascii = false;
-	if (encoding == 'ASCII') {
-		encoding = 'ISO-8859-1 (Latin-1)';
-		ascii = true;
-	}
 	var mapping = window.mappings[encoding];
+	var ascii = true;
+	for (var codepoint in mapping) {
+		if (mapping[codepoint] > 0x7F)
+			ascii = false;
+	}
 	var html = '<thead><th></th>';
 	for (var i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';

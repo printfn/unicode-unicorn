@@ -84,16 +84,7 @@ function itos(int, base, padding) {
 
 function applySingleByteMapping(mapping, codepoint) {
 	codepoint = parseInt(codepoint);
-	if (mapping[codepoint])
-		return mapping[codepoint];
-	if (codepoint > 0xFF)
-		return; // Non-ISO-8859-1 codepoints not included in `mapping` can't be encoded
-	for (var x in mapping) {
-		// x is a codepoint
-		if (mapping[x] == codepoint)
-			return; // another codepoint as assigned to the 8-bit version of `codepoint`
-	}
-	return codepoint;
+	return mapping[codepoint];
 }
 
 function codepointForByteUsingMapping(mapping, byte) {
@@ -102,7 +93,7 @@ function codepointForByteUsingMapping(mapping, byte) {
 		return;
 	for (var codepoint in mapping) {
 		if (byte == mapping[codepoint])
-			return codepoint;
+			return parseInt(codepoint);
 	}
 	return byte;
 }
@@ -151,8 +142,8 @@ function loadEncodingFromURL(url, name, completion) {
 			if (line.length == 0 || line[0] == '#')
 				continue;
 			var components = line.split('\t');
-			if (parseInt(components[0]) == parseInt(components[1]))
-				continue;
+			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
+				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
 			mapping[parseInt(components[1])] = parseInt(components[0]);
 		}
 		window.mappings[name] = mapping;
@@ -221,20 +212,12 @@ function codepointsToEncoding(encoding, codepoints) {
 	} else { // try ASCII or a single-byte encoding from `window.mappings`
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
-			if (encoding == 'ASCII') {
-				if (c < 0x80) {
-					codeUnits.push(c);
-				} else {
-					return parseInt(c);
-				}
+			var mapping = window.mappings[encoding];
+			var codeUnit = applySingleByteMapping(mapping, c);
+			if (codeUnit) {
+				codeUnits.push(codeUnit);
 			} else {
-				var mapping = window.mappings[encoding];
-				var codeUnit = applySingleByteMapping(mapping, c);
-				if (codeUnit) {
-					codeUnits.push(codeUnit);
-				} else {
-					return parseInt(c);
-				}
+				return parseInt(c);
 			}
 		}
 	}
