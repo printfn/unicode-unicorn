@@ -47,3 +47,13 @@ DOS Code page 869;Mappings/VENDORS/MICSFT/PC/CP869.TXT
 DOS Code page 874 (equivalent to Windows-874);Mappings/VENDORS/MICSFT/PC/CP874.TXT
 
 Microsoft Mac Roman;Mappings/VENDORS/MICSFT/MAC/ROMAN.TXT
+Microsoft Mac Latin 2;Mappings/VENDORS/MICSFT/MAC/LATIN2.TXT
+Microsoft Mac Cyrillic;Mappings/VENDORS/MICSFT/MAC/CYRILLIC.TXT
+Microsoft Mac Greek;Mappings/VENDORS/MICSFT/MAC/GREEK.TXT
+Microsoft Mac Iceland;Mappings/VENDORS/MICSFT/MAC/ICELAND.TXT
+Microsoft Mac Turkish;Mappings/VENDORS/MICSFT/MAC/TURKISH.TXT
+
+Microsoft EBCDIC Codepage 37;Mappings/VENDORS/MICSFT/EBCDIC/CP037.TXT
+Microsoft EBCDIC Codepage 500;Mappings/VENDORS/MICSFT/EBCDIC/CP500.TXT
+Microsoft EBCDIC Codepage 875;Mappings/VENDORS/MICSFT/EBCDIC/CP875.TXT
+Microsoft EBCDIC Codepage 1026;Mappings/VENDORS/MICSFT/EBCDIC/CP1026.TXT
