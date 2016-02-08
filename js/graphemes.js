@@ -1,63 +1,57 @@
 graphemeBreakData = [];
 
 function initGraphemeData(completion) {
-	requestAsync('UCD/auxiliary/GraphemeBreakProperty.txt', function(lines) {
-		for (var i in lines) {
-			var line = lines[i];
-			if (line == '' || line[0] == '#')
-				continue;
-			var state = 1;
-			var startCodePoint = '';
-			var endCodePoint = '';
-			var value = '';
-			for (var j in line) {
-				var c = line[j];
-				if (c == '#')
-					break;
-				if (state == 1) {
-					if (c != '.' && c != ' ') {
-						startCodePoint += c;
-						continue;
-					} else {
-						state = 2;
-					}
-				}
-				if (state == 2) {
-					if (c == ' ') {
-						state = 3;
-					} else if (c == '.') {
-						continue;
-					} else {
-						endCodePoint += c;
-						continue;
-					}
-				}
-				if (state == 3) {
-					if (c == ' ')
-						continue;
-					else if (c == ';') {
-						state = 4;
-						continue;
-					}
-				}
-				if (state == 4) {
-					if (c == ' ') {
-						continue;
-					} else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-						value += c;
-						continue;
-					} else
-						break;
+	requestAsync('UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
+		var state = 1;
+		var startCodePoint = '';
+		var endCodePoint = '';
+		var value = '';
+		for (var j in line) {
+			var c = line[j];
+			if (c == '#')
+				break;
+			if (state == 1) {
+				if (c != '.' && c != ' ') {
+					startCodePoint += c;
+					continue;
+				} else {
+					state = 2;
 				}
 			}
-			startCodePoint = parseInt('0x' + startCodePoint);
-			endCodePoint = endCodePoint == '' ? startCodePoint : parseInt('0x' + endCodePoint);
-			for (var x = startCodePoint; x <= endCodePoint; ++x) {
-				graphemeBreakData[x] = value;
+			if (state == 2) {
+				if (c == ' ') {
+					state = 3;
+				} else if (c == '.') {
+					continue;
+				} else {
+					endCodePoint += c;
+					continue;
+				}
+			}
+			if (state == 3) {
+				if (c == ' ')
+					continue;
+				else if (c == ';') {
+					state = 4;
+					continue;
+				}
+			}
+			if (state == 4) {
+				if (c == ' ') {
+					continue;
+				} else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+					value += c;
+					continue;
+				} else
+					break;
 			}
 		}
-		completion();
-	});
+		startCodePoint = parseInt('0x' + startCodePoint);
+		endCodePoint = endCodePoint == '' ? startCodePoint : parseInt('0x' + endCodePoint);
+		for (var x = startCodePoint; x <= endCodePoint; ++x) {
+			graphemeBreakData[x] = value;
+		}
+	}, completion);
 }
 
 function graphemeBreakValueForCodepoint(codepoint) {

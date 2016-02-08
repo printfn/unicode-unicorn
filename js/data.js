@@ -42,71 +42,59 @@ function getCodepointDescription(codepoint, name) {
 }
 
 function initAliasData(completion) {
-	requestAsync('UCD/NameAliases.txt', function(lines) {
+	requestAsync('UCD/NameAliases.txt', function() {
 		aliases = [];
 		controlAliases = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0 || lines[i][0] == '#')
-				continue;
-			var splitLine = lines[i].split(';');
-			var codepoint = parseInt('0x' + splitLine[0]);
-			var alias = splitLine[1];
-			aliases.push({codepoint: codepoint, alias: alias});
-			if (splitLine[2] == 'control')
-				controlAliases.push({codepoint: codepoint, alias: alias});
-		}
-		completion();
-	});
+	}, function(line) {
+		var splitLine = line.split(';');
+		var codepoint = parseInt('0x' + splitLine[0]);
+		var alias = splitLine[1];
+		aliases.push({codepoint: codepoint, alias: alias});
+		if (splitLine[2] == 'control')
+			controlAliases.push({codepoint: codepoint, alias: alias});
+	}, completion);
 }
 
 function initGeneralCategoryNames(completion) {
-	requestAsync('UCD/PropertyValueAliases.txt', function(lines) {
+	requestAsync('UCD/PropertyValueAliases.txt', function() {
 		generalCategoryNames = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0)
-				continue;
-			var splitLine = lines[i].split('#');
-			splitLine = splitLine[0];
-			splitLine = splitLine.split(';');
-			if (splitLine[0].trim() != 'gc')
-				continue;
-			var gc = splitLine[1].trim();
-			var gcAlias = splitLine[2].trim();
-			generalCategoryNames[gc] = gcAlias.replace('_', ' ');
-		}
-		completion();
-	});
+	}, function(line) {
+		var splitLine = line.split('#');
+		splitLine = splitLine[0];
+		splitLine = splitLine.split(';');
+		if (splitLine[0].trim() != 'gc')
+			return;
+		var gc = splitLine[1].trim();
+		var gcAlias = splitLine[2].trim();
+		generalCategoryNames[gc] = gcAlias.replace('_', ' ');
+	}, completion);
 }
 
 function initUnicodeData(completion) {
-	requestAsync('UCD/UnicodeData.txt', function(lines) {
+	requestAsync('UCD/UnicodeData.txt', function() {
 		data = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0)
-				continue;
-			var data_line = lines[i].split(';');
-			if (data_line[1].endsWith(', First>')) {
-				var startCodePoint = parseInt('0x' + data_line[0]);
-				var endCodePoint = parseInt('0x' + lines[i+1].split(';')[0]);
-				ranges.push([
-					startCodePoint,
-					endCodePoint,
-					data_line[1].substring(1, data_line[1].length - 8)
-				]);
-				categoryRanges.push([
-					startCodePoint,
-					endCodePoint,
-					data_line[2]
-				]);
-			} else if (data_line[1].endsWith(', Last>')) {
-				continue;
-			} else {
-				data[parseInt('0x' + data_line[0])] = data_line[1];
-				category[parseInt('0x' + data_line[0])] = data_line[2];
-			}
+		startCodePoint = 0;
+	}, function(line) {
+		var data_line = line.split(';');
+		if (data_line[1].endsWith(', First>')) {
+			startCodePoint = parseInt('0x' + data_line[0]);
+		} else if (data_line[1].endsWith(', Last>')) {
+			var endCodePoint = parseInt('0x' + data_line[0]);
+			ranges.push([
+				startCodePoint,
+				endCodePoint,
+				data_line[1].substring(1, data_line[1].length - 8)
+			]);
+			categoryRanges.push([
+				startCodePoint,
+				endCodePoint,
+				data_line[2]
+			]);
+		} else {
+			data[parseInt('0x' + data_line[0])] = data_line[1];
+			category[parseInt('0x' + data_line[0])] = data_line[2];
 		}
-		completion();
-	});
+	}, completion);
 }
 
 function decompomposeHangulSyllable(codepoint) {

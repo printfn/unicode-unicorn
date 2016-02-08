@@ -1,18 +1,14 @@
 function initHanData(completion) {
-	requestAsync('Unihan/Unihan_Readings.txt', function(lines) {
+	requestAsync('Unihan/Unihan_Readings.txt', function() {
 		han_meanings = [];
 		han_meanings_search = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == '' || lines[i][0] == '#')
-				continue;
-			var fields = lines[i].split('\t');
-			if (fields[1] != 'kDefinition')
-				continue;
-			han_meanings[parseInt('0x' + fields[0].substring(2))] = fields[2];
-			han_meanings_search[parseInt('0x' + fields[0].substring(2))] = fields[2].toUpperCase();
-		}
-		completion();
-	});
+	}, function(line) {
+		var fields = line.split('\t');
+		if (fields[1] != 'kDefinition')
+			return;
+		han_meanings[parseInt('0x' + fields[0].substring(2))] = fields[2];
+		han_meanings_search[parseInt('0x' + fields[0].substring(2))] = fields[2].toUpperCase();
+	}, completion);
 }
 
 function getHanEntry(codepoint, prefix) {

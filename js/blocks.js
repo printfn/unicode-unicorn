@@ -1,17 +1,13 @@
 function initBlockData(completion) {
-	requestAsync('UCD/Blocks.txt', function(lines) {
+	requestAsync('UCD/Blocks.txt', function() {
 		blockRanges = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0 || lines[i][0] == '#')
-				continue;
-			var splitLine = lines[i].split(';');
-			var startCodepoint = parseInt('0x' + splitLine[0].split('..')[0]);
-			var endCodepoint = parseInt('0x' + splitLine[0].split('..')[1]);
-			var blockName = splitLine[1].trim();
-			blockRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, blockName: blockName});
-		}
-		completion();
-	});
+	}, function(line) {
+		var splitLine = line.split(';');
+		var startCodepoint = parseInt('0x' + splitLine[0].split('..')[0]);
+		var endCodepoint = parseInt('0x' + splitLine[0].split('..')[1]);
+		var blockName = splitLine[1].trim();
+		blockRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, blockName: blockName});
+	}, completion);
 }
 
 function getBlockForCodepoint(codepoint) {
@@ -25,29 +21,24 @@ function getBlockForCodepoint(codepoint) {
 }
 
 function initHangulSyllableTypes(completion) {
-	requestAsync('UCD/HangulSyllableType.txt', function(lines) {
+	requestAsync('UCD/HangulSyllableType.txt', function() {
 		syllableRanges = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0 || lines[i][0] == '#')
-				continue;
-			var line = lines[i].split('#')[0];
-			var splitLine = line.split(';');
-			if (splitLine[0].trim().split('..').length == 2) {
-				var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
-				var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
-			} else {
-				var startCodepoint = parseInt('0x' + splitLine[0].trim());
-				var endCodepoint = startCodepoint;
-			}
-			var syllableType = splitLine[1].trim();
-			syllableRanges.push({
-				startCodepoint: startCodepoint,
-				endCodepoint: endCodepoint,
-				syllableType: syllableType
-			});
+	}, function(line) {
+		var splitLine = line.split(';');
+		if (splitLine[0].trim().split('..').length == 2) {
+			var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
+			var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+		} else {
+			var startCodepoint = parseInt('0x' + splitLine[0].trim());
+			var endCodepoint = startCodepoint;
 		}
-		completion();
-	});
+		var syllableType = splitLine[1].trim();
+		syllableRanges.push({
+			startCodepoint: startCodepoint,
+			endCodepoint: endCodepoint,
+			syllableType: syllableType
+		});
+	}, completion);
 }
 
 function getSyllableTypeForCodepoint(codepoint) {
@@ -61,19 +52,14 @@ function getSyllableTypeForCodepoint(codepoint) {
 }
 
 function initShortJamoNames(completion) {
-	requestAsync('UCD/Jamo.txt', function(lines) {
+	requestAsync('UCD/Jamo.txt', function() {
 		shortJamoNames = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0 || lines[i][0] == '#')
-				continue;
-			var line = lines[i].split('#')[0];
-			var splitLine = line.split(';');
-			var codepoint = parseInt('0x' + splitLine[0].trim());
-			var shortJamoName = splitLine[1].trim();
-			shortJamoNames[codepoint] = shortJamoName;
-		}
-		completion();
-	});
+	}, function(line) {
+		var splitLine = line.split(';');
+		var codepoint = parseInt('0x' + splitLine[0].trim());
+		var shortJamoName = splitLine[1].trim();
+		shortJamoNames[codepoint] = shortJamoName;
+	}, completion);
 }
 
 function getShortJamoName(codepoint) {
@@ -81,25 +67,20 @@ function getShortJamoName(codepoint) {
 }
 
 function initScriptData(completion) {
-	requestAsync('UCD/Scripts.txt', function(lines) {
+	requestAsync('UCD/Scripts.txt', function() {
 		scriptRanges = [];
-		for (var i = 0; i < lines.length; ++i) {
-			if (lines[i].length == 0 || lines[i][0] == '#')
-				continue;
-			var line = lines[i].split('#')[0];
-			var splitLine = line.split(';');
-			if (splitLine[0].trim().split('..').length == 2) {
-				var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
-				var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
-			} else {
-				var startCodepoint = parseInt('0x' + splitLine[0].trim());
-				var endCodepoint = startCodepoint;
-			}
-			var scriptName = splitLine[1].trim();
-			scriptRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, scriptName: scriptName});
+	}, function(line) {
+		var splitLine = line.split(';');
+		if (splitLine[0].trim().split('..').length == 2) {
+			var startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
+			var endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+		} else {
+			var startCodepoint = parseInt('0x' + splitLine[0].trim());
+			var endCodepoint = startCodepoint;
 		}
-		completion();
-	});
+		var scriptName = splitLine[1].trim();
+		scriptRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, scriptName: scriptName});
+	}, completion);
 }
 
 function getScriptForCodepoint(codepoint) {

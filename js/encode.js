@@ -100,56 +100,49 @@ function codepointForByteUsingMapping(mapping, byte) {
 }
 
 function initializeMappings(completion) {
-	requestAsync('Mappings/mappings.txt', function(lines) {
-		var totalCount = 0;
-		var count = 0;
-		var mappingNames = [];
+	requestAsync('Mappings/mappings.txt', function() {
+		totalCount = 0;
+		count = 0;
+		mappingNames = [];
 		mappings = {};
-		for (var i = 0; i < lines.length; ++i) {
-			var line = lines[i];
-			if (line.length == 0)
-				continue;
-			var parts = line.split(';');
-			++totalCount;
-			mappingNames.push(parts[0]);
-			loadEncodingFromURL(parts[1], parts[0], function() {
-				++count;
-				if (count == totalCount) {
-					$.each(mappingNames, function(i, value) {
-						$('#codepageEncoding')
-							.append($('<option' 
-								+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
-								+ '></option>')
-							.text(value));
-					});
-					$.each(mappingNames, function(i, value) {
-						$('#outputEncoding')
-							.append($('<option></option>')
-							.text(value));
-					});
-					completion();
-				}
-			});
-		}
+	}, function(line) {
+		var parts = line.split(';');
+		++totalCount;
+		mappingNames.push(parts[0]);
+		loadEncodingFromURL(parts[1], parts[0], function() {
+			++count;
+			if (count == totalCount) {
+				$.each(mappingNames, function(i, value) {
+					$('#codepageEncoding')
+						.append($('<option' 
+							+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
+							+ '></option>')
+						.text(value));
+				});
+				$.each(mappingNames, function(i, value) {
+					$('#outputEncoding')
+						.append($('<option></option>')
+						.text(value));
+				});
+				completion();
+			}
+		});
 	});
 }
 
 function loadEncodingFromURL(url, name, completion) {
-	requestAsync(url, function(lines) {
-		var mapping = {};
-		for (var i = 0; i < lines.length; ++i) {
-			var line = lines[i];
-			if (line.length == 0
-				|| line[0] == '#'
-				|| (line.length == 1 && line.charCodeAt(0) == 26)) // weird format found in CP857 (and others)
-				continue;
-			var components = line.split('\t');
-			if (components[1].trim() == '')
-				continue;
-			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
-			mapping[parseInt(components[1])] = parseInt(components[0]);
-		}
+	requestAsync(url, function() {
+		mapping = {};
+	}, function(line) {
+		if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
+			return;
+		var components = line.split('\t');
+		if (components[1].trim() == '')
+			return;
+		if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
+			throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
+		mapping[parseInt(components[1])] = parseInt(components[0]);
+	}, function() {
 		mappings[name] = mapping;
 		completion();
 	});
