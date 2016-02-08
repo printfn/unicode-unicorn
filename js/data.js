@@ -193,6 +193,16 @@ function getSearchString(codepoint) {
 	return getName(codepoint, true) + getSearchHanEntry(codepoint);
 }
 
+function testSearch(ss, words) {
+	if (!ss.includes(words[0]))
+		return false;
+	for (var i = 1; i < words.length; ++i) {
+		if (!ss.includes(words[i]))
+			return false;
+	}
+	return true;
+}
+
 function searchCodepoints(str, completion) {
 	var results = [];
 
@@ -218,6 +228,9 @@ function searchCodepoints(str, completion) {
 	}
 
 	str = str.toUpperCase();
+	var words = str.split(',');
+	for (var i = 0; i < words.length; ++i)
+		words[i] = words[i].trim();
 	if (/^U\+[0-9A-F]+$/.test(str))
 		results.push(parseInt(str.replace('U+', '0x')));
 	if (/^0X[0-9A-F]+$/.test(str))
@@ -231,7 +244,7 @@ function searchCodepoints(str, completion) {
 	var plainResultsLength = 0;
 	for (var c in data) {
 		var searchString = getSearchString(parseInt(c));
-		if (searchString.includes(str)) {
+		if (testSearch(searchString, words)) {
 			plainResults.push(parseInt(c));
 			++plainResultsLength;
 			if (reachedMaxResults(plainResults))
@@ -246,7 +259,7 @@ function searchCodepoints(str, completion) {
 				if (c > plainResults.length && plainResultsLength >= 256)
 					break;
 				var searchString = getSearchString(c);
-				if (searchString.includes(str)) {
+				if (testSearch(searchString, words)) {
 					rangeResults.push(c);
 					if (reachedMaxResults(rangeResults))
 						break;
@@ -258,7 +271,7 @@ function searchCodepoints(str, completion) {
 				if (c > plainResults.length && plainResultsLength >= 256)
 					break;
 				var searchString = getSearchHanEntry(c);
-				if (searchString.includes(str)) {
+				if (testSearch(searchString, words)) {
 					rangeResults.push(c);
 					if (reachedMaxResults(rangeResults))
 						break;
@@ -269,7 +282,7 @@ function searchCodepoints(str, completion) {
 	var aliasResults = [];
 	for (var i = 0; i < aliases.length; ++i) {
 		var searchString = aliases[i].alias;
-		if (searchString.includes(str)) {
+		if (testSearch(searchString, words)) {
 			aliasResults.push(aliases[i].codepoint);
 		}
 	}
