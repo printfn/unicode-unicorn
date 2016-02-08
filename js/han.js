@@ -31,6 +31,6 @@ function getHanEntry(codepoint, prefix) {
 
 function getSearchHanEntry(codepoint) {
 	if (han_meanings_search[codepoint])
-		return ' - ' + han_meanings_search[codepoint];
+		return ' - ' + han_meanings_search[codepoint] + (kun_readings[codepoint] || '').toUpperCase() + (on_readings[codepoint] || '').toUpperCase();
 	return '';
 }
