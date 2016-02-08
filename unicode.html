@@ -245,10 +245,10 @@
 				+ $('#codepageEncoding option:selected').text();
 		}
 
-		window.prevUIState = '';
+		prevUIState = '';
 		function updateInfo() {
 			var input = $('#output').val();
-			if (uiState() == window.prevUIState)
+			if (uiState() == prevUIState)
 				return;
 
 			var codepoints = stoc(input);
@@ -292,9 +292,9 @@
 				require: function(i, length) { return i != length - 1; }
 			}]);
 
-			var url = window.location.href.indexOf('?') == -1
-				? window.location.href
-				: window.location.href.substring(0, window.location.href.indexOf('?'));
+			var url = location.href.indexOf('?') == -1
+				? location.href
+				: location.href.substring(0, location.href.indexOf('?'));
 			if (codepoints.length > 0)
 				url += '?c=' + codepoints.join(',');
 			$('#url').text(url);
@@ -308,7 +308,7 @@
 				codepoints
 			));
 
-			window.prevUIState = uiState();
+			prevUIState = uiState();
 		}
 
 		function deleteAtIndex(codepoint, index) {
@@ -373,7 +373,7 @@
 			if (loaded)
 				return;
 			loaded = true;
-			var args = window.location.search.substring(1).split('&');
+			var args = location.search.substring(1).split('&');
 			for (var i = 0; i < args.length; ++i) {
 				var arg = args[i].split('=');
 				if (arg[0] == 'c') {
@@ -385,7 +385,7 @@
 			var startTime = new Date();
 			initData(function() {
 				var loadDuration = new Date() - startTime; // in ms
-				window.setTimeout(function() {
+				setTimeout(function() {
 					updateInfo();
 					updateSuggestions();
 					$('#input').on('keyup', function(e) {
@@ -393,7 +393,7 @@
 							var input = $('#input').val();
 							if (isNaN(parseInt(input.replace('U+', '0x')))) {
 								document.body.style.backgroundColor = '#fdd';
-								window.setTimeout(function() {
+								setTimeout(function() {
 									document.body.style.backgroundColor = '#fff';
 								}, 1000);
 							} else {
@@ -410,7 +410,7 @@
 					$('select').change(function() {
 						updateInfo();
 					});
-					window.setInterval(function() {
+					setInterval(function() {
 						updateInfo();
 						updateSpacerHeights();
 					}, 1000);

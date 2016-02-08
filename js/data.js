@@ -1,13 +1,13 @@
-window.data = [];
-window.ranges = [];
-window.category = [];
-window.categoryRanges = [];
+data = [];
+ranges = [];
+category = [];
+categoryRanges = [];
 
 function getCharacterCategoryCode(codepoint) {
-	var categoryCode = window.category[codepoint];
+	var categoryCode = category[codepoint];
 	if (!categoryCode) {
-		for (var i = 0; i < window.categoryRanges.length; ++i) {
-			var range = window.categoryRanges[i];
+		for (var i = 0; i < categoryRanges.length; ++i) {
+			var range = categoryRanges[i];
 			if (codepoint >= range[0] && codepoint <= range[1]) {
 				categoryCode = range[2];
 				break;
@@ -19,7 +19,7 @@ function getCharacterCategoryCode(codepoint) {
 
 function getCharacterCategoryName(codepoint) {
 	var categoryCode = getCharacterCategoryCode(codepoint);
-	return window.generalCategoryNames[categoryCode] || 'Unknown';
+	return generalCategoryNames[categoryCode] || 'Unknown';
 }
 
 // see the Unicode Standard, section 3.6 "Combination", "Combining Character Sequences", D50: "Graphic character"
@@ -43,17 +43,17 @@ function getCodepointDescription(codepoint, name) {
 
 function initAliasData(completion) {
 	requestAsync('UCD/NameAliases.txt', function(lines) {
-		window.aliases = [];
-		window.controlAliases = [];
+		aliases = [];
+		controlAliases = [];
 		for (var i = 0; i < lines.length; ++i) {
 			if (lines[i].length == 0 || lines[i][0] == '#')
 				continue;
 			var splitLine = lines[i].split(';');
 			var codepoint = parseInt('0x' + splitLine[0]);
 			var alias = splitLine[1];
-			window.aliases.push({codepoint: codepoint, alias: alias});
+			aliases.push({codepoint: codepoint, alias: alias});
 			if (splitLine[2] == 'control')
-				window.controlAliases.push({codepoint: codepoint, alias: alias});
+				controlAliases.push({codepoint: codepoint, alias: alias});
 		}
 		completion();
 	});
@@ -61,7 +61,7 @@ function initAliasData(completion) {
 
 function initGeneralCategoryNames(completion) {
 	requestAsync('UCD/PropertyValueAliases.txt', function(lines) {
-		window.generalCategoryNames = [];
+		generalCategoryNames = [];
 		for (var i = 0; i < lines.length; ++i) {
 			if (lines[i].length == 0)
 				continue;
@@ -72,7 +72,7 @@ function initGeneralCategoryNames(completion) {
 				continue;
 			var gc = splitLine[1].trim();
 			var gcAlias = splitLine[2].trim();
-			window.generalCategoryNames[gc] = gcAlias.replace('_', ' ');
+			generalCategoryNames[gc] = gcAlias.replace('_', ' ');
 		}
 		completion();
 	});
@@ -80,7 +80,7 @@ function initGeneralCategoryNames(completion) {
 
 function initUnicodeData(completion) {
 	requestAsync('UCD/UnicodeData.txt', function(lines) {
-		window.data = [];
+		data = [];
 		for (var i = 0; i < lines.length; ++i) {
 			if (lines[i].length == 0)
 				continue;
@@ -88,12 +88,12 @@ function initUnicodeData(completion) {
 			if (data_line[1].endsWith(', First>')) {
 				var startCodePoint = parseInt('0x' + data_line[0]);
 				var endCodePoint = parseInt('0x' + lines[i+1].split(';')[0]);
-				window.ranges.push([
+				ranges.push([
 					startCodePoint,
 					endCodePoint,
 					data_line[1].substring(1, data_line[1].length - 8)
 				]);
-				window.categoryRanges.push([
+				categoryRanges.push([
 					startCodePoint,
 					endCodePoint,
 					data_line[2]
@@ -101,8 +101,8 @@ function initUnicodeData(completion) {
 			} else if (data_line[1].endsWith(', Last>')) {
 				continue;
 			} else {
-				window.data[parseInt('0x' + data_line[0])] = data_line[1];
-				window.category[parseInt('0x' + data_line[0])] = data_line[2];
+				data[parseInt('0x' + data_line[0])] = data_line[1];
+				category[parseInt('0x' + data_line[0])] = data_line[2];
 			}
 		}
 		completion();
@@ -140,19 +140,36 @@ function decompomposeHangulSyllable(codepoint) {
 	}
 }
 
-function getName(codepoint) {
-	if (getUnicodeDataTxtNameField(codepoint).startsWith('Hangul Syllable')) {
+function getName(codepoint, search) {
+	var d = data[codepoint];
+	if (d) {
+		if (d[0] != '<')
+			return d;
+		else
+			return '';
+	}
+	if (0xAC00 <= codepoint && codepoint <= 0xD7AF) {
 		var decomposedSyllables = decompomposeHangulSyllable(codepoint);
 		var shortJamoNames = [];
 		for (var i = 0; i < decomposedSyllables.length; ++i)
 			shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
 		return 'HANGUL SYLLABLE ' + shortJamoNames.join('');
 	}
-	if (getUnicodeDataTxtNameField(codepoint).startsWith('CJK Ideograph')) {
-		return "CJK UNIFIED IDEOGRAPH-" + itos(codepoint, 16, 4);
+	if ((0x3400 <= codepoint && codepoint <= 0x4DBF)
+		|| (0x4E00 <= codepoint && codepoint <= 0x9FFF)) {
+		if (search)
+			return 'CJK UNIFIED IDEOGRAPH';
+		return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
 	}
-	if (window.data[codepoint] && window.data[codepoint][0] != '<') {
-		return window.data[codepoint];
+	for (var i = 0; i < ranges.length; ++i) {
+		var range = ranges[i];
+		if (codepoint >= range[0] && codepoint <= range[1]) {
+			if (range[2].startsWith('CJK Ideograph')) {
+				if (search)
+					return 'CJK UNIFIED IDEOGRAPH';
+				return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
+			}
+		}
 	}
 	return '';
 }
@@ -160,11 +177,11 @@ function getName(codepoint) {
 function getHtmlNameDescription(codepoint) {
 	if (getName(codepoint) != '')
 		return getName(codepoint);
-	if (window.data[codepoint] == '<control>') {
+	if (data[codepoint] == '<control>') {
 		var name = [];
-		for (var j = 0; j < window.controlAliases.length; ++j) {
-			if (window.controlAliases[j].codepoint == codepoint) {
-				name.push(window.controlAliases[j].alias);
+		for (var j = 0; j < controlAliases.length; ++j) {
+			if (controlAliases[j].codepoint == codepoint) {
+				name.push(controlAliases[j].alias);
 			}
 		}
 		if (name.length > 0)
@@ -174,10 +191,10 @@ function getHtmlNameDescription(codepoint) {
 }
 
 function getUnicodeDataTxtNameField(codepoint) {
-	if (window.data[codepoint])
-		return window.data[codepoint];
-	for (var i = 0; i < window.ranges.length; ++i) {
-		var range = window.ranges[i];
+	if (data[codepoint])
+		return data[codepoint];
+	for (var i = 0; i < ranges.length; ++i) {
+		var range = ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1])
 			return range[2];
 	}
@@ -185,7 +202,7 @@ function getUnicodeDataTxtNameField(codepoint) {
 }
 
 function getSearchString(codepoint) {
-	return getName(codepoint) + getHanEntry(codepoint).toUpperCase();
+	return getName(codepoint, true) + getSearchHanEntry(codepoint);
 }
 
 function searchCodepoints(str, completion) {
@@ -224,7 +241,7 @@ function searchCodepoints(str, completion) {
 
 	var plainResults = [];
 	var plainResultsLength = 0;
-	for (var c in window.data) {
+	for (var c in data) {
 		var searchString = getSearchString(parseInt(c));
 		if (searchString.includes(str)) {
 			plainResults.push(parseInt(c));
@@ -234,9 +251,9 @@ function searchCodepoints(str, completion) {
 		}
 	}
 	var rangeResults = [];
-	for (var i = 0; i < window.ranges.length; ++i) {
-		var range = window.ranges[i];
-		if (range[2].startsWith('Hangul Syllable') || range[2].startsWith('CJK Ideograph')) {
+	for (var i = 0; i < ranges.length; ++i) {
+		var range = ranges[i];
+		if (range[2].startsWith('Hangul Syllable')) {
 			for (var c = range[0]; c <= range[1]; ++c) {
 				if (c > plainResults.length && plainResultsLength >= 256)
 					break;
@@ -248,12 +265,24 @@ function searchCodepoints(str, completion) {
 				}
 			}
 		}
+		if (range[2].startsWith('CJK Ideograph')) {
+			for (var c = range[0]; c <= range[1]; ++c) {
+				if (c > plainResults.length && plainResultsLength >= 256)
+					break;
+				var searchString = getSearchHanEntry(c);
+				if (searchString.includes(str)) {
+					rangeResults.push(c);
+					if (reachedMaxResults(rangeResults))
+						break;
+				}
+			}
+		}
 	}
 	var aliasResults = [];
-	for (var i = 0; i < window.aliases.length; ++i) {
-		var searchString = window.aliases[i].alias;
+	for (var i = 0; i < aliases.length; ++i) {
+		var searchString = aliases[i].alias;
 		if (searchString.includes(str)) {
-			aliasResults.push(window.aliases[i].codepoint);
+			aliasResults.push(aliases[i].codepoint);
 		}
 	}
 	results = results.concat(plainResults, rangeResults, aliasResults);

@@ -1,4 +1,4 @@
-window.graphemeBreakData = [];
+graphemeBreakData = [];
 
 function initGraphemeData(completion) {
 	requestAsync('UCD/auxiliary/GraphemeBreakProperty.txt', function(lines) {
@@ -53,7 +53,7 @@ function initGraphemeData(completion) {
 			startCodePoint = parseInt('0x' + startCodePoint);
 			endCodePoint = endCodePoint == '' ? startCodePoint : parseInt('0x' + endCodePoint);
 			for (var x = startCodePoint; x <= endCodePoint; ++x) {
-				window.graphemeBreakData[x] = value;
+				graphemeBreakData[x] = value;
 			}
 		}
 		completion();
@@ -61,8 +61,8 @@ function initGraphemeData(completion) {
 }
 
 function graphemeBreakValueForCodepoint(codepoint) {
-	if (window.graphemeBreakData[codepoint])
-		return window.graphemeBreakData[codepoint];
+	if (graphemeBreakData[codepoint])
+		return graphemeBreakData[codepoint];
 	return 'Other';
 }
 

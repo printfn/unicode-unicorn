@@ -104,6 +104,7 @@ function initializeMappings(completion) {
 		var totalCount = 0;
 		var count = 0;
 		var mappingNames = [];
+		mappings = {};
 		for (var i = 0; i < lines.length; ++i) {
 			var line = lines[i];
 			if (line.length == 0)
@@ -135,8 +136,6 @@ function initializeMappings(completion) {
 
 function loadEncodingFromURL(url, name, completion) {
 	requestAsync(url, function(lines) {
-		if (!window.mappings)
-			window.mappings = {};
 		var mapping = {};
 		for (var i = 0; i < lines.length; ++i) {
 			var line = lines[i];
@@ -151,7 +150,7 @@ function loadEncodingFromURL(url, name, completion) {
 				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
 			mapping[parseInt(components[1])] = parseInt(components[0]);
 		}
-		window.mappings[name] = mapping;
+		mappings[name] = mapping;
 		completion();
 	});
 }
@@ -214,10 +213,10 @@ function codepointsToEncoding(encoding, codepoints) {
 				}
 			}
 		}
-	} else { // try ASCII or a single-byte encoding from `window.mappings`
+	} else { // try ASCII or a single-byte encoding from `mappings`
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
-			var mapping = window.mappings[encoding];
+			var mapping = mappings[encoding];
 			var codeUnit = applySingleByteMapping(mapping, c);
 			if (codeUnit) {
 				codeUnits.push(codeUnit);

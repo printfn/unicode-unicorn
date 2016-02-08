@@ -46,20 +46,20 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 }
 
 function randomColorForKey(key) {
-	if (!window.colorMap)
-		window.colorMap = [];
-	if (window.colorMap[key])
-		return window.colorMap[key];
+	if (typeof colorMap == 'undefined')
+		colorMap = [];
+	if (colorMap[key])
+		return colorMap[key];
 	var color = randomColor({
 		luminosity: 'light'
 	});
-	window.colorMap[key] = color;
+	colorMap[key] = color;
 	return color;
 }
 
 function updateRenderedCodepage() {
 	var encoding = $('#codepageEncoding option:selected').text();
-	var mapping = window.mappings[encoding];
+	var mapping = mappings[encoding];
 	var ascii = true;
 	for (var codepoint in mapping) {
 		if (mapping[codepoint] > 0x7F)
@@ -102,9 +102,9 @@ function showCodepageDetail(codepoint) {
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace('_', ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace('_', ' '));
 	var aliases = [];
-	for (var i = 0; i < window.aliases.length; ++i) {
-		if (window.aliases[i].codepoint == codepoint)
-			aliases.push(window.aliases[i].alias);
+	for (var i = 0; i < aliases.length; ++i) {
+		if (aliases[i].codepoint == codepoint)
+			aliases.push(aliases[i].alias);
 	}
 	if (aliases.length == 0) {
 		$('#detail-aliases').hide();
