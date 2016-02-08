@@ -344,6 +344,7 @@
 
 		function initData(completion) {
 			callMultipleAsync([
+				initializeMappings,
 				initHanData,
 				initGraphemeData,
 				initUnicodeData,
@@ -352,8 +353,7 @@
 				initBlockData,
 				initHangulSyllableTypes,
 				initShortJamoNames,
-				initScriptData,
-				initializeMappings], completion);
+				initScriptData], completion);
 		}
 
 		function updateSpacerHeights() {
