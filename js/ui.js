@@ -119,5 +119,21 @@ function showCodepageDetail(codepoint) {
 		$('#detail-meaning').show();
 		$('#detail-meaning-content').text(meaning);
 	}
+	var encodingsString = '';
+	$('#outputEncoding option').each(function(i, e) {
+		var encoding = $(e).text();
+		var html = encodeOutput(
+			$('#byteOrderMark option:selected').text(),
+			encoding,
+			$('#outputFormat option:selected').text(),
+			$('#outputJoiner option:selected').text(),
+			[codepoint]
+		);
+		if (html.startsWith('<span'))
+			return;
+		encodingsString += encoding + ': ' + html + '\n';
+	});
+
+	$('#detail-encoding-outputs').text(encodingsString);
 	$('#codepoint-detail').modal('show');
 }
