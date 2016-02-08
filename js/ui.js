@@ -60,11 +60,7 @@ function randomColorForKey(key) {
 function updateRenderedCodepage() {
 	var encoding = $('#codepageEncoding option:selected').text();
 	var mapping = mappings[encoding];
-	var ascii = true;
-	for (var codepoint in mapping) {
-		if (mapping[codepoint] > 0x7F)
-			ascii = false;
-	}
+	var ascii = isMapping7Bit(mapping);
 	var html = '<thead><th></th>';
 	for (var i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
@@ -118,6 +114,27 @@ function showCodepageDetail(codepoint) {
 	} else {
 		$('#detail-meaning').show();
 		$('#detail-meaning-content').text(meaning);
+	}
+	var mandarin = mandarin_readings[codepoint];
+	if (mandarin) {
+		$('#detail-mandarin').show();
+		$('#detail-mandarin-content').text(mandarin);
+	} else {
+		$('#detail-mandarin').hide();
+	}
+	var kun = kun_readings[codepoint];
+	if (kun) {
+		$('#detail-kun').show();
+		$('#detail-kun-content').text(kun);
+	} else {
+		$('#detail-kun').hide();
+	}
+	var on = on_readings[codepoint];
+	if (on) {
+		$('#detail-on').show();
+		$('#detail-on-content').text(on);
+	} else {
+		$('#detail-on').hide();
 	}
 	var encodingsString = '';
 	$('#outputEncoding option').each(function(i, e) {

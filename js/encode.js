@@ -86,7 +86,12 @@ function itos(int, base, padding) {
 
 function applySingleByteMapping(mapping, codepoint) {
 	codepoint = parseInt(codepoint);
-	return mapping[codepoint];
+	var number = mapping[codepoint];
+	if (typeof number == 'undefined')
+		return;
+	if (number <= 0xFF)
+		return [number];
+	return [number >> 8, number & 0xFF];
 }
 
 function codepointForByteUsingMapping(mapping, byte) {
@@ -99,6 +104,22 @@ function codepointForByteUsingMapping(mapping, byte) {
 	}
 }
 
+function isMapping7Bit(mapping) {
+	for (var codepoint in mapping) {
+		if (mapping[codepoint] > 0x7F)
+			return false;
+	}
+	return true;
+}
+
+function isMapping8Bit(mapping) {
+	for (var codepoint in mapping) {
+		if (mapping[codepoint] > 0xFF)
+			return false;
+	}
+	return true;
+}
+
 function initializeMappings(completion) {
 	requestAsync('Mappings/mappings.txt', function() {
 		totalCount = 0;
@@ -106,18 +127,20 @@ function initializeMappings(completion) {
 		mappingNames = [];
 		mappings = {};
 	}, function(line) {
-		var parts = line.split(';');
+		var parts = line.split('\t');
 		++totalCount;
 		mappingNames.push(parts[0]);
 		loadEncodingFromURL(parts[1], parts[0], function() {
 			++count;
 			if (count == totalCount) {
 				$.each(mappingNames, function(i, value) {
-					$('#codepageEncoding')
-						.append($('<option' 
-							+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
-							+ '></option>')
-						.text(value));
+					if (isMapping8Bit(mappings[value])) {
+						$('#codepageEncoding')
+							.append($('<option' 
+								+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
+								+ '></option>')
+							.text(value));
+					}
 				});
 				$.each(mappingNames, function(i, value) {
 					$('#outputEncoding')
@@ -210,9 +233,14 @@ function codepointsToEncoding(encoding, codepoints) {
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
 			var mapping = mappings[encoding];
-			var codeUnit = applySingleByteMapping(mapping, c);
-			if (codeUnit) {
-				codeUnits.push(codeUnit);
+			var bytes = applySingleByteMapping(mapping, c);
+			if (bytes) {
+				if (bytes.length == 1) {
+					codeUnits.push(bytes[0]);
+				} else if (bytes.length == 2) {
+					codeUnits.push(bytes[0]);
+					codeUnits.push(bytes[1]);
+				}
 			} else {
 				return parseInt(c);
 			}

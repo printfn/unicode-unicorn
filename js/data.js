@@ -83,7 +83,7 @@ function initUnicodeData(completion) {
 			ranges.push([
 				startCodePoint,
 				endCodePoint,
-				data_line[1].substring(1, data_line[1].length - 8)
+				data_line[1].substring(1, data_line[1].length - 7)
 			]);
 			categoryRanges.push([
 				startCodePoint,
