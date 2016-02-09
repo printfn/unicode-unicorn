@@ -1,16 +1,5 @@
-var entityMap = {
-	"&": "&amp;",
-	"<": "&lt;",
-	">": "&gt;",
-	'"': '&quot;',
-	"'": '&#39;',
-	"/": '&#x2F;'
-};
-
 function escapeHtml(string) {
-	return String(string).replace(/[&<>"'\/]/g, function (s) {
-		return entityMap[s];
-	});
+	return he.encode(string);
 }
 
 function displayCodepoint(codepoint) {
@@ -196,6 +185,11 @@ function codepointsToEncoding(encoding, codepoints) {
 			return punycodeText;
 		else
 			return stoc(punycodeText);
+	} else if (encoding.includes('HTML Entities')) {
+		return he.encode(ctos(codepoints), {
+			'encodeEverything': encoding.includes('Encode Everything'),
+			'useNamedReferences': !encoding.includes('Numeric')
+		});
 	} else { // try ASCII or a single-byte encoding from `mappings`
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];

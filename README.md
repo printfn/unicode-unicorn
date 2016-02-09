@@ -13,3 +13,5 @@ Download the latest bootstrap from `https://getbootstrap.com/getting-started/` a
 Download `randomColor.js` from `https://github.com/davidmerfield/randomColor` and place it in `libs/`.
 
 Download `punycode.js` from `https://github.com/bestiejs/punycode.js` and place it in `libs/`.
+
+Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `libs/`.
