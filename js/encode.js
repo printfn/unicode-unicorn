@@ -26,52 +26,12 @@ function displayCodepoint(codepoint) {
 	return escapeHtml(ctos(codepoints));
 }
 
-// encoding functions from https://github.com/bestiejs/punycode.js/blob/master/punycode.js
 function ctos(array) {
-	function map(array, fn) {
-		var length = array.length;
-		var result = [];
-		while (length--) {
-			result[length] = fn(array[length]);
-		}
-		return result;
-	}
-	return map(array, function(value) {
-		var output = '';
-		if (value > 0xFFFF) {
-			value -= 0x10000;
-			output += String.fromCharCode(value >>> 10 & 0x3FF | 0xD800);
-			value = 0xDC00 | value & 0x3FF;
-		}
-		output += String.fromCharCode(value);
-		return output;
-	}).join('');
+	return punycode.ucs2.encode(array);
 }
 
 function stoc(string) {
-	var output = [],
-	    counter = 0,
-	    length = string.length,
-	    value,
-	    extra;
-	while (counter < length) {
-		value = string.charCodeAt(counter++);
-		if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-			// high surrogate, and there is a next character
-			extra = string.charCodeAt(counter++);
-			if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-				output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-			} else {
-				// unmatched surrogate; only append this code unit, in case the next
-				// code unit is the high surrogate of a surrogate pair
-				output.push(value);
-				counter--;
-			}
-		} else {
-			output.push(value);
-		}
-	}
-	return output;
+	return punycode.ucs2.decode(string);
 }
 
 function itos(int, base, padding) {
@@ -229,6 +189,13 @@ function codepointsToEncoding(encoding, codepoints) {
 				}
 			}
 		}
+	} else if (encoding.includes('Punycode')) {
+		var inputStr = ctos(codepoints);
+		var punycodeText = punycode.encode(inputStr);
+		if (encoding.includes('Text'))
+			return punycodeText;
+		else
+			return stoc(punycodeText);
 	} else { // try ASCII or a single-byte encoding from `mappings`
 		for (var i = 0; i < codepoints.length; ++i) {
 			var c = codepoints[i];
@@ -320,6 +287,9 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 		    + ' because it contains incompatible characters.\nThe first such incompatible character is U+'
 		    + itos(invalidCodepoint, 16, 4).toUpperCase()
 		    + ' - ' + getHtmlNameDescription(invalidCodepoint) + ' (' + displayCodepoint(invalidCodepoint) + ').</span>';
+	} else if (typeof bytes == 'string') {
+		var outputString = bytes;
+		return escapeHtml(outputString);
 	}
 	var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
 	return escapeHtml(joinBytes(joiner, chars));
