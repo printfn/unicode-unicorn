@@ -3,19 +3,22 @@ function requestAsync(url, before, each, after) {
 	client.open('GET',  url);
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
-			before();
 			var lines = client.responseText.split('\n');
-			for (var i = 0; i < lines.length; ++i) {
-				var line = lines[i];
-				if (line.length == 0 || line[0] == '#')
-					continue;
-				if (line.indexOf('#') != -1) {
-					line = line.substring(0, line.indexOf('#'));
+			before(lines);
+			if (each) {
+				for (var i = 0; i < lines.length; ++i) {
+					var line = lines[i];
+					if (line.length == 0 || line[0] == '#')
+						continue;
+					if (line.indexOf('#') != -1) {
+						line = line.substring(0, line.indexOf('#'));
+					}
+					each(line);
 				}
-				each(line);
 			}
-			if (after)
+			if (after) {
 				after();
+			}
 		}
 	}
 	client.send();
