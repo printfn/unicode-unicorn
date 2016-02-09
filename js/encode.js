@@ -76,33 +76,48 @@ function initializeMappings(completion) {
 		mappingNames = [];
 		mappings = {};
 	}, function(line) {
+		if (line == '---') {
+			mappingNames.push('');
+			return;
+		}
 		var parts = line.split('\t');
 		++totalCount;
 		mappingNames.push(parts[0]);
-		loadEncodingFromURL(parts[1], parts[0], function() {
-			++count;
-			if (count == totalCount) {
-				$.each(mappingNames, function(i, value) {
-					if (isMapping8Bit(mappings[value])) {
-						$('#codepageEncoding')
-							.append($('<option' 
-								+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
-								+ '></option>')
+		window.setTimeout(function() {
+			loadEncodingFromURL(parts[1], parts[0], function() {
+				++count;
+				if (count == totalCount) {
+					$.each(mappingNames, function(i, value) {
+						if (value == '') {
+							$('#outputEncoding')
+								.append($('<option disabled>---</option>')
+								.text(value));
+							return;
+						}
+
+						if (mappings[value] && isMapping8Bit(mappings[value])) {
+							$('#codepageEncoding')
+								.append($('<option' 
+									+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
+									+ '></option>')
+								.text(value));
+						}
+						$('#outputEncoding')
+							.append($('<option></option>')
 							.text(value));
-					}
-				});
-				$.each(mappingNames, function(i, value) {
-					$('#outputEncoding')
-						.append($('<option></option>')
-						.text(value));
-				});
-				completion();
-			}
-		});
+					});
+					completion();
+				}
+			});
+		}, 0);
 	});
 }
 
 function loadEncodingFromURL(url, name, completion) {
+	if (!url) {
+		completion();
+		return;
+	}
 	requestAsync(url, function() {
 		mapping = {};
 	}, function(line) {
