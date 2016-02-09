@@ -66,7 +66,7 @@ function initGeneralCategoryNames(completion) {
 			return;
 		var gc = splitLine[1].trim();
 		var gcAlias = splitLine[2].trim();
-		generalCategoryNames[gc] = gcAlias.replace('_', ' ');
+		generalCategoryNames[gc] = gcAlias.replace(/_/g, ' ');
 	}, completion);
 }
 

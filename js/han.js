@@ -12,11 +12,11 @@ function initHanData(completion) {
 			han_meanings[codepoint] = fields[2];
 			han_meanings_search[codepoint] = fields[2].toUpperCase();
 		} else if (fields[1] == 'kMandarin') {
-			mandarin_readings[codepoint] = fields[2].toLowerCase().replace(' ', ', ');
+			mandarin_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, ', ');
 		} else if (fields[1] == 'kJapaneseKun') {
-			kun_readings[codepoint] = fields[2].toLowerCase().replace(' ', ', ');
+			kun_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, ', ');
 		} else if (fields[1] == 'kJapaneseOn') {
-			on_readings[codepoint] = fields[2].toLowerCase().replace(' ', ', ');
+			on_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, ', ');
 		}
 	}, completion);
 }

@@ -95,8 +95,8 @@ function showCodepageDetail(codepoint) {
 	$('#detail-name').html('"' + getName(codepoint) + '"');
 	$('#detail-character').html(displayCodepoint(codepoint));
 	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
-	$('#detail-block').text(getBlockForCodepoint(codepoint).replace('_', ' '));
-	$('#detail-script').text(getScriptForCodepoint(codepoint).replace('_', ' '));
+	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
+	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
 	var aliases = [];
 	for (var i = 0; i < aliases.length; ++i) {
 		if (aliases[i].codepoint == codepoint)

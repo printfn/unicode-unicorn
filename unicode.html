@@ -307,7 +307,7 @@
 			}
 			$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
 			$('#numUtf8Bytes').text(numUtf8CodeUnits);
-			$('#string').html(escapeHtml($('#output').val()).replace('\n', '<br>'));
+			$('#string').html(escapeHtml($('#output').val()).replace(/\n/g, '<br>'));
 
 			renderCodepointsInTable(codepoints, 'codepointlist', [{
 				displayName: 'Delete',
