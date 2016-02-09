@@ -151,6 +151,6 @@ function showCodepageDetail(codepoint) {
 		encodingsString += encoding + ': ' + html + '\n';
 	});
 
-	$('#detail-encoding-outputs').text(encodingsString);
+	$('#detail-encoding-outputs').html(encodingsString);
 	$('#codepoint-detail').modal('show');
 }
