@@ -110,12 +110,12 @@ function showCodepageDetail(codepoint) {
 		$('#detail-aliases').show();
 		$('#detail-aliases-list').text(matchingAliases.join(', '));
 	}
-	var meaning = getHanEntry(codepoint, '');
-	if (meaning.length == 0) {
-		$('#detail-meaning').hide();
-	} else {
+	var meaning = han_meanings[codepoint];
+	if (meaning) {
 		$('#detail-meaning').show();
 		$('#detail-meaning-content').text(meaning);
+	} else {
+		$('#detail-meaning').hide();
 	}
 	var mandarin = mandarin_readings[codepoint];
 	if (mandarin) {

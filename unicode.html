@@ -21,6 +21,7 @@
 	<script src="js/encode.js"></script>
 	<script src="js/graphemes.js"></script>
 	<script src="js/han.js"></script>
+	<script src="js/search.js"></script>
 	<script src="js/ui.js"></script>
 
 	<div style="width: 100%; height: 30px; position: fixed; background-color: white"></div>
@@ -406,6 +407,7 @@
 			updateSpacerHeights();
 			var startTime = new Date();
 			initData(function() {
+				initializeSearchStrings();
 				var loadDuration = new Date() - startTime; // in ms
 				setTimeout(function() {
 					updateInfo();

@@ -20,17 +20,3 @@ function initHanData(completion) {
 		}
 	}, completion);
 }
-
-function getHanEntry(codepoint, prefix) {
-	if (typeof prefix == 'undefined')
-		var prefix = ' - ';
-	if (han_meanings[codepoint])
-		return prefix + han_meanings[codepoint];
-	return '';
-}
-
-function getSearchHanEntry(codepoint) {
-	if (han_meanings_search[codepoint])
-		return ' - ' + han_meanings_search[codepoint] + (kun_readings[codepoint] || '').toUpperCase() + (on_readings[codepoint] || '').toUpperCase();
-	return '';
-}
