@@ -5,6 +5,7 @@ function getSearchString(codepoint) {
 	    + '|name:' + getName(codepoint, true)
 	    + '|block:' + getBlockForCodepoint(codepoint).replace(/_/g, ' ')
 	    + '|script:' + getScriptForCodepoint(codepoint).replace(/_/g, ' ')
+	    + '|category:' + getCharacterCategoryName(codepoint);
 	for (var i = 0; i < aliases.length; ++i) {
 		if (aliases[i].codepoint == codepoint) {
 			res += '|alias:' + aliases[i].alias;
@@ -65,7 +66,7 @@ function searchCodepoints(str) {
 			if (!searchString)
 				continue;
 			if (testSearch(searchString, words)) {
-				results.push(parseInt(c));
+				results.push(c);
 				if (reachedMaxResults(results))
 					return results;
 			}
