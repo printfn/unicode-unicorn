@@ -3,8 +3,8 @@ graphemeBreakData = [];
 function initGraphemeData(completion) {
 	requestAsync('UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
 		var state = 1;
-		var startCodePoint = '';
-		var endCodePoint = '';
+		var startCodepoint = '';
+		var endCodepoint = '';
 		var value = '';
 		for (var j in line) {
 			var c = line[j];
@@ -12,7 +12,7 @@ function initGraphemeData(completion) {
 				break;
 			if (state == 1) {
 				if (c != '.' && c != ' ') {
-					startCodePoint += c;
+					startCodepoint += c;
 					continue;
 				} else {
 					state = 2;
@@ -24,7 +24,7 @@ function initGraphemeData(completion) {
 				} else if (c == '.') {
 					continue;
 				} else {
-					endCodePoint += c;
+					endCodepoint += c;
 					continue;
 				}
 			}
@@ -46,9 +46,9 @@ function initGraphemeData(completion) {
 					break;
 			}
 		}
-		startCodePoint = parseInt('0x' + startCodePoint);
-		endCodePoint = endCodePoint == '' ? startCodePoint : parseInt('0x' + endCodePoint);
-		for (var x = startCodePoint; x <= endCodePoint; ++x) {
+		startCodepoint = parseInt('0x' + startCodepoint);
+		endCodepoint = endCodepoint == '' ? startCodepoint : parseInt('0x' + endCodepoint);
+		for (var x = startCodepoint; x <= endCodepoint; ++x) {
 			graphemeBreakData[x] = value;
 		}
 	}, completion);

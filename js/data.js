@@ -1,5 +1,6 @@
 data = [];
 ranges = [];
+all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
 category = [];
 categoryRanges = [];
 
@@ -71,28 +72,39 @@ function initGeneralCategoryNames(completion) {
 }
 
 function initUnicodeData(completion) {
+	var startCodepoint = 0;
 	requestAsync('UCD/UnicodeData.txt', function() {
-		data = [];
-		startCodePoint = 0;
 	}, function(line) {
 		var data_line = line.split(';');
 		if (data_line[1].endsWith(', First>')) {
-			startCodePoint = parseInt('0x' + data_line[0]);
+			startCodepoint = parseInt('0x' + data_line[0]);
 		} else if (data_line[1].endsWith(', Last>')) {
-			var endCodePoint = parseInt('0x' + data_line[0]);
+			var endCodepoint = parseInt('0x' + data_line[0]);
 			ranges.push([
-				startCodePoint,
-				endCodePoint,
+				startCodepoint,
+				endCodepoint,
 				data_line[1].substring(1, data_line[1].length - 7)
 			]);
+			if (data_line[1].startsWith('<CJK Ideograph') || data_line[1].startsWith('<Hangul Syllable')) {
+				all_assigned_ranges.push({
+					startCodepoint: startCodepoint,
+					endCodepoint: endCodepoint
+				});
+			}
 			categoryRanges.push([
-				startCodePoint,
-				endCodePoint,
+				startCodepoint,
+				endCodepoint,
 				data_line[2]
 			]);
 		} else {
-			data[parseInt('0x' + data_line[0])] = data_line[1];
-			category[parseInt('0x' + data_line[0])] = data_line[2];
+			var codepoint = parseInt('0x' + data_line[0]);
+			data[codepoint] = data_line[1];
+			category[codepoint] = data_line[2];
+			if (all_assigned_ranges[all_assigned_ranges.length - 1].endCodepoint >= codepoint - 1) {
+				++all_assigned_ranges[all_assigned_ranges.length - 1].endCodepoint;
+			} else {
+				all_assigned_ranges.push({startCodepoint: codepoint, endCodepoint: codepoint});
+			}
 		}
 	}, completion);
 }
@@ -240,45 +252,20 @@ function searchCodepoints(str, completion) {
 	if (/^[0-9]+$/.test(str))
 		results.push(parseInt(str));
 
-	var plainResults = [];
-	var plainResultsLength = 0;
-	for (var c in data) {
-		var searchString = getSearchString(parseInt(c));
-		if (testSearch(searchString, words)) {
-			plainResults.push(parseInt(c));
-			++plainResultsLength;
-			if (reachedMaxResults(plainResults))
-				break;
-		}
-	}
-	var rangeResults = [];
-	for (var i = 0; i < ranges.length; ++i) {
-		var range = ranges[i];
-		if (range[2].startsWith('Hangul Syllable')) {
-			for (var c = range[0]; c <= range[1]; ++c) {
-				if (c > plainResults.length && plainResultsLength >= 256)
+	var results = [];
+	for (var i = 0; i < all_assigned_ranges.length; ++i) {
+		var range = all_assigned_ranges[i];
+		var end = range.endCodepoint;
+		for (var c = range.startCodepoint; c < end; ++c) {
+			var searchString = getSearchString(c);
+			if (testSearch(searchString, words)) {
+				results.push(parseInt(c));
+				if (reachedMaxResults(results))
 					break;
-				var searchString = getSearchString(c);
-				if (testSearch(searchString, words)) {
-					rangeResults.push(c);
-					if (reachedMaxResults(rangeResults))
-						break;
-				}
-			}
-		}
-		if (range[2].startsWith('CJK Ideograph')) {
-			for (var c = range[0]; c <= range[1]; ++c) {
-				if (c > plainResults.length && plainResultsLength >= 256)
-					break;
-				var searchString = getSearchHanEntry(c);
-				if (testSearch(searchString, words)) {
-					rangeResults.push(c);
-					if (reachedMaxResults(rangeResults))
-						break;
-				}
 			}
 		}
 	}
+
 	var aliasResults = [];
 	for (var i = 0; i < aliases.length; ++i) {
 		var searchString = aliases[i].alias;
@@ -286,7 +273,7 @@ function searchCodepoints(str, completion) {
 			aliasResults.push(aliases[i].codepoint);
 		}
 	}
-	results = results.concat(plainResults, rangeResults, aliasResults);
+	results = results.concat(aliasResults);
 	results = deduplicate(results);
 	completion(results);
 }

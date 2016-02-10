@@ -99,16 +99,16 @@ function showCodepageDetail(codepoint) {
 	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
-	var aliases = [];
+	var matchingAliases = [];
 	for (var i = 0; i < aliases.length; ++i) {
 		if (aliases[i].codepoint == codepoint)
-			aliases.push(aliases[i].alias);
+			matchingAliases.push(aliases[i].alias);
 	}
-	if (aliases.length == 0) {
+	if (matchingAliases.length == 0) {
 		$('#detail-aliases').hide();
 	} else {
 		$('#detail-aliases').show();
-		$('#detail-aliases-list').text(aliases.join(', '));
+		$('#detail-aliases-list').text(matchingAliases.join(', '));
 	}
 	var meaning = getHanEntry(codepoint, '');
 	if (meaning.length == 0) {
