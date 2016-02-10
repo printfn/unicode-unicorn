@@ -7,7 +7,9 @@ input[type=text] {
 }
 textarea {
 	width: 100%;
-	/*font-size: 30pt;*/
+}
+#encodedInput {
+	font-family: monospace;
 }
 pre {
 	white-space: pre-line;

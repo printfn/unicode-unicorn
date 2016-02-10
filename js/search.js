@@ -1,22 +1,22 @@
 function getSearchString(codepoint) {
 	var res = 'U+' + itos(codepoint, 16, 4)
-	    + '|' + codepoint
-	    + '|' + getName(codepoint, true)
-	    + '|' + getBlockForCodepoint(codepoint).replace(/_/g, ' ')
-	    + '|' + getScriptForCodepoint(codepoint).replace(/_/g, ' ')
+	    + '|cp:' + codepoint
+	    + '|name:' + getName(codepoint, true)
+	    + '|block:' + getBlockForCodepoint(codepoint).replace(/_/g, ' ')
+	    + '|script:' + getScriptForCodepoint(codepoint).replace(/_/g, ' ')
 	for (var i = 0; i < aliases.length; ++i) {
 		if (aliases[i].codepoint == codepoint) {
-			res += '|' + aliases[i].alias;
+			res += '|alias:' + aliases[i].alias;
 		}
 	}
 	if (han_meanings[codepoint])
-		res += '|' + han_meanings[codepoint];
+		res += '|meaning:' + han_meanings[codepoint];
 	if (kun_readings[codepoint])
-		res += '|' + kun_readings[codepoint];
+		res += '|kun:' + kun_readings[codepoint];
 	if (on_readings[codepoint])
-		res += '|' + on_readings[codepoint];
+		res += '|on:' + on_readings[codepoint];
 	if (mandarin_readings[codepoint])
-		res += '|' + mandarin_readings[codepoint];
+		res += '|mandarin:' + mandarin_readings[codepoint];
 	return res.toUpperCase();
 }
 

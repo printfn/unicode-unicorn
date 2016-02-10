@@ -14,6 +14,7 @@
 	<script src="libs/he.js"></script>
 	<script src="libs/punycode.min.js"></script>
 	<script src="libs/randomColor.js"></script>
+	<script src="libs/utf8.js"></script>
 
 	<script src="js/ajax.js"></script>
 	<script src="js/blocks.js"></script>
@@ -146,6 +147,8 @@
 					</select>
 				</p>
 				<pre id="encodedOutput"></pre>
+				<textarea id="encodedInput" placeholder="Input to decode using above settings"></textarea>
+				<table class="table table-striped" id="decodedCodepoints"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="normalization">
 				<p>
@@ -252,6 +255,7 @@
 
 		function uiState() {
 			return $('#output').val()
+				+ $('#encodedInput').val()
 				+ $('#outputEncoding option:selected').text()
 				+ $('#outputFormat option:selected').text()
 				+ $('#outputJoiner option:selected').text()
@@ -321,6 +325,19 @@
 				$('#outputJoiner option:selected').text(),
 				codepoints
 			));
+
+			var decodedOutput = decodeOutput(
+				$('#byteOrderMark option:selected').text(),
+				$('#outputEncoding option:selected').text(),
+				$('#outputFormat option:selected').text(),
+				$('#outputJoiner option:selected').text(),
+				$('#encodedInput').val()
+			);
+			if (decodedOutput)
+				renderCodepointsInTable(
+					decodedOutput,
+					'decodedCodepoints',
+					[{displayName: 'Insert', functionName: 'output'}]);
 
 			prevUIState = uiState();
 		}
