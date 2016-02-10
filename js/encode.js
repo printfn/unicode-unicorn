@@ -76,10 +76,6 @@ function initializeMappings(completion) {
 		mappingNames = [];
 		mappings = {};
 	}, function(line) {
-		if (line == '---') {
-			mappingNames.push('');
-			return;
-		}
 		var parts = line.split('\t');
 		++totalCount;
 		mappingNames.push(parts[0]);
@@ -88,13 +84,6 @@ function initializeMappings(completion) {
 				++count;
 				if (count == totalCount) {
 					$.each(mappingNames, function(i, value) {
-						if (value == '') {
-							$('#outputEncoding')
-								.append($('<option disabled>---</option>')
-								.text(value));
-							return;
-						}
-
 						if (mappings[value] && isMapping8Bit(mappings[value])) {
 							$('#codepageEncoding')
 								.append($('<option' 

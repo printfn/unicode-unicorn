@@ -22,7 +22,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 			var disabled = '';
 			if (buttonDescription.require) {
 				if (!buttonDescription.require(i, codepoints.length)) {
-					disabled = 'disabled '
+					disabled = 'disabled ';
 				}
 			}
 			buttonStr += '<input type="button" ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')" value="'
@@ -42,7 +42,9 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
 	}
 	html += '</tbody>';
+	table.hide();
 	table.html(html);
+	table.show();
 }
 
 function randomColorForKey(key) {
