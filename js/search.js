@@ -46,25 +46,8 @@ function testSearch(ss, words) {
 function searchCodepoints(str, completion) {
 	var results = [];
 
-	var deduplicate = function(a) {
-		var temp = {};
-		for (var i = 0; i < a.length; i++)
-			temp[a[i]] = true;
-		var r = [];
-		for (var k in temp) {
-			if (r.length < 256) {
-				r.push(parseInt(k));
-			}
-		}
-		return r;
-	}
 	var reachedMaxResults = function(results) {
-		if (results.length < 256)
-			return false;
-		results = deduplicate(results);
-		if (results.length < 256)
-			return false;
-		return true;
+		return results.length >= 256;
 	}
 
 	str = str.toUpperCase();
@@ -88,6 +71,5 @@ function searchCodepoints(str, completion) {
 		}
 	}
 
-	results = deduplicate(results);
 	completion(results);
 }
