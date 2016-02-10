@@ -7,7 +7,7 @@ input[type=text] {
 }
 textarea {
 	width: 100%;
-	font-size: 30pt;
+	/*font-size: 30pt;*/
 }
 pre {
 	white-space: pre-line;

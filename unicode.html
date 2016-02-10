@@ -88,7 +88,7 @@
 					Use this URL to share the unicode sequence: <a id="url" style="word-break: break-all;"></a>
 				</p>
 				<p>
-					<a onclick="$('#licenses-modal').modal('show');" style="cursor:pointer;">Third-Party Licenses</a>
+					<a onclick="$('#licenses-modal').modal('show');" style="cursor: pointer;">Third-Party Licenses</a>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
@@ -233,13 +233,12 @@
 
 		function updateSuggestions() {
 			var input = $('#input').val();
-			searchCodepoints(input, function(results) {
-				renderCodepointsInTable(
-					results,
-					'searchResults',
-					[{displayName: 'Insert', functionName: 'output'}]
-				);
-			});
+			var results = searchCodepoints(input);
+			renderCodepointsInTable(
+				results,
+				'searchResults',
+				[{displayName: 'Insert', functionName: 'output'}]
+			);
 		}
 
 		function normalizeString(form) {

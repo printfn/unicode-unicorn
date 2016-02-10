@@ -43,7 +43,7 @@ function testSearch(ss, words) {
 	return true;
 }
 
-function searchCodepoints(str, completion) {
+function searchCodepoints(str) {
 	var results = [];
 
 	var reachedMaxResults = function(results) {
@@ -66,10 +66,10 @@ function searchCodepoints(str, completion) {
 			if (testSearch(searchString, words)) {
 				results.push(parseInt(c));
 				if (reachedMaxResults(results))
-					break;
+					return results;
 			}
 		}
 	}
 
-	completion(results);
+	return results;
 }
