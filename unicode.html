@@ -44,7 +44,7 @@
 					<a href="#codepoints" aria-controls="codepoints" role="tab" data-toggle="tab">List of Codepoints</a>
 				</li>
 				<li role="presentation">
-					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encode</a>
+					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encodings</a>
 				</li>
 				<li role="presentation">
 					<a href="#normalization" aria-controls="normalization" role="tab" data-toggle="tab">Unicode Normalization</a>
@@ -90,6 +90,24 @@
 				</p>
 				<p>
 					<a onclick="$('#licenses-modal').modal('show');" style="cursor: pointer;">Third-Party Licenses</a>
+				</p>
+				<p>
+					<b>Search syntax:</b><br>
+					Use commas to separate multiple terms.<br>
+					All searches are case-insensitive.<br>
+					By default, all visible character properties are searched, but you can use this syntax to search for specific character properties:
+					<pre>
+						U+FF
+						cp:100
+						name:Latin capital letter a
+						block:Hiragana
+						script:Han
+						alias:Byte order mark
+						meaning:Water
+						kun:mizu
+						on:sui
+						mandarin:shuǐ
+					</pre>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">

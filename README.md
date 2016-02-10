@@ -15,3 +15,5 @@ Download `randomColor.js` from `https://github.com/davidmerfield/randomColor` an
 Download `punycode.js` from `https://github.com/bestiejs/punycode.js` and place it in `libs/`.
 
 Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `libs/`.
+
+Download `utf8.js` from `https://github.com/mathiasbynens/utf8.js` and place it in `libs/`.

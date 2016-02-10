@@ -26,7 +26,7 @@ function initializeSearchStrings() {
 	for (var i = 0; i < all_assigned_ranges.length; ++i) {
 		var range = all_assigned_ranges[i];
 		var end = range.endCodepoint;
-		for (var c = range.startCodepoint; c < end; ++c) {
+		for (var c = range.startCodepoint; c <= end; ++c) {
 			var searchString = getSearchString(c);
 			search_strings[c] = searchString;
 		}
@@ -59,7 +59,7 @@ function searchCodepoints(str) {
 	for (var i = 0; i < all_assigned_ranges.length; ++i) {
 		var range = all_assigned_ranges[i];
 		var end = range.endCodepoint;
-		for (var c = range.startCodepoint; c < end; ++c) {
+		for (var c = range.startCodepoint; c <= end; ++c) {
 			var searchString = search_strings[c];
 			if (!searchString)
 				continue;
