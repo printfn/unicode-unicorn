@@ -1,5 +1,6 @@
 function getSearchString(codepoint) {
-	var res = 'U+' + itos(codepoint, 16, 4)
+	var res = ctos([codepoint])
+		+ '|U+' + itos(codepoint, 16, 4)
 	    + '|cp:' + codepoint
 	    + '|name:' + getName(codepoint, true)
 	    + '|block:' + getBlockForCodepoint(codepoint).replace(/_/g, ' ')
@@ -33,11 +34,11 @@ function initializeSearchStrings() {
 	}
 }
 
-function testSearch(ss, words) {
-	if (!ss.includes(words[0]))
+function testSearch(searchString, words) {
+	if (!searchString.includes(words[0]))
 		return false;
 	for (var i = 1; i < words.length; ++i) {
-		if (!ss.includes(words[i]))
+		if (!searchString.includes(words[i]))
 			return false;
 	}
 	return true;
