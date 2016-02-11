@@ -14,11 +14,11 @@ function getSearchString(codepoint) {
 	if (han_meanings[codepoint])
 		res += '|meaning:' + han_meanings[codepoint];
 	if (kun_readings[codepoint])
-		res += '|kun:' + kun_readings[codepoint];
+		res += '|kun:' + kun_readings[codepoint].split(', ').join('|kun:');
 	if (on_readings[codepoint])
-		res += '|on:' + on_readings[codepoint];
+		res += '|on:' + on_readings[codepoint].split(', ').join('|on:');
 	if (mandarin_readings[codepoint])
-		res += '|mandarin:' + mandarin_readings[codepoint];
+		res += '|mandarin:' + mandarin_readings[codepoint].split(', ').join('|mandarin:');
 	return res.toUpperCase();
 }
 
