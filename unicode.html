@@ -22,6 +22,7 @@
 	<script src="js/encode.js"></script>
 	<script src="js/graphemes.js"></script>
 	<script src="js/han.js"></script>
+	<script src="js/languages.js"></script>
 	<script src="js/search.js"></script>
 	<script src="js/ui.js"></script>
 
@@ -51,6 +52,9 @@
 				</li>
 				<li role="presentation">
 					<a href="#codepages" aria-controls="codepages" role="tab" data-toggle="tab">View Codepages</a>
+				</li>
+				<li role="presentation">
+					<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Help &amp; Settings</a>
 				</li>
 			</ul>
 		</div>
@@ -87,28 +91,6 @@
 				</p>
 				<p>
 					Use this URL to share the unicode sequence: <a id="url" style="word-break: break-all;"></a>
-				</p>
-				<p>
-					<a onclick="$('#licenses-modal').modal('show');" style="cursor: pointer;">Third-Party Licenses</a>
-				</p>
-				<p>
-					<b>Search syntax:</b><br>
-					Use commas to separate multiple terms.<br>
-					All searches are case-insensitive.<br>
-					By default, all visible character properties are searched, but you can use this syntax to search for specific character properties:
-					<pre>
-						U+FF
-						cp:100
-						name:Latin capital letter a
-						block:Hiragana
-						script:Han
-						category:currency symbol
-						alias:Byte order mark
-						meaning:Water
-						kun:mizu
-						on:sui
-						mandarin:shuǐ
-					</pre>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
@@ -187,6 +169,38 @@
 				<select id="codepageEncoding">
 				</select>
 				<table class="table" id="codepage"></table>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="settings">
+				<p>
+					<b>Search syntax:</b><br>
+					Use commas to separate multiple terms.<br>
+					All searches are case-insensitive.<br>
+					By default, all visible character properties are searched, but you can use this syntax to search for specific character properties:
+					<pre>
+						U+FF
+						cp:100
+						name:Latin capital letter a
+						block:Hiragana
+						script:Han
+						category:currency symbol
+						alias:Byte order mark
+						meaning:Water
+						kun:mizu
+						on:sui
+						mandarin:shuǐ
+					</pre>
+				</p>
+				<p>
+					The shapes of some characters may change depending on your browser's language. For example, Han characters have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
+					Language: <select id="languageList"></select><br>
+					Script: <select id="scriptList"></select><br>
+					Region: <select id="regionList"></select><br>
+					Variant: <select id="variantList"></select><br>
+					Code: <input type="text" id="languageCode" placeholder="Language code (e.g. en, en-US, zh-Hant)">
+				</p>
+				<p>
+					<a onclick="$('#licenses-modal').modal('show');" style="cursor: pointer;">Third-Party Licenses</a>
+				</p>
 			</div>
 		</div>
 	</div>
@@ -275,11 +289,16 @@
 		function uiState() {
 			return $('#output').val()
 				+ $('#encodedInput').val()
+				+ $('#languageCode').val()
 				+ $('#outputEncoding option:selected').text()
 				+ $('#outputFormat option:selected').text()
 				+ $('#outputJoiner option:selected').text()
 				+ $('#byteOrderMark option:selected').text()
-				+ $('#codepageEncoding option:selected').text();
+				+ $('#codepageEncoding option:selected').text()
+				+ $('#languageList option:selected').text()
+				+ $('#scriptList option:selected').text()
+				+ $('#regionList option:selected').text()
+				+ $('#variantList option:selected').text();
 		}
 
 		prevUIState = '';
@@ -358,6 +377,57 @@
 					'decodedCodepoints',
 					[{displayName: 'Insert', functionName: 'output'}]);
 
+			var lang = '';
+			var textboxCode = $('#languageCode').val();
+			var dropdownCode = '';
+			var langComponentStrings = [
+				$('#languageList option:selected').attr('data-code'),
+				$('#scriptList option:selected').attr('data-code'),
+				$('#regionList option:selected').attr('data-code'),
+				$('#variantList option:selected').attr('data-code')
+			];
+			for (var i = 0; i < langComponentStrings.length; ++i) {
+				var component = langComponentStrings[i];
+				if (!component)
+					continue;
+				if (dropdownCode != '')
+					dropdownCode += '-';
+				dropdownCode += component;
+			}
+			if (textboxCode == '' && dropdownCode == '') {
+				$('#languageCode').removeAttr('disabled');
+				$('#languageList').removeAttr('disabled');
+				$('#scriptList').removeAttr('disabled');
+				$('#regionList').removeAttr('disabled');
+				$('#variantList').removeAttr('disabled');
+				lang = '';
+			} else if (textboxCode == '' && dropdownCode != '') {
+				$('#languageCode').attr('disabled', 'disabled');
+				$('#languageList').removeAttr('disabled');
+				$('#scriptList').removeAttr('disabled');
+				$('#regionList').removeAttr('disabled');
+				$('#variantList').removeAttr('disabled');
+				lang = dropdownCode;
+				$('#languageCode').val(lang);
+			} else if (textboxCode != '' && dropdownCode == '') {
+				$('#languageCode').removeAttr('disabled');
+				$('#languageList').attr('disabled', 'disabled');
+				$('#scriptList').attr('disabled', 'disabled');
+				$('#regionList').attr('disabled', 'disabled');
+				$('#variantList').attr('disabled', 'disabled');
+				lang = textboxCode;
+			} else {
+				if ($('#languageCode')[0].hasAttribute('disabled')) {
+					lang = dropdownCode;
+					$('#languageCode').val(lang);
+				} else {
+					lang = textboxCode;
+				}
+			}
+			
+			$('html').attr('lang', lang);
+			$('html').attr('xml:lang', lang);
+
 			prevUIState = uiState();
 		}
 
@@ -411,7 +481,8 @@
 				initHangulSyllableTypes,
 				initShortJamoNames,
 				initScriptData,
-				initLicenseInfo], completion);
+				initLicenseInfo,
+				initLanguageData], completion);
 		}
 
 		function updateSpacerHeights() {

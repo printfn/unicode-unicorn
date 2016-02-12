@@ -17,3 +17,5 @@ Download `punycode.js` from `https://github.com/bestiejs/punycode.js` and place 
 Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `libs/`.
 
 Download `utf8.js` from `https://github.com/mathiasbynens/utf8.js` and place it in `libs/`.
+
+Download `language-subtag-registry` from IANA (`https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry`) and place it in the repo directory.
