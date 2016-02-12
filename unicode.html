@@ -394,6 +394,15 @@
 					dropdownCode += '-';
 				dropdownCode += component;
 			}
+			// valid states:
+			//   everything enabled, textboxCode and dropdownCode empty
+			//   dropdownCode non-empty: textboxCode set to dropdownCode, textbox disabled
+			//   dropdownCode empty: dropdown disabled
+
+			if ($('#languageCode')[0].hasAttribute('disabled')) {
+				$('#languageCode').val(''); // occurs when dropdownCode is reset to blank
+			}
+				
 			if (textboxCode == '' && dropdownCode == '') {
 				$('#languageCode').removeAttr('disabled');
 				$('#languageList').removeAttr('disabled');
