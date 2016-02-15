@@ -316,23 +316,7 @@
 			$('#numCodepoints').text(codepoints.length);
 			$('#numUtf16CodeUnits').text(input.length);
 			$('#numUtf16Bytes').text(input.length * 2);
-
-			var numUtf8CodeUnits = 0;
-			for (var i = 0; i < codepoints.length; ++i) {
-				var c = codepoints[i];
-				if (c < 0x80)
-					numUtf8CodeUnits += 1;
-				else if (c < 0x800)
-					numUtf8CodeUnits += 2;
-				else if (c < 0x10000)
-					numUtf8CodeUnits += 3;
-				else if (c < 0x10FFFF)
-					numUtf8CodeUnits += 4;
-				else
-					numUtf8CodeUnits = 0;
-			}
-			$('#numUtf8CodeUnits').text(numUtf8CodeUnits);
-			$('#numUtf8Bytes').text(numUtf8CodeUnits);
+			$('#numUtf8CodeUnits').text(ctou8(codepoints).length);
 			$('#string').html(escapeHtml($('#output').val()).replace(/\n/g, '<br>'));
 
 			renderCodepointsInTable(codepoints, 'codepointlist', [{

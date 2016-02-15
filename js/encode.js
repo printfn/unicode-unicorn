@@ -27,7 +27,7 @@ function ctou8(codepoints) {
 	var u8str = utf8.encode(ctos(codepoints));
 	var res = [];
 	for (var i = 0; i < u8str.length; ++i)
-		res += u8str.charCodeAt(i);
+		res.push(u8str.charCodeAt(i));
 	return res;
 }
 
