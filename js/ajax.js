@@ -4,7 +4,8 @@ function requestAsync(url, before, each, after) {
 	client.onreadystatechange = function() { 
 		if (client.readyState == 4 && client.status == 200) {
 			var lines = client.responseText.split('\n');
-			before(lines);
+			if (before)
+				before(lines);
 			if (each) {
 				for (var i = 0; i < lines.length; ++i) {
 					var line = lines[i];

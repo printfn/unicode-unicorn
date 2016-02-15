@@ -1,6 +1,6 @@
 function initLanguageData(completion) {
 	requestAsync('language-subtag-registry', function(lines) {
-		languageTags = [];
+		var languageTags = [];
 		var entries = lines.join('\n').split('\n%%\n');
 		for (var i = 0; i < entries.length; ++i) {
 			var fieldsStrings = entries[i].split('\n');

@@ -6,27 +6,27 @@ function getSearchString(codepoint) {
 	    + '|block:' + getBlockForCodepoint(codepoint).replace(/_/g, ' ')
 	    + '|script:' + getScriptForCodepoint(codepoint).replace(/_/g, ' ')
 	    + '|category:' + getCharacterCategoryName(codepoint);
-	for (var i = 0; i < aliases.length; ++i) {
-		if (aliases[i].codepoint == codepoint) {
-			res += '|alias:' + aliases[i].alias;
+	for (var i = 0; i < global_aliases.length; ++i) {
+		if (global_aliases[i].codepoint == codepoint) {
+			res += '|alias:' + global_aliases[i].alias;
 		}
 	}
-	if (han_meanings[codepoint])
-		res += '|meaning:' + han_meanings[codepoint];
-	if (kun_readings[codepoint])
-		res += '|kun:' + kun_readings[codepoint].split(', ').join('|kun:');
-	if (on_readings[codepoint])
-		res += '|on:' + on_readings[codepoint].split(', ').join('|on:');
-	if (mandarin_readings[codepoint])
-		res += '|mandarin:' + mandarin_readings[codepoint].split(', ').join('|mandarin:');
+	if (global_han_meanings[codepoint])
+		res += '|meaning:' + global_han_meanings[codepoint];
+	if (global_kun_readings[codepoint])
+		res += '|kun:' + global_kun_readings[codepoint].split(', ').join('|kun:');
+	if (global_on_readings[codepoint])
+		res += '|on:' + global_on_readings[codepoint].split(', ').join('|on:');
+	if (global_mandarin_readings[codepoint])
+		res += '|mandarin:' + global_mandarin_readings[codepoint].split(', ').join('|mandarin:');
 	return res.toUpperCase();
 }
 
 function initializeSearchStrings() {
 	search_strings = [];
 
-	for (var i = 0; i < all_assigned_ranges.length; ++i) {
-		var range = all_assigned_ranges[i];
+	for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
+		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
 		for (var c = range.startCodepoint; c <= end; ++c) {
 			var searchString = getSearchString(c);
@@ -58,8 +58,8 @@ function searchCodepoints(str) {
 		words[i] = words[i].trim();
 
 	var results = [];
-	for (var i = 0; i < all_assigned_ranges.length; ++i) {
-		var range = all_assigned_ranges[i];
+	for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
+		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
 		for (var c = range.startCodepoint; c <= end; ++c) {
 			var searchString = search_strings[c];

@@ -100,9 +100,9 @@ function showCodepageDetail(codepoint) {
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
 	var matchingAliases = [];
-	for (var i = 0; i < aliases.length; ++i) {
-		if (aliases[i].codepoint == codepoint)
-			matchingAliases.push(aliases[i].alias);
+	for (var i = 0; i < global_aliases.length; ++i) {
+		if (global_aliases[i].codepoint == codepoint)
+			matchingAliases.push(global_aliases[i].alias);
 	}
 	if (matchingAliases.length == 0) {
 		$('#detail-aliases').hide();
@@ -110,28 +110,28 @@ function showCodepageDetail(codepoint) {
 		$('#detail-aliases').show();
 		$('#detail-aliases-list').text(matchingAliases.join(', '));
 	}
-	var meaning = han_meanings[codepoint];
+	var meaning = global_han_meanings[codepoint];
 	if (meaning) {
 		$('#detail-meaning').show();
 		$('#detail-meaning-content').text(meaning);
 	} else {
 		$('#detail-meaning').hide();
 	}
-	var mandarin = mandarin_readings[codepoint];
+	var mandarin = global_mandarin_readings[codepoint];
 	if (mandarin) {
 		$('#detail-mandarin').show();
 		$('#detail-mandarin-content').text(mandarin);
 	} else {
 		$('#detail-mandarin').hide();
 	}
-	var kun = kun_readings[codepoint];
+	var kun = global_kun_readings[codepoint];
 	if (kun) {
 		$('#detail-kun').show();
 		$('#detail-kun-content').text(kun);
 	} else {
 		$('#detail-kun').hide();
 	}
-	var on = on_readings[codepoint];
+	var on = global_on_readings[codepoint];
 	if (on) {
 		$('#detail-on').show();
 		$('#detail-on-content').text(on);
