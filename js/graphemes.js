@@ -1,7 +1,7 @@
 global_graphemeBreakData = [];
 
 function initGraphemeData(completion) {
-	requestAsync('UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
+	requestAsync('data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
 		var state = 1;
 		var startCodepoint = '';
 		var endCodepoint = '';

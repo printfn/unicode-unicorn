@@ -48,6 +48,9 @@
 					<a href="#encode" aria-controls="encode" role="tab" data-toggle="tab">Encodings</a>
 				</li>
 				<li role="presentation">
+					<a href="#mojibake" aria-controls="mojibake" role="tab" data-toggle="tab">文字化け</a>
+				</li>
+				<li role="presentation">
 					<a href="#normalization" aria-controls="normalization" role="tab" data-toggle="tab">Unicode Normalization</a>
 				</li>
 				<li role="presentation">
@@ -150,6 +153,9 @@
 				<pre id="encodedOutput"></pre>
 				<textarea id="encodedInput" placeholder="Input to decode using above settings"></textarea>
 				<table class="table table-striped" id="decodedCodepoints"></table>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="mojibake">
+				<pre id="mojibakeOutput"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="normalization">
 				<p>
@@ -275,6 +281,11 @@
 		}
 
 		function setStr(str) {
+			for (var i = 0; i < str.length; ++i) {
+				if (str.charCodeAt(i) < 0 || str.charCodeAt(i) > 0x10FFFF) {
+					str.splice(i, 1); // remove element at i
+				}
+			}
 			global_internalString = str;
 			$('#output').val(str);
 		}
@@ -325,12 +336,67 @@
 		function updateInfo() {
 			if (uiState() == prevUIState)
 				return;
-
+			actualUpdateInfo();
+			prevUIState = uiState();
+		}
+		function actualUpdateInfo() {
 			global_useInternalString = $('#useInternalString').is(':checked');
 			setStr(getStr());
 
 			var input = getStr();
 			var codepoints = stoc(input);
+
+			if ($('#mojibake').hasClass('active')) {
+				var mojibakeOutputs = [];
+				$('#outputEncoding option').each(function(i, e) {
+					var encoding1Name = $(e).text();
+					if (global_encodings[encoding1Name].type == 'text function')
+						return;
+					var encodedString = encodeOutput(
+						'Don\'t use a byte order mark',
+						encoding1Name,
+						'Decimal',
+						'Separated using commas and spaces',
+						codepoints);
+					if (encodedString.startsWith('<'))
+						return;
+					$('#outputEncoding option').each(function(j, f) {
+						if (i == j)
+							return;
+						var encoding2Name = $(f).text();
+						if (global_encodings[encoding2Name].type == 'text function')
+							return;
+						var decodedString = decodeOutput(
+							'Don\'t use a byte order mark',
+							encoding2Name,
+							'Decimal',
+							'Separated using commas and spaces',
+							encodedString);
+						if (!decodedString)
+							return;
+						for (var k = 0; k < mojibakeOutputs.length; ++k) {
+							if (mojibakeOutputs[k].text == ctos(decodedString))
+								return;
+						}
+						mojibakeOutputs.push({
+							encoding1Name: encoding1Name,
+							encoding2Name: encoding2Name,
+							text: ctos(decodedString)
+						});
+					});
+				});
+				var mojibakeOutputStr = '';
+				var lastEncoding1 = '';
+				for (var i = 0; i < mojibakeOutputs.length; ++i) {
+					var o = mojibakeOutputs[i];
+					if (o.encoding1Name != lastEncoding1) {
+						lastEncoding1 = o.encoding1Name;
+						mojibakeOutputStr += 'Assuming the input was erroneously interpreted as ' + o.encoding1Name + ':<br>';
+					}
+					mojibakeOutputStr += '    If the original encoding was ' + o.encoding2Name + ':<br>        ' + mojibakeOutputs[i].text + '<br>';
+				}
+				$('#mojibakeOutput').html(mojibakeOutputStr);
+			}
 
 			updateRenderedCodepage();
 
@@ -443,8 +509,6 @@
 			
 			$('html').attr('lang', lang);
 			$('html').attr('xml:lang', lang);
-
-			prevUIState = uiState();
 		}
 
 		function deleteAtIndex(codepoint, index) {
@@ -479,7 +543,7 @@
 		}
 
 		function initLicenseInfo(completion) {
-			requestAsync('licenses.html', function(lines) {
+			requestAsync('data/licenses.html', function(lines) {
 				$('#licenses-text').html(lines.join('\n'));
 				completion();
 			});
@@ -562,6 +626,7 @@
 					}, 1000);
 					$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 						updateSpacerHeights();
+						actualUpdateInfo();
 					});
 					$('#loadingModal').modal('hide');
 				}, loadDuration < 500 ? 500 - loadDuration : 100);

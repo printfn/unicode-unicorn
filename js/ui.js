@@ -60,18 +60,18 @@ function randomColorForKey(key) {
 }
 
 function updateRenderedCodepage() {
-	var encoding = $('#codepageEncoding option:selected').text();
-	var mapping = mappings[encoding];
-	var ascii = isMapping7Bit(mapping);
+	var encodingName = $('#codepageEncoding option:selected').text();
+	var encoding = global_encodings[encodingName];
+	var isAscii = encoding.type == '7-bit mapping';
 	var html = '<thead><th></th>';
 	for (var i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
 	html += '</thead><tbody>';
-	for (var i = 0; i < (ascii ? 8 : 16); ++i) {
+	for (var i = 0; i < (isAscii ? 8 : 16); ++i) {
 		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
-			var codepoint = codepointForByteUsingMapping(mapping, byte);
+			var codepoint = encoding.decode([byte])[0];
 			var color = randomColorForKey(getCharacterCategoryName(codepoint));
 			var displayedCodepoint = displayCodepoint(codepoint);
 			if (displayedCodepoint) {

@@ -1,3 +1,11 @@
+global_encodingNames = [];
+global_encodings = [];
+// dictionary of name: {
+//     type: 'typename',
+//     encode: function(codepoints/str),
+//     decode: function(codeUnits/str)
+// }
+
 function escapeHtml(string) {
 	return he.encode(string);
 }
@@ -48,65 +56,33 @@ function itos(int, base, padding) {
 	return res;
 }
 
-function applySingleByteMapping(mapping, codepoint) {
-	codepoint = parseInt(codepoint);
-	var number = mapping[codepoint];
-	if (typeof number == 'undefined')
-		return;
-	if (number <= 0xFF)
-		return [number];
-	return [number >> 8, number & 0xFF];
-}
-
-function codepointForByteUsingMapping(mapping, byte) {
-	byte = parseInt(byte);
-	for (var codepoint in mapping) {
-		if (byte == mapping[codepoint])
-			return parseInt(codepoint);
-	}
-}
-
-function isMapping7Bit(mapping) {
-	for (var codepoint in mapping) {
-		if (mapping[codepoint] > 0x7F)
-			return false;
-	}
-	return true;
-}
-
-function isMapping8Bit(mapping) {
-	for (var codepoint in mapping) {
-		if (mapping[codepoint] > 0xFF)
-			return false;
-	}
-	return true;
-}
-
 function initializeMappings(completion) {
-	requestAsync('Mappings/mappings.txt', function() {
+	requestAsync('data/encodings.txt', function() {
 		totalCount = 0;
 		count = 0;
-		mappingNames = [];
-		mappings = {};
 	}, function(line) {
 		var parts = line.split('\t');
 		++totalCount;
-		mappingNames.push(parts[0]);
+		var type = parts[0];
+		var name = parts[1];
+		var url = parts[2];
+		global_encodingNames.push(name);
 		window.setTimeout(function() {
-			loadEncodingFromURL(parts[1], parts[0], function() {
+			loadEncodingFromURL(type, name, url, function() {
 				++count;
 				if (count == totalCount) {
-					$.each(mappingNames, function(i, value) {
-						if (mappings[value] && isMapping8Bit(mappings[value])) {
+					$.each(global_encodingNames, function(i, encodingName) {
+						if (global_encodings[encodingName].type == '7-bit mapping'
+							|| global_encodings[encodingName].type == '8-bit mapping') {
 							$('#codepageEncoding')
 								.append($('<option' 
-									+ (value == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
+									+ (encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
 									+ '></option>')
-								.text(value));
+								.text(encodingName));
 						}
 						$('#outputEncoding')
 							.append($('<option></option>')
-							.text(value));
+							.text(encodingName));
 					});
 					completion();
 				}
@@ -115,185 +91,84 @@ function initializeMappings(completion) {
 	});
 }
 
-function loadEncodingFromURL(url, name, completion) {
-	if (!url) {
-		completion();
-		return;
-	}
-	requestAsync(url, function() {
-		mapping = {};
+function loadEncodingFromURL(type, name, url, completion) {
+	var encoding = {};
+	encoding.type = type;
+	requestAsync(url, function(lines) {
+		if (type.includes('function')) {
+			encoding = eval(lines.join('\n'));
+		} else {
+			encoding.encode = function(codepoints) {
+				var bytes = [];
+				for (var i = 0; i < codepoints.length; ++i) {
+					var codepoint = parseInt(codepoints[i]);
+					var number = encoding.table[codepoint];
+					if (typeof number == 'undefined') {
+						// if (codepoint <= 0xFF)
+						// 	bytes.push(codepoint);
+						// else
+						return codepoint;
+					}
+					if (number <= 0xFF) {
+						bytes.push(number);
+					} else {
+						bytes.push(number >> 8);
+						bytes.push(number & 0xFF);
+					}
+				}
+				return bytes;
+			};
+			encoding.decode = function(bytes) {
+				var table = encoding.table;
+				var codepointForByteUsingMapping = function(byte) {
+					byte = parseInt(byte);
+					for (var codepoint in table) {
+						if (byte == table[codepoint])
+							return parseInt(codepoint);
+					}
+				};
+				var codepoints = [];
+				for (var i = 0; i < bytes.length; ++i) {
+					var cp = codepointForByteUsingMapping(bytes[i]);
+					if (typeof cp != 'undefined') {
+						codepoints.push(cp);
+						continue;
+					}
+					cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i+1]);
+					if (typeof cp == 'undefined') {
+						return;
+					}
+					codepoints.push(cp);
+					++i;
+				}
+				return codepoints;
+			};
+		}
 	}, function(line) {
-		if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
-			return;
-		var components = line.split('\t');
-		if (components[1].trim() == '')
-			return;
-		if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-			throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
-		mapping[parseInt(components[1])] = parseInt(components[0]);
+		if (type.includes('mapping')) {
+			if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
+				return;
+			var components = line.split('\t');
+			if (components[1].trim() == '')
+				return;
+			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
+				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
+			if (!encoding.table)
+				encoding.table = [];
+			encoding.table[parseInt(components[1])] = parseInt(components[0]);
+		}
 	}, function() {
-		mappings[name] = mapping;
+		global_encodings[name] = encoding;
 		completion();
 	});
 }
 
 function codepointsToEncoding(encoding, codepoints) {
-	var codeUnits = [];
-	if (encoding == 'Unicode UTF-8') {
-		for (var i = 0; i < codepoints.length; ++i) {
-			var c = codepoints[i];
-			if (c < 0x80) {
-				codeUnits.push(c);
-			} else if (c < 0x800) {
-				codeUnits.push(c >> 6 & 0x1F | 0xC0)
-				codeUnits.push(c >> 0 & 0x3F | 0x80)
-			} else if (c < 0x10000) {
-				codeUnits.push(c >> 12 & 0x0F | 0xE0)
-				codeUnits.push(c >>  6 & 0x3F | 0x80)
-				codeUnits.push(c >>  0 & 0x3F | 0x80)
-			} else if (c < 0x10FFFF) {
-				codeUnits.push(c >> 18 & 0x07 | 0xF0)
-				codeUnits.push(c >> 12 & 0x3F | 0x80)
-				codeUnits.push(c >>  6 & 0x3F | 0x80)
-				codeUnits.push(c >>  0 & 0x3F | 0x80)
-			} else {
-				return parseInt(c); // can never be reached in a compliant browser
-			}
-		}
-	} else if (encoding.includes('UTF-16') || encoding.includes('UCS-2')) {
-		var inputStr = ctos(codepoints);
-		for (var i = 0; i < inputStr.length; ++i) {
-			var x = inputStr.charCodeAt(i);
-			if (encoding.includes('UCS-2') && x >= 0xD800 && x <= 0xDFFF) {
-				return stoc(String.fromCharCode(x, inputStr.charCodeAt(parseInt(i)+1)))[0];
-			}
-			if (encoding.includes('16-bit code units')) {
-				codeUnits.push(x);
-			} else {
-				var highByte = x >> 8;
-				var lowByte = x & 0xFF;
-				if (encoding.includes('LE')) {
-					codeUnits.push(lowByte);
-					codeUnits.push(highByte);
-				} else {
-					codeUnits.push(highByte);
-					codeUnits.push(lowByte);
-				}
-			}
-		}
-	} else if (encoding.includes('UTF-32')) {
-		for (var i = 0; i < codepoints.length; ++i) {
-			var c = codepoints[i];
-			if (encoding.includes('32-bit code units')) {
-				codeUnits.push(c);
-			} else {
-				var bytesBE = [c >> 24, (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF];
-				if (encoding.includes('LE')) {
-					codeUnits = codeUnits.concat(bytesBE.reverse());
-				} else {
-					codeUnits = codeUnits.concat(bytesBE);
-				}
-			}
-		}
-	} else if (encoding.includes('Punycode')) {
-		var inputStr = ctos(codepoints);
-		var punycodeText = punycode.encode(inputStr);
-		if (encoding.includes('Text'))
-			return punycodeText;
-		else
-			return stoc(punycodeText);
-	} else if (encoding.includes('HTML Entities')) {
-		return he.encode(ctos(codepoints), {
-			'encodeEverything': encoding.includes('Encode Everything'),
-			'useNamedReferences': !encoding.includes('Numeric')
-		});
-	} else { // try ASCII or a single-byte encoding from `mappings`
-		for (var i = 0; i < codepoints.length; ++i) {
-			var c = codepoints[i];
-			var mapping = mappings[encoding];
-			var bytes = applySingleByteMapping(mapping, c);
-			if (bytes) {
-				if (bytes.length == 1) {
-					codeUnits.push(bytes[0]);
-				} else if (bytes.length == 2) {
-					codeUnits.push(bytes[0]);
-					codeUnits.push(bytes[1]);
-				}
-			} else {
-				return parseInt(c);
-			}
-		}
-	}
-	return codeUnits;
+	return global_encodings[encoding].encode(codepoints);
 }
 
 function codeUnitsToCodepoints(encoding, codeUnits) {
-	var codepoints = [];
-	if (encoding == 'Unicode UTF-8') {
-		codepoints = u8toc(codeUnits);
-	} else if (encoding.includes('UTF-16') || encoding.includes('UCS-2')) {
-		var combinedCodeUnits = [];
-		if (encoding.includes('16-bit code units')) {
-			combinedCodeUnits = codeUnits;
-		} else {
-			for (var i = 0; i < codeUnits.length; i += 2) {
-				if (encoding.includes('BE')) {
-					combinedCodeUnits.push((codeUnits[i] << 8) + codeUnits[i + 1]);
-				} else {
-					combinedCodeUnits.push((codeUnits[i + 1] << 8) + codeUnits[i]);
-				}
-			}
-		}
-		var str = '';
-		for (var i = 0; i < combinedCodeUnits.length; ++i) {
-			if (encoding.includes('UCS-2')
-				&& combinedCodeUnits[i] >= 0xD800
-				&& combinedCodeUnits[i] <= 0xDFFF)
-				return; // surrogate pairs not supported
-			str += String.fromCharCode(combinedCodeUnits[i]);
-		}
-		codepoints = stoc(str);
-	} else if (encoding.includes('UTF-32')) {
-		if (encoding.includes('32-bit code units')) {
-			codepoints = codeUnits; // nice and simple
-		} else {
-			for (var i = 0; i < codeUnits.length; i += 4) {
-				if (encoding.includes('BE')) {
-					codepoints.push(
-						(codeUnits[i] << 24)
-						+ (codeUnits[i + 1] << 16)
-						+ (codeUnits[i + 2] << 8)
-						+ (codeUnits[i + 3]));
-				} else {
-					codepoints.push(
-						(codeUnits[i + 3] << 24)
-						+ (codeUnits[i + 2] << 16)
-						+ (codeUnits[i + 1] << 8)
-						+ (codeUnits[i]));
-				}
-			}
-		}
-	} else if (encoding.includes('Punycode')) {
-		// this is ASCII-encoded Punycode only; the text based version is handled directly in decodeOutput
-		var str = '';
-		for (var i = 0; i < codeUnits.length; ++i) {
-			str += String.fromCharCode(codeUnits[i]);
-		}
-		return stoc(punycode.decode(str));
-	} else {
-		var mapping = mappings[encoding];
-		for (var i = 0; i < codeUnits.length; ++i) {
-			var cp = codepointForByteUsingMapping(mapping, codeUnits[i]);
-			if (cp) {
-				codepoints.push(cp);
-				continue;
-			}
-			cp = codepointForByteUsingMapping(mapping, (codeUnits[i] << 8) + codeUnits[i+1]);
-			codepoints.push(cp);
-			++i;
-		}
-	}
-	return codepoints;
+	return global_encodings[encoding].decode(codeUnits);
 }
 
 function bytesToText(format, bytes, hexadecimalPadding) {
@@ -407,6 +282,8 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 }
 
 function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
+	if (str == '')
+		return;
 	if (encoding.includes('Punycode') && encoding.includes('Text')) {
 		return stoc(punycode.decode(str));
 	}

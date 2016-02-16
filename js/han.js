@@ -5,7 +5,7 @@ global_kun_readings = [];
 global_on_readings = [];
 
 function initHanData(completion) {
-	requestAsync('Unihan/Unihan_Readings.txt', null, function(line) {
+	requestAsync('data/Unicode/Unihan/Unihan_Readings.txt', null, function(line) {
 		var fields = line.split('\t');
 		var codepoint = parseInt('0x' + fields[0].substring(2));
 		if (fields[1] == 'kDefinition') {

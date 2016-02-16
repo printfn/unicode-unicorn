@@ -12,7 +12,7 @@ textarea {
 	font-family: monospace;
 }
 pre {
-	white-space: pre-line;
+	white-space: all;
 	word-break: normal;
 }
 .fixed {
