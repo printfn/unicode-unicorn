@@ -24,6 +24,7 @@
 	<script src="js/han.js"></script>
 	<script src="js/languages.js"></script>
 	<script src="js/search.js"></script>
+	<script src="js/tests.js"></script>
 	<script src="js/ui.js"></script>
 
 	<div style="width: 100%; height: 30px; position: fixed; background-color: white"></div>
@@ -201,6 +202,10 @@
 						mandarin:shuǐ
 					</pre>
 				</p>
+				<b>Unit Tests</b>
+				<p>
+					<input type="button" onclick="runTests()" value="Run Unit Tests">
+				</p>
 				<b>Language, Script and Region Settings:</b>
 				<p>
 					The shapes of some characters may change depending on your browser's language. For example, Han characters have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
@@ -265,6 +270,23 @@
 				</div>
 				<div class="modal-body">
 					<pre id="licenses-text">
+					</pre>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="unit-tests-modal" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Unit test results</h4>
+				</div>
+				<div class="modal-body">
+					<pre id="unit-tests-text">
 					</pre>
 				</div>
 				<div class="modal-footer">
