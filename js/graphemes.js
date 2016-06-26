@@ -39,7 +39,7 @@ function initGraphemeData(completion) {
 			if (state == 4) {
 				if (c == ' ') {
 					continue;
-				} else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+				} else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
 					value += c;
 					continue;
 				} else
@@ -73,6 +73,33 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
 		// see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
 		// skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string
 
+		var GB10Value1Match = function() { // rule: (E_Base | E_Base_GAZ) Extend* × ...
+			for (var j = i - 1; j >= 0; --j) {
+				var value = graphemeBreakValueForCodepoint(codepoints[j]);
+				if (value == 'Extend')
+					continue;
+				else if (value == 'E_Base' || value == 'E_Base_GAZ')
+					return true;
+				return false;
+			}
+			return false;
+		}
+
+		// rules:
+		//   GB12:     ^ (RI RI)* RI × ...
+		//   GB13: [^RI] (RI RI)* RI × ...
+		var GB12And13Value1Match = function() {
+			if (value1 != 'Regional_Indicator')
+				return false;
+			var oddNumberOfRegionalIndicatorSymbols = true;
+			for (var j = i - 1; j >= 0; --j) {
+				if (value1 != 'Regional_Indicator')
+					break;
+				oddNumberOfRegionalIndicatorSymbols = !oddNumberOfRegionalIndicatorSymbols;
+			}
+			return oddNumberOfRegionalIndicatorSymbols;
+		}
+
 		if (value1 == 'CR' && value2 == 'LF') { // GB3
 
 		} else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') { // GB4
@@ -85,15 +112,19 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
 
 		} else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') { // GB8
 
-		} else if (value1 == 'Regional_Indicator' && value2 == 'Regional_Indicator') { // GB8a
-
-		} else if (value2 == 'Extend') { // GB9
+		} else if (value2 == 'Extend' || value2 == 'ZWJ') { // GB9
 
 		} else if (useExtended && value2 == 'SpacingMark') { // GB9a
 
 		} else if (useExtended && value1 == 'Prepend') { // GB9b
 
-		} else { // GB10
+		} else if (GB10Value1Match() && value2 == 'E_Modifier') { // GB10
+
+		} else if (value1 == 'ZWJ' && (value2 == 'Glue_After_Zwj' || value2 == 'E_Base_GAZ')) { // GB11
+
+		} else if (GB12And13Value1Match() && value2 == 'Regional_Indicator') { // GB12 and GB13
+
+		} else { // GB999
 			++breaks;
 		}
 	}
