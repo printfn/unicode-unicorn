@@ -95,9 +95,6 @@
 					<br>
 					UTF-8 code units/bytes: <span id="numUtf8CodeUnits">0</span>
 				</p>
-				<p>
-					Use this URL to share the unicode sequence: <a id="url" style="word-break: break-all;"></a>
-				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
 				<table id="codepointlist" class="table table-striped"></table>
@@ -450,8 +447,7 @@ mandarin:shuǐ</pre>
 				: location.href.substring(0, location.href.indexOf('?'));
 			if (codepoints.length > 0)
 				url += '?c=' + codepoints.join(',');
-			$('#url').text(url);
-			$('#url').attr('href', url);
+			history.replaceState({}, '', url);
 
 			$('#encodedOutput').html(encodeOutput(
 				$('#byteOrderMark option:selected').text(),
@@ -608,13 +604,16 @@ mandarin:shuǐ</pre>
 			if (loaded)
 				return;
 			loaded = true;
-			var args = location.search.substring(1).split('&');
-			for (var i = 0; i < args.length; ++i) {
-				var arg = args[i].split('=');
-				if (arg[0] == 'c') {
-					setStr(ctos(arg[1].split(',')));
+			window.onpopstate = function() {
+				var args = location.search.substring(1).split('&');
+				for (var i = 0; i < args.length; ++i) {
+					var arg = args[i].split('=');
+					if (arg[0] == 'c') {
+						setStr(ctos(arg[1].split(',')));
+					}
 				}
-			}
+			};
+			window.onpopstate();
 			$('#loadingModal').modal('show');
 			updateSpacerHeights();
 			var startTime = new Date();
