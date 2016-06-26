@@ -1,5 +1,4 @@
 global_han_meanings = [];
-global_han_meanings_search = [];
 global_mandarin_readings = [];
 global_kun_readings = [];
 global_on_readings = [];
@@ -10,7 +9,6 @@ function initHanData(completion) {
 		var codepoint = parseInt('0x' + fields[0].substring(2));
 		if (fields[1] == 'kDefinition') {
 			global_han_meanings[codepoint] = fields[2];
-			global_han_meanings_search[codepoint] = fields[2].toUpperCase();
 		} else if (fields[1] == 'kMandarin') {
 			global_mandarin_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, ', ');
 		} else if (fields[1] == 'kJapaneseKun') {

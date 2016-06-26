@@ -32,6 +32,10 @@ function requestAsync(url, before, each, after) {
 	});
 }
 
+function deleteUnicodeData() {
+	delete DataZip;
+}
+
 function callMultipleAsync(functions, completion) {
 	var count = 0;
 	var callback = function() {

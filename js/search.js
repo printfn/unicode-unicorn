@@ -8,11 +8,11 @@ function getSearchString(codepoint) {
 	    + '|category:' + getCharacterCategoryName(codepoint);
 	for (var i = 0; i < global_aliases.length; ++i) {
 		if (global_aliases[i].codepoint == codepoint) {
-			res += '|alias:' + global_aliases[i].alias;
+			res += '|name:' + global_aliases[i].alias;
 		}
 	}
 	if (global_han_meanings[codepoint])
-		res += '|meaning:' + global_han_meanings[codepoint];
+		res += global_han_meanings[codepoint];
 	if (global_kun_readings[codepoint])
 		res += '|kun:' + global_kun_readings[codepoint].split(', ').join('|kun:');
 	if (global_on_readings[codepoint])
@@ -23,14 +23,14 @@ function getSearchString(codepoint) {
 }
 
 function initializeSearchStrings() {
-	search_strings = [];
+	global_search_strings = [];
 
 	for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
 		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
 		for (var c = range.startCodepoint; c <= end; ++c) {
 			var searchString = getSearchString(c);
-			search_strings[c] = searchString;
+			global_search_strings[c] = searchString;
 		}
 	}
 }
@@ -62,7 +62,7 @@ function searchCodepoints(str) {
 		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
 		for (var c = range.startCodepoint; c <= end; ++c) {
-			var searchString = search_strings[c];
+			var searchString = global_search_strings[c];
 			if (!searchString)
 				continue;
 			if (testSearch(searchString, words)) {

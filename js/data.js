@@ -162,9 +162,16 @@ function getHtmlNameDescription(codepoint) {
 		return getName(codepoint);
 	if (global_data[codepoint] == '<control>') {
 		var name = [];
-		for (var j = 0; j < global_controlAliases.length; ++j) {
-			if (global_controlAliases[j].codepoint == codepoint) {
-				name.push(global_controlAliases[j].alias);
+		for (var i = 0; i < global_controlAliases.length; ++i) {
+			if (global_controlAliases[i].codepoint == codepoint) {
+				name.push(global_controlAliases[i].alias);
+			}
+		}
+		if (name.length > 0)
+			return '<i>' + name.join(' / ') + '</i>';
+		for (var i = 0; i < global_aliases.length; ++i) {
+			if (global_aliases[i].codepoint == codepoint) {
+				name.push(global_aliases[i].alias);
 			}
 		}
 		if (name.length > 0)

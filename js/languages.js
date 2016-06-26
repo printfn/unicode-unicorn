@@ -1,5 +1,5 @@
 function initLanguageData(completion) {
-	requestAsync('data/language-subtag-registry', function(lines) {
+	var parseLanguageData = function(lines) {
 		var languageTags = [];
 		var entries = lines.join('\n').split('\n%%\n');
 		for (var i = 0; i < entries.length; ++i) {
@@ -46,8 +46,12 @@ function initLanguageData(completion) {
 		$('#variantList').html(htmls['variant']);
 		$('#showRareLanguages').on('click', function() {
 			$('#showRareLanguages').attr('disabled', 'disabled');
-			initLanguageData(function() {});
+			parseLanguageData(global_languageData);
 		})
 		completion();
+	}
+	requestAsync('data/language-subtag-registry', function(lines) {
+		global_languageData = lines;
+		parseLanguageData(lines);
 	});
 }
