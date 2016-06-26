@@ -21,22 +21,33 @@ function initLanguageData(completion) {
 
 			if (!fields['Subtag'] || !fields['Description'])
 				throw 'Invalid Format';
+
+			if (!$('#showRareLanguages')[0].hasAttribute('disabled') && fields['Type'] == 'language' && fields['Subtag'].length > 2)
+				continue;
+
 			languageTags.push({
 				code: fields['Subtag'],
 				name: fields['Description'],
 				type: fields['Type']
 			});
 		}
+		languageTags.sort(function(a, b) {
+			return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
+		});
 		var htmls = {};
 		for (var i = 0; i < languageTags.length; ++i) {
 			if (!htmls[languageTags[i].type])
-				htmls[languageTags[i].type] = '<option data-code="">None / Default / Not Applicable</option>';
-			htmls[languageTags[i].type] += '<option data-code="' + languageTags[i].code + '">' + languageTags[i].code + ' - ' + languageTags[i].name + '</option>';
+				htmls[languageTags[i].type] = '<option data-code="">None / Default</option>';
+			htmls[languageTags[i].type] += '<option data-code="' + languageTags[i].code + '">' + languageTags[i].name + ' (' + languageTags[i].code + ')</option>';
 		}
 		$('#languageList').html(htmls['language']);
 		$('#scriptList').html(htmls['script']);
 		$('#regionList').html(htmls['region']);
 		$('#variantList').html(htmls['variant']);
+		$('#showRareLanguages').on('click', function() {
+			$('#showRareLanguages').attr('disabled', 'disabled');
+			initLanguageData(function() {});
+		})
 		completion();
 	});
 }
