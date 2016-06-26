@@ -1,28 +1,35 @@
+function loadUnicodeData(completion) {
+	DataZip = new JSZip();
+	JSZipUtils.getBinaryContent('data.zip', function(err, data) {
+		if (err) {
+			throw err;
+		}
+		DataZip.loadAsync(data).then(function() {
+			completion();
+		});
+	});
+}
+
 function requestAsync(url, before, each, after) {
-	var client = new XMLHttpRequest();
-	client.open('GET',  url);
-	client.onreadystatechange = function() { 
-		if (client.readyState == 4 && client.status == 200) {
-			var lines = client.responseText.split('\n');
-			if (before)
-				before(lines);
-			if (each) {
-				for (var i = 0; i < lines.length; ++i) {
-					var line = lines[i];
-					if (line.length == 0 || line[0] == '#')
-						continue;
-					if (line.indexOf('#') != -1) {
-						line = line.substring(0, line.indexOf('#'));
-					}
-					each(line);
+	DataZip.file(url).async('string').then(function(str) {
+		var lines = str.split('\n');
+		if (before)
+			before(lines);
+		if (each) {
+			for (var i = 0; i < lines.length; ++i) {
+				var line = lines[i];
+				if (line.length == 0 || line[0] == '#')
+					continue;
+				if (line.indexOf('#') != -1) {
+					line = line.substring(0, line.indexOf('#'));
 				}
-			}
-			if (after) {
-				after();
+				each(line);
 			}
 		}
-	}
-	client.send();
+		if (after) {
+			after();
+		}
+	});
 }
 
 function callMultipleAsync(functions, completion) {

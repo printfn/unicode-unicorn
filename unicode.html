@@ -12,6 +12,8 @@
 	<script src="libs/jquery-2.2.0.min.js"></script>
 	<script src="libs/bootstrap/js/bootstrap.min.js"></script>
 	<script src="libs/he.js"></script>
+	<script src="libs/jszip.min.js"></script>
+	<script src="libs/jszip-utils.min.js"></script>
 	<script src="libs/punycode.min.js"></script>
 	<script src="libs/randomColor.js"></script>
 	<script src="libs/utf8.js"></script>
@@ -572,19 +574,21 @@ mandarin:shuǐ</pre>
 		}
 
 		function initData(completion) {
-			callMultipleAsync([
-				initializeMappings,
-				initHanData,
-				initGraphemeData,
-				initUnicodeData,
-				initGeneralCategoryNames,
-				initAliasData,
-				initBlockData,
-				initHangulSyllableTypes,
-				initShortJamoNames,
-				initScriptData,
-				initLicenseInfo,
-				initLanguageData], completion);
+			loadUnicodeData(function() {
+				callMultipleAsync([
+					initializeMappings,
+					initHanData,
+					initGraphemeData,
+					initUnicodeData,
+					initGeneralCategoryNames,
+					initAliasData,
+					initBlockData,
+					initHangulSyllableTypes,
+					initShortJamoNames,
+					initScriptData,
+					initLicenseInfo,
+					initLanguageData], completion);
+			});
 		}
 
 		function updateSpacerHeights() {
