@@ -96,6 +96,8 @@ function showCodepageDetail(codepoint) {
 	$('#detail-codepoint-decimal').text(codepoint);
 	$('#detail-name').html('"' + getName(codepoint) + '"');
 	$('#detail-character').html(displayCodepoint(codepoint));
+	$('#detail-character-raw').text(ctos([codepoint]));
+	$('#detail-character-textbox').val(ctos([codepoint]));
 	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
