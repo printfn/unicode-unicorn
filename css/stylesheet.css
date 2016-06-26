@@ -30,3 +30,6 @@ pre {
 #codepage th {
 	text-align: center;   
 }
+.modal-xl {
+	width: 1000px;
+}
