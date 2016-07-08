@@ -355,12 +355,12 @@ mandarin:shuǐ</pre>
 				+ $('#variantList option:selected').text();
 		}
 
-		prevUIState = '';
+		global_prevUIState = '';
 		function updateInfo() {
-			if (uiState() == prevUIState)
+			if (uiState() == global_prevUIState)
 				return;
 			actualUpdateInfo();
-			prevUIState = uiState();
+			global_prevUIState = uiState();
 		}
 		function actualUpdateInfo() {
 			global_useInternalString = $('#useInternalString').is(':checked');
