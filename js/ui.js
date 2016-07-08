@@ -1,3 +1,4 @@
+global_colorMap = {};
 // codepoints is an int array, 
 // tableId a string to a <table class="table table-striped">
 // and buttons is an array of {
@@ -48,14 +49,12 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 }
 
 function randomColorForKey(key) {
-	if (typeof colorMap == 'undefined')
-		colorMap = [];
-	if (colorMap[key])
-		return colorMap[key];
+	if (global_colorMap[key])
+		return global_colorMap[key];
 	var color = randomColor({
 		luminosity: 'light'
 	});
-	colorMap[key] = color;
+	global_colorMap[key] = color;
 	return color;
 }
 
