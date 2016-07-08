@@ -4,7 +4,6 @@ global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
 global_category = [];
 global_categoryRanges = [];
 global_aliases = [];
-global_controlAliases = [];
 global_generalCategoryNames = [];
 
 function getCharacterCategoryCode(codepoint) {
@@ -35,11 +34,19 @@ function initAliasData(completion) {
 	requestAsync('data/Unicode/UCD/NameAliases.txt', null, function(line) {
 		var splitLine = line.split(';');
 		var codepoint = parseInt('0x' + splitLine[0]);
-		var alias = splitLine[1];
-		global_aliases.push({codepoint: codepoint, alias: alias});
-		if (splitLine[2] == 'control')
-			global_controlAliases.push({codepoint: codepoint, alias: alias});
+		global_aliases.push({codepoint: codepoint, alias: splitLine[1], type: splitLine[2]});
 	}, completion);
+	global_aliases.sort(function(a, b) {
+		if (a.type == 'control' && b.type != 'control')
+			return 1;
+		if (a.type != 'control' && b.type == 'control')
+			return -1;
+		if (a.alias < b.alias)
+			return 1;
+		if (a.alias > b.alias)
+			return -1;
+		return 0;
+	})
 }
 
 function initGeneralCategoryNames(completion) {
@@ -162,16 +169,13 @@ function getHtmlNameDescription(codepoint) {
 		return getName(codepoint);
 	if (global_data[codepoint] == '<control>') {
 		var name = [];
-		for (var i = 0; i < global_controlAliases.length; ++i) {
-			if (global_controlAliases[i].codepoint == codepoint) {
-				name.push(global_controlAliases[i].alias);
-			}
-		}
-		if (name.length > 0)
-			return '<i>' + name.join(' / ') + '</i>';
 		for (var i = 0; i < global_aliases.length; ++i) {
 			if (global_aliases[i].codepoint == codepoint) {
+				if (global_aliases[i].type != 'control' && name.length > 0)
+					break;
 				name.push(global_aliases[i].alias);
+				if (global_aliases[i].type != 'control')
+					break;
 			}
 		}
 		if (name.length > 0)
