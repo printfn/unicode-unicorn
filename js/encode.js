@@ -152,7 +152,7 @@ function loadEncodingFromURL(type, name, url, completion) {
 			if (components[1].trim() == '')
 				return;
 			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-				throw new Error('Invalid line detected in ' + url + ' (' + i + ')');
+				throw new Error('Invalid line detected in ' + url);
 			if (!encoding.table)
 				encoding.table = [];
 			encoding.table[parseInt(components[1])] = parseInt(components[0]);
