@@ -140,7 +140,8 @@ function showCodepageDetail(codepoint) {
 		$('#detail-on').hide();
 	}
 	var variationSequences = variationSequencesForCodepoint(codepoint);
-	if (variationSequences.length == 0) {
+	var ideographicVariationSequences = ideographicVariationSequencesForCodepoint(codepoint);
+	if (variationSequences.length == 0 && ideographicVariationSequences.length == 0) {
 		$('#detail-variation-sequences').hide();
 	} else {
 		$('#detail-variation-sequences').show();
@@ -158,6 +159,15 @@ function showCodepageDetail(codepoint) {
 				variationsString += ' (' + vs.shapingEnvironments.join(', ') + ')</i>';
 			else
 				variationsString += '</i>';
+		}
+		for (var i = 0; i < ideographicVariationSequences.length; ++i) {
+			var vs = ideographicVariationSequences[i];
+			if (variationsString != '')
+				variationsString += '<br>';
+			variationsString +=
+				'U+' + itos(vs.base, 16, 4) +
+				' U+' + itos(vs.variationSelector, 16, 4) +
+				': ' + escapeHtml(ctos([vs.base, vs.variationSelector]));
 		}
 		$('#detail-variation-sequences-content').html(variationsString);
 	}
