@@ -618,6 +618,8 @@ mandarin:shuǐ</pre>
 					var arg = args[i].split('=');
 					if (arg[0] == 'c') {
 						setStr(ctos(arg[1].split(',')));
+					} else if (arg[0] == 'info') {
+						showCodepageDetail(parseInt(arg[1], 16));
 					}
 				}
 			};
