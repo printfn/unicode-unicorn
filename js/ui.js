@@ -139,26 +139,29 @@ function showCodepageDetail(codepoint) {
 	} else {
 		$('#detail-on').hide();
 	}
-	var variationsString = '<tbody><tr><td></td>';
-	for (var i = 0; i < 16; ++i) {
-		variationsString += '<td>0x0' + itos(i, 16) + '</td>';
-	}
-	variationsString += '</tr>';
-	for (var i = 0; i < 16; ++i) {
-		variationsString += '<tr><td>0x' + itos(i, 16) + '0</td>';
-		for (var j = 0; j < 16; ++j) {
-			variationsString += '<td>' + escapeHtml(ctos([codepoint]));
-			var variationSelector = i * 16 + j;
-			if (i == 0)
-				variationsString += escapeHtml(ctos([0xFE00 + variationSelector]));
+	var variationSequences = variationSequencesForCodepoint(codepoint);
+	if (variationSequences.length == 0) {
+		$('#detail-variation-sequences').hide();
+	} else {
+		$('#detail-variation-sequences').show();
+		var variationsString = '';
+		for (var i = 0; i < variationSequences.length; ++i) {
+			var vs = variationSequences[i];
+			if (variationsString != '')
+				variationsString += '<br>';
+			variationsString +=
+				'U+' + itos(vs.base, 16) +
+				' U+' + itos(vs.variationSelector, 16) +
+				': ' + escapeHtml(ctos([vs.base, vs.variationSelector]))
+				+ ' <i>' + vs.description;
+			if (vs.shapingEnvironments.length > 0)
+				variationsString += ' (' + vs.shapingEnvironments.join(', ') + ')</i>';
 			else
-				variationsString += escapeHtml(ctos([0xE0100 + variationSelector - 16]));
-			variationsString += '</td>';
-
+				variationsString += '</i>';
 		}
-		variationsString += '</tr></tbody>';
+		$('#detail-variation-sequences-content').html(variationsString);
 	}
-	$('#detail-variation-sequences-content').html(variationsString);
+
 	var encodingsString = '';
 	$('#outputEncoding option').each(function(i, e) {
 		var encoding = $(e).text();

@@ -28,6 +28,7 @@
 	<script src="js/search.js"></script>
 	<script src="js/tests.js"></script>
 	<script src="js/ui.js"></script>
+	<script src="js/variation-sequences.js"></script>
 
 	<div style="width: 100%; height: 30px; position: fixed; background-color: white"></div>
 	<div style="padding: 15px">
@@ -253,7 +254,7 @@ mandarin:shuǐ</pre>
 					<p id="detail-mandarin">Mandarin: <span id="detail-mandarin-content"></span></p>
 					<p id="detail-kun">Kun: <span id="detail-kun-content"></span></p>
 					<p id="detail-on">On: <span id="detail-on-content"></span></p>
-					<p id="detail-variation-sequences">Variation sequences:<br><table class="table" id="detail-variation-sequences-content"></table></p>
+					<p id="detail-variation-sequences">Variation sequences:<br><span id="detail-variation-sequences-content"></span></p>
 					<pre id="detail-encoding-outputs"></pre>
 				</div>
 				<div class="modal-footer">
@@ -585,7 +586,8 @@ mandarin:shuǐ</pre>
 					initShortJamoNames,
 					initScriptData,
 					initLicenseInfo,
-					initLanguageData], function() {
+					initLanguageData,
+					initVariationSequences], function() {
 						deleteUnicodeData();
 						completion();
 					});
