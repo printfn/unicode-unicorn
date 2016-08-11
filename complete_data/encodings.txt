@@ -1,0 +1,99 @@
+# Types of encodings:
+# 
+# 7-bit mapping
+# 8-bit mapping
+# other mapping
+# byte function
+# text function
+#
+# Format: type\tname\turl
+# For mappings, the file must be in the format [byte(s)]\t[codepoint]
+# Byte must be in range 0 to 0x7F for 7-bit mappings,
+#   0 to 0xFF for 8-bit mappings,
+#   or 0 to 0xFFFF for other mappings
+#
+
+byte function	Unicode UTF-8	data/utf8.js
+
+byte function	Unicode UTF-16 (16-bit code units)	data/utf16-16bit.js
+byte function	Unicode UTF-16 BE (8-bit code units)	data/utf16-8bitBE.js
+byte function	Unicode UTF-16 LE (8-bit code units)	data/utf16-8bitLE.js
+
+byte function	Unicode UTF-32 (32-bit code units)	data/utf32-32bit.js
+byte function	Unicode UTF-32 BE (8-bit code units)	data/utf32-8bitBE.js
+byte function	Unicode UTF-32 LE (8-bit code units)	data/utf32-8bitLE.js
+
+7-bit mapping	ASCII	data/ascii.txt
+7-bit mapping	ASCII with typographical quotes	data/Unicode/Mappings/VENDORS/MISC/US-ASCII-QUOTES.TXT
+
+#text function	Punycode (Text)
+#byte function	Punycode (ASCII encoded)
+#
+#text function	HTML Entities
+#text function	HTML Entities (Numeric)
+#text function	HTML Entities (Encode Everything)
+#text function	HTML Entities (Numeric, Encode Everything)
+
+byte function	UCS-2 (16-bit code units)	data/ucs2-16bit.js
+byte function	UCS-2 BE (8-bit code units)	data/ucs2-8bitBE.js
+byte function	UCS-2 LE (8-bit code units)	data/ucs2-8bitLE.js
+
+8-bit mapping	ISO-8859-1 (Latin-1 Western European)	data/Unicode/Mappings/ISO8859/8859-1.TXT
+8-bit mapping	ISO-8859-2 (Latin-2 Central European)	data/Unicode/Mappings/ISO8859/8859-2.TXT
+8-bit mapping	ISO-8859-3 (Latin-3 South European)	data/Unicode/Mappings/ISO8859/8859-3.TXT
+8-bit mapping	ISO-8859-4 (Latin-4 North European)	data/Unicode/Mappings/ISO8859/8859-4.TXT
+8-bit mapping	ISO-8859-5 (Latin/Cyrillic)	data/Unicode/Mappings/ISO8859/8859-5.TXT
+8-bit mapping	ISO-8859-6 (Latin/Arabic)	data/Unicode/Mappings/ISO8859/8859-6.TXT
+8-bit mapping	ISO-8859-7 (Latin/Greek)	data/Unicode/Mappings/ISO8859/8859-7.TXT
+8-bit mapping	ISO-8859-8 (Latin/Hebrew)	data/Unicode/Mappings/ISO8859/8859-8.TXT
+8-bit mapping	ISO-8859-9 (Latin-5 Turkish)	data/Unicode/Mappings/ISO8859/8859-9.TXT
+8-bit mapping	ISO-8859-10 (Latin-6 Nordic)	data/Unicode/Mappings/ISO8859/8859-10.TXT
+8-bit mapping	ISO-8859-11 (Latin/Thai)	data/Unicode/Mappings/ISO8859/8859-11.TXT
+8-bit mapping	ISO-8859-13 (Latin-7 Baltic Rim)	data/Unicode/Mappings/ISO8859/8859-13.TXT
+8-bit mapping	ISO-8859-14 (Latin-8 Celtic)	data/Unicode/Mappings/ISO8859/8859-14.TXT
+8-bit mapping	ISO-8859-15 (Latin-9)	data/Unicode/Mappings/ISO8859/8859-15.TXT
+8-bit mapping	ISO-8859-16 (Latin-10 South-Eastern European)	data/Unicode/Mappings/ISO8859/8859-16.TXT
+
+8-bit mapping	Code page 437 (MS-DOS Latin US)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP437.TXT
+8-bit mapping	Code page 737 (MS-DOS Greek)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP737.TXT
+8-bit mapping	Code page 775 (MS-DOS Baltic Rim)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP775.TXT
+8-bit mapping	Code page 850 (MS-DOS Latin 1)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP850.TXT
+8-bit mapping	Code page 852 (MS-DOS Latin 2)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP852.TXT
+8-bit mapping	Code page 855 (MS-DOS Cyrillic)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP855.TXT
+8-bit mapping	Code page 857 (MS-DOS Turkish)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP857.TXT
+8-bit mapping	Code page 860 (MS-DOS Portuguese)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP860.TXT
+8-bit mapping	Code page 861 (MS-DOS Icelandic)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP861.TXT
+8-bit mapping	Code page 862 (MS-DOS Hebrew)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP862.TXT
+8-bit mapping	Code page 863 (MS-DOS French Canada)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP863.TXT
+8-bit mapping	Code page 864 (MS-DOS Arabic)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP864.TXT
+8-bit mapping	Code page 865 (MS-DOS Nordic)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP865.TXT
+8-bit mapping	Code page 866 (MS-DOS Cyrillic CIS 1)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP866.TXT
+8-bit mapping	Code page 869 (MS-DOS Greek 2)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP869.TXT
+
+other mapping	Code page 874 (Thai)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP874.TXT
+other mapping	Code page 932 (Japanese; Shift-JIS extension)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP932.TXT
+other mapping	Code page 936 (Simplified Chinese)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP936.TXT
+other mapping	Code page 949 (Korean)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP949.TXT
+other mapping	Code page 950 (Traditional Chinese)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP950.TXT
+
+8-bit mapping	Code page 1250 (Windows Latin 2 (Central Europe))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1250.TXT
+8-bit mapping	Code page 1251 (Windows Cyrillic (Slavic))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1251.TXT
+8-bit mapping	Code page 1252 (Windows Latin 1 (ANSI))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1252.TXT
+8-bit mapping	Code page 1253 (Windows Greek)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1253.TXT
+8-bit mapping	Code page 1254 (Windows Latin 5 (Turkish))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1254.TXT
+8-bit mapping	Code page 1255 (Windows Hebrew)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1255.TXT
+8-bit mapping	Code page 1256 (Windows Arabic)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1256.TXT
+8-bit mapping	Code page 1257 (Windows Baltic Rim)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1257.TXT
+8-bit mapping	Code page 1258 (Windows Vietnamese)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1258.TXT
+
+8-bit mapping	Code page 10000 (Macintosh Roman)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/ROMAN.TXT
+8-bit mapping	Code page 10006 (Macintosh Greek)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/GREEK.TXT
+8-bit mapping	Code page 10007 (Macintosh Cyrillic)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/CYRILLIC.TXT
+8-bit mapping	Code page 10029 (Macintosh Latin 2)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/LATIN2.TXT
+8-bit mapping	Code page 10079 (Macintosh Iceland)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/ICELAND.TXT
+8-bit mapping	Code page 10081 (Macintosh Turkish)	data/Unicode/Mappings/VENDORS/MICSFT/MAC/TURKISH.TXT
+
+8-bit mapping	Code page 37 (Microsoft EBCDIC)	data/Unicode/Mappings/VENDORS/MICSFT/EBCDIC/CP037.TXT
+8-bit mapping	Code page 500 (Microsoft EBCDIC)	data/Unicode/Mappings/VENDORS/MICSFT/EBCDIC/CP500.TXT
+8-bit mapping	Code page 875 (Microsoft EBCDIC)	data/Unicode/Mappings/VENDORS/MICSFT/EBCDIC/CP875.TXT
+8-bit mapping	Code page 1026 (Microsoft EBCDIC)	data/Unicode/Mappings/VENDORS/MICSFT/EBCDIC/CP1026.TXT
