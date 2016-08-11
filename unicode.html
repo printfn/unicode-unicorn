@@ -612,23 +612,23 @@ mandarin:shuǐ</pre>
 			if (loaded)
 				return;
 			loaded = true;
-			window.onpopstate = function() {
-				var args = location.search.substring(1).split('&');
-				for (var i = 0; i < args.length; ++i) {
-					var arg = args[i].split('=');
-					if (arg[0] == 'c') {
-						setStr(ctos(arg[1].split(',')));
-					} else if (arg[0] == 'info') {
-						showCodepageDetail(parseInt(arg[1], 16));
-					}
-				}
-			};
-			window.onpopstate();
 			$('#loadingModal').modal('show');
 			updateSpacerHeights();
 			var startTime = new Date();
 			initData(function() {
 				initializeSearchStrings();
+				window.onpopstate = function() {
+					var args = location.search.substring(1).split('&');
+					for (var i = 0; i < args.length; ++i) {
+						var arg = args[i].split('=');
+						if (arg[0] == 'c') {
+							setStr(ctos(arg[1].split(',')));
+						} else if (arg[0] == 'info') {
+							showCodepageDetail(parseInt(arg[1], 16));
+						}
+					}
+				};
+				window.onpopstate();
 				var loadDuration = new Date() - startTime; // in ms
 				setTimeout(function() {
 					updateInfo();
