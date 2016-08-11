@@ -220,7 +220,7 @@ mandarin:shuǐ</pre>
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" data-backdrop="static" data-keyboard="false" id="loadingModal" role="dialog">
+	<div class="modal" data-backdrop="static" data-keyboard="false" id="loadingModal" role="dialog">
 		<div style="height: 20%">
 		</div>
 		<div class="modal-dialog">
@@ -608,11 +608,11 @@ mandarin:shuǐ</pre>
 		}
 
 		var loaded = false;
+		$('#loadingModal').modal('show');
 		$(document).ready(function() {
 			if (loaded)
 				return;
 			loaded = true;
-			$('#loadingModal').modal('show');
 			updateSpacerHeights();
 			var startTime = new Date();
 			initData(function() {
@@ -630,41 +630,39 @@ mandarin:shuǐ</pre>
 				};
 				window.onpopstate();
 				var loadDuration = new Date() - startTime; // in ms
-				setTimeout(function() {
-					updateInfo();
-					updateSuggestions();
-					$('#input').on('keyup', function(e) {
-						if (e.keyCode == 13) {
-							var input = $('#input').val();
-							if (isNaN(parseInt(input.replace('U+', '0x')))) {
-								document.body.style.backgroundColor = '#fdd';
-								setTimeout(function() {
-									document.body.style.backgroundColor = '#fff';
-								}, 1000);
-							} else {
-								output(parseInt(input.replace('U+', '0x')));
-								updateInfo();
-								$('#input').val('');
-							}
+				updateInfo();
+				updateSuggestions();
+				$('#input').on('keyup', function(e) {
+					if (e.keyCode == 13) {
+						var input = $('#input').val();
+						if (isNaN(parseInt(input.replace('U+', '0x')))) {
+							document.body.style.backgroundColor = '#fdd';
+							setTimeout(function() {
+								document.body.style.backgroundColor = '#fff';
+							}, 1000);
+						} else {
+							output(parseInt(input.replace('U+', '0x')));
+							updateInfo();
+							$('#input').val('');
 						}
-						updateSuggestions();
-					});
-					$('#output').on('keyup', function() {
-						updateInfo();
-					});
-					$('select').change(function() {
-						updateInfo();
-					});
-					setInterval(function() {
-						updateInfo();
-						updateSpacerHeights();
-					}, 1000);
-					$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-						updateSpacerHeights();
-						actualUpdateInfo();
-					});
-					$('#loadingModal').modal('hide');
-				}, loadDuration < 500 ? 500 - loadDuration : 100);
+					}
+					updateSuggestions();
+				});
+				$('#output').on('keyup', function() {
+					updateInfo();
+				});
+				$('select').change(function() {
+					updateInfo();
+				});
+				setInterval(function() {
+					updateInfo();
+					updateSpacerHeights();
+				}, 1000);
+				$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+					updateSpacerHeights();
+					actualUpdateInfo();
+				});
+				$('#loadingModal').modal('hide');
 				console.log('Loaded in ' + loadDuration + 'ms');
 			});
 		});
