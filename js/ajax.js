@@ -11,7 +11,6 @@ function loadUnicodeData(completion) {
 }
 
 function requestAsync(url, before, each, after) {
-	console.log(url);
 	DataZip.file(url).async('string').then(function(str) {
 		var lines = str.split('\n');
 		if (before)
