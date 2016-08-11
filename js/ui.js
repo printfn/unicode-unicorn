@@ -150,8 +150,8 @@ function showCodepageDetail(codepoint) {
 			if (variationsString != '')
 				variationsString += '<br>';
 			variationsString +=
-				'U+' + itos(vs.base, 16) +
-				' U+' + itos(vs.variationSelector, 16) +
+				'U+' + itos(vs.base, 16, 4) +
+				' U+' + itos(vs.variationSelector, 16, 4) +
 				': ' + escapeHtml(ctos([vs.base, vs.variationSelector]))
 				+ ' <i>' + vs.description;
 			if (vs.shapingEnvironments.length > 0)
