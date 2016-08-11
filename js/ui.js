@@ -70,10 +70,11 @@ function updateRenderedCodepage() {
 		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
-			var codepoint = encoding.decode([byte])[0];
-			var color = randomColorForKey(getCharacterCategoryName(codepoint));
-			var displayedCodepoint = displayCodepoint(codepoint);
-			if (displayedCodepoint) {
+			var codepoints = encoding.decode([byte]);
+			if (codepoints) {
+				var codepoint = codepoints[0];
+				var color = randomColorForKey(getCharacterCategoryName(codepoint));
+				var displayedCodepoint = displayCodepoint(codepoint);
 				html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
 					+ i.toString(16).toUpperCase()
 					+ j.toString(16).toUpperCase()
