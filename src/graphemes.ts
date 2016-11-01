@@ -1,10 +1,10 @@
 global_graphemeBreakData = [];
 
-function initGraphemeData(completion) {
+function initGraphemeData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
 		var state = 1;
-		var startCodepoint = '';
-		var endCodepoint = '';
+		var startCodepoint: number | string = '';
+		var endCodepoint: number | string = '';
 		var value = '';
 		for (var j in line) {
 			var c = line[j];
@@ -54,13 +54,13 @@ function initGraphemeData(completion) {
 	}, completion);
 }
 
-function graphemeBreakValueForCodepoint(codepoint) {
+function graphemeBreakValueForCodepoint(codepoint: number): string {
 	if (global_graphemeBreakData[codepoint])
 		return global_graphemeBreakData[codepoint];
 	return 'Other';
 }
 
-function countGraphemesForCodepoints(codepoints, useExtended) {
+function countGraphemesForCodepoints(codepoints: number[], useExtended: boolean) {
 	if (codepoints.length === 0)
 		return 0;
 

@@ -6,57 +6,55 @@ global_encodings = [];
 //     decode: function(codeUnits/str)
 // }
 
-function escapeHtml(string) {
+function escapeHtml(string: string): string {
 	return he.encode(string);
 }
 
-function displayCodepoint(codepoint) {
+function displayCodepoint(codepoint?: number): string {
 	if (typeof codepoint == 'undefined')
 		return;
 	if (codepoint < 0x20)
 		codepoint += 0x2400;
 	if (codepoint == 0x7F)
 		codepoint = 0x2421;
-	codepoints = [codepoint];
+	var codepoints = [codepoint];
 	if (graphemeBreakValueForCodepoint(codepoint) == 'Extend')
 		codepoints = [0x25CC, codepoint];
 	return escapeHtml(ctos(codepoints));
 }
 
-function ctos(codepoints) {
+function ctos(codepoints: (number | string)[]): string {
 	return punycode.ucs2.encode(codepoints);
 }
 
-function stoc(string) {
+function stoc(string: string): number[] {
 	return punycode.ucs2.decode(string);
 }
 
-function ctou8(codepoints) {
+function ctou8(codepoints: number[]): number[] {
 	var u8str = utf8.encode(ctos(codepoints));
-	var res = [];
+	var res: number[] = [];
 	for (var i = 0; i < u8str.length; ++i)
 		res.push(u8str.charCodeAt(i));
 	return res;
 }
 
-function u8toc(bytes) {
+function u8toc(bytes: number[]): number[] {
 	var u8str = '';
 	for (var i = 0; i < bytes.length; ++i)
 		u8str += String.fromCharCode(bytes[i]);
 	return stoc(utf8.decode(u8str));
 }
 
-function itos(int, base, padding) {
+function itos(int: number, base: number, padding: number = 0) {
 	var res = int.toString(base).toUpperCase();
-	if (padding) {
-		while (res.length < padding) {
-			res = '0' + res;
-		}
+	while (res.length < padding) {
+		res = '0' + res;
 	}
 	return res;
 }
 
-function initializeMappings(completion) {
+function initializeMappings(completion: () => void) {
 	requestAsync('data/encodings.txt', function() {
 		totalCount = 0;
 		count = 0;
@@ -91,7 +89,7 @@ function initializeMappings(completion) {
 	});
 }
 
-function loadEncodingFromURL(type, name, url, completion) {
+function loadEncodingFromURL(type, name: string, url: string, completion: () => void) {
 	var encoding = {};
 	encoding.type = type;
 	requestAsync(url, function(lines) {
@@ -99,8 +97,8 @@ function loadEncodingFromURL(type, name, url, completion) {
 			encoding = eval(lines.join('\n'));
 		} else {
 			encoding.encode = function(codepoints) {
-				var bytes = [];
-				for (var i = 0; i < codepoints.length; ++i) {
+				var bytes: number[] = [];
+				for (let i = 0; i < codepoints.length; ++i) {
 					var codepoint = parseInt(codepoints[i]);
 					var number = encoding.table[codepoint];
 					if (typeof number == 'undefined') {
@@ -283,7 +281,7 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 	return escapeHtml(joinBytes(joiner, chars));
 }
 
-function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
+function decodeOutput(byteOrderMark, encoding, format, joiner, str: string) {
 	if (str === '')
 		return;
 	if (encoding.includes('Punycode') && encoding.includes('Text')) {

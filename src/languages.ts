@@ -1,9 +1,8 @@
-function initLanguageData(completion) {
-	var parseLanguageData = function(lines) {
+function initLanguageData(completion: () => void) {
+	var parseLanguageData = function(lines: string[]) {
 		var languageTags = [];
 		var entries = lines.join('\n').split('\n%%\n');
-		var i;
-		for (i = 0; i < entries.length; ++i) {
+		for (let i = 0; i < entries.length; ++i) {
 			var fieldsStrings = entries[i].split('\n');
 			var fields = {};
 			for (var j = 0; j < fieldsStrings.length; ++j) {
@@ -36,7 +35,7 @@ function initLanguageData(completion) {
 			return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
 		});
 		var htmls = {};
-		for (i = 0; i < languageTags.length; ++i) {
+		for (let i = 0; i < languageTags.length; ++i) {
 			if (!htmls[languageTags[i].type])
 				htmls[languageTags[i].type] = '<option data-code="">None / Default</option>';
 			htmls[languageTags[i].type] += '<option data-code="' + languageTags[i].code + '">' + languageTags[i].name + ' (' + languageTags[i].code + ')</option>';

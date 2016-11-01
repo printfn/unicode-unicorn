@@ -10,7 +10,7 @@ function loadUnicodeData(completion: () => void) {
 	});
 }
 
-function requestAsync(url: string, before: (lines: string[]) => void, each: (line: string) => void, after: () => void) {
+function requestAsync(url: string, before?: (lines: string[]) => void, each?: (line: string) => void, after?: () => void) {
 	DataZip.file(url).async('string').then(function(str: string) {
 		var lines = str.split('\n');
 		if (before)

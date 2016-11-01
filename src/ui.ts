@@ -194,3 +194,10 @@ function showCodepageDetail(codepoint) {
 	$('#detail-encoding-outputs').html(encodingsString);
 	$('#codepoint-detail').modal('show');
 }
+
+function initLicenseInfo(completion: () => void) {
+	requestAsync('data/licenses.html', function(lines) {
+		$('#licenses-text').html(lines.join('\n'));
+		completion();
+	});
+}

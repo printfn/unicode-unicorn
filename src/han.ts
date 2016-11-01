@@ -3,7 +3,7 @@ global_mandarin_readings = [];
 global_kun_readings = [];
 global_on_readings = [];
 
-function initHanData(completion) {
+function initHanData(completion: () => void) {
 	requestAsync('data/Unicode/Unihan/Unihan_Readings.txt', null, function(line) {
 		var fields = line.split('\t');
 		var codepoint = parseInt('0x' + fields[0].substring(2));
