@@ -90,11 +90,7 @@
 					<br>
 					Codepoints: <span id="numCodepoints">0</span>
 					<br>
-					UTF-16 code units: <span id="numUtf16CodeUnits">0</span>
-					<br>
-					UTF-16 bytes: <span id="numUtf16Bytes">0</span>
-					<br>
-					UTF-8 code units/bytes: <span id="numUtf8CodeUnits">0</span>
+					<table id="encodingLengths" class="table table-striped"></table>
 				</p>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="codepoints">
@@ -427,9 +423,22 @@ mandarin:shuǐ</pre>
 			$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
 			$('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
 			$('#numCodepoints').text(codepoints.length);
-			$('#numUtf16CodeUnits').text(input.length);
-			$('#numUtf16Bytes').text(input.length * 2);
-			$('#numUtf8CodeUnits').text(ctou8(codepoints).length);
+			var encodingLengthsStr = '<thead><tr><th>Encoding</th><th>Number of code units</th><th>Number of bytes</th></tr></thead><tbody>';
+			for (var name in global_encodings) {
+				var encoding = global_encodings[name];
+				var codeUnits = encoding.encode(codepoints);
+				if (typeof codeUnits === 'number') {
+					var codeUnitsCount = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
+					var bytesCount = codeUnitsCount;
+				} else {
+					var codeUnitsCount = codeUnits.length + ' code units';
+					var bytesCount = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+				}
+				encodingLengthsStr += '<tr>';
+				encodingLengthsStr += '<td>' + name + '</td><td>' + codeUnitsCount + '</td><td>' + bytesCount + '</td>';
+				encodingLengthsStr += '</tr>';
+			}
+			$('#encodingLengths').html(encodingLengthsStr + '</tbody>');
 			$('#string').html(escapeHtml(getStr()).replace(/\n/g, '<br>'));
 
 			renderCodepointsInTable(codepoints, 'codepointlist', [{
