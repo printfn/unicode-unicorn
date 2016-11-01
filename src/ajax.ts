@@ -1,6 +1,6 @@
-function loadUnicodeData(completion) {
+function loadUnicodeData(completion: () => void) {
 	DataZip = new JSZip();
-	JSZipUtils.getBinaryContent('data.zip', function(err, data) {
+	JSZipUtils.getBinaryContent('data.zip', function(err: Error, data: ArrayBuffer) {
 		if (err) {
 			throw err;
 		}
@@ -10,8 +10,8 @@ function loadUnicodeData(completion) {
 	});
 }
 
-function requestAsync(url, before, each, after) {
-	DataZip.file(url).async('string').then(function(str) {
+function requestAsync(url: string, before: (lines: string[]) => void, each: (line: string) => void, after: () => void) {
+	DataZip.file(url).async('string').then(function(str: string) {
 		var lines = str.split('\n');
 		if (before)
 			before(lines);
@@ -36,7 +36,7 @@ function deleteUnicodeData() {
 	DataZip = null;
 }
 
-function callMultipleAsync(functions, completion) {
+function callMultipleAsync(functions: ((callback: () => void) => void)[], completion: () => void) {
 	var count = 0;
 	var callback = function() {
 		++count;

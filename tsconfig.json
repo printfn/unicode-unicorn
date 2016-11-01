@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+    	/*"outFile":"./build/build.js",
+    	"module":"amd",*/
+    	"noImplicitAny":true,
+        "allowJs": true,
+        "target": "es5"
+        //strictNullChecks
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}

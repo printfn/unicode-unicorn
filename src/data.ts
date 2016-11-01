@@ -6,7 +6,7 @@ global_categoryRanges = [];
 global_aliases = [];
 global_generalCategoryNames = [];
 
-function getCharacterCategoryCode(codepoint) {
+function getCharacterCategoryCode(codepoint: number): string {
 	var categoryCode = global_category[codepoint];
 	if (!categoryCode) {
 		for (var i = 0; i < global_categoryRanges.length; ++i) {
@@ -20,17 +20,17 @@ function getCharacterCategoryCode(codepoint) {
 	return categoryCode;
 }
 
-function getCharacterCategoryName(codepoint) {
+function getCharacterCategoryName(codepoint: number): string {
 	var categoryCode = getCharacterCategoryCode(codepoint);
 	return global_generalCategoryNames[categoryCode] || 'Unknown';
 }
 
-function getCodepointDescription(codepoint, name) {
+function getCodepointDescription(codepoint: number, name: string): string {
 	codepoint = parseInt(codepoint);
 	return name + ' ' + ctos([codepoint]);
 }
 
-function initAliasData(completion) {
+function initAliasData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/NameAliases.txt', null, function(line) {
 		var splitLine = line.split(';');
 		var codepoint = parseInt('0x' + splitLine[0]);
@@ -49,9 +49,9 @@ function initAliasData(completion) {
 	});
 }
 
-function initGeneralCategoryNames(completion) {
+function initGeneralCategoryNames(completion: () => void) {
 	requestAsync('data/Unicode/UCD/PropertyValueAliases.txt', null, function(line) {
-		var splitLine = line.split('#');
+		var splitLine: string[] | string = line.split('#');
 		splitLine = splitLine[0];
 		splitLine = splitLine.split(';');
 		if (splitLine[0].trim() != 'gc')
@@ -62,7 +62,7 @@ function initGeneralCategoryNames(completion) {
 	}, completion);
 }
 
-function initUnicodeData(completion) {
+function initUnicodeData(completion: () => void) {
 	var startCodepoint = 0;
 	requestAsync('data/Unicode/UCD/UnicodeData.txt', null, function(line) {
 		var data_line = line.split(';');
@@ -99,7 +99,7 @@ function initUnicodeData(completion) {
 	}, completion);
 }
 
-function decompomposeHangulSyllable(codepoint) {
+function decompomposeHangulSyllable(codepoint: number): number[] {
 	var syllableType = getSyllableTypeForCodepoint(codepoint);
 	if (syllableType == 'Not_Applicable')
 		return [codepoint];
@@ -130,9 +130,8 @@ function decompomposeHangulSyllable(codepoint) {
 	}
 }
 
-function getName(codepoint, search) {
-	var d = global_data[codepoint];
-	var i;
+function getName(codepoint: number, search: boolean = false): string {
+	let d = global_data[codepoint];
 	if (d) {
 		if (d[0] != '<')
 			return d;
@@ -141,8 +140,8 @@ function getName(codepoint, search) {
 	}
 	if (0xAC00 <= codepoint && codepoint <= 0xD7AF) {
 		var decomposedSyllables = decompomposeHangulSyllable(codepoint);
-		var shortJamoNames = [];
-		for (i = 0; i < decomposedSyllables.length; ++i)
+		var shortJamoNames: string[] = [];
+		for (let i = 0; i < decomposedSyllables.length; ++i)
 			shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
 		return 'HANGUL SYLLABLE ' + shortJamoNames.join('');
 	}
@@ -152,7 +151,7 @@ function getName(codepoint, search) {
 			return 'CJK UNIFIED IDEOGRAPH';
 		return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
 	}
-	for (i = 0; i < global_ranges.length; ++i) {
+	for (let i = 0; i < global_ranges.length; ++i) {
 		var range = global_ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1]) {
 			if (range[2].startsWith('CJK Ideograph')) {
@@ -165,11 +164,11 @@ function getName(codepoint, search) {
 	return '';
 }
 
-function getHtmlNameDescription(codepoint) {
+function getHtmlNameDescription(codepoint: number): string {
 	if (getName(codepoint) !== '')
 		return getName(codepoint);
 	if (global_data[codepoint] == '<control>') {
-		var name = [];
+		var name: string[] = [];
 		for (var i = 0; i < global_aliases.length; ++i) {
 			if (global_aliases[i].codepoint == codepoint) {
 				if (global_aliases[i].type != 'control' && name.length > 0)
@@ -185,7 +184,7 @@ function getHtmlNameDescription(codepoint) {
 	return '<i>Unknown-' + itos(codepoint, 16, 4) + '</i>';
 }
 
-function getUnicodeDataTxtNameField(codepoint) {
+function getUnicodeDataTxtNameField(codepoint: number): string {
 	if (global_data[codepoint])
 		return global_data[codepoint];
 	for (var i = 0; i < global_ranges.length; ++i) {
