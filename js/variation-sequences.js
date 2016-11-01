@@ -9,7 +9,7 @@ function initVariationSequences(completion) {
 		codepoints[1] = parseInt(codepoints[1], 16);
 		var description = fields[1].trim();
 		var shapingEnvironments = fields[2].trim().split(' ');
-		if (shapingEnvironments.length == 1 && shapingEnvironments[0] == '')
+		if (shapingEnvironments.length == 1 && shapingEnvironments[0] === '')
 			shapingEnvironments = [];
 		global_variationSequences.push({
 			base: codepoints[0],

@@ -46,7 +46,7 @@ function initAliasData(completion) {
 		if (a.alias > b.alias)
 			return -1;
 		return 0;
-	})
+	});
 }
 
 function initGeneralCategoryNames(completion) {
@@ -132,6 +132,7 @@ function decompomposeHangulSyllable(codepoint) {
 
 function getName(codepoint, search) {
 	var d = global_data[codepoint];
+	var i;
 	if (d) {
 		if (d[0] != '<')
 			return d;
@@ -141,17 +142,17 @@ function getName(codepoint, search) {
 	if (0xAC00 <= codepoint && codepoint <= 0xD7AF) {
 		var decomposedSyllables = decompomposeHangulSyllable(codepoint);
 		var shortJamoNames = [];
-		for (var i = 0; i < decomposedSyllables.length; ++i)
+		for (i = 0; i < decomposedSyllables.length; ++i)
 			shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
 		return 'HANGUL SYLLABLE ' + shortJamoNames.join('');
 	}
-	if ((0x3400 <= codepoint && codepoint <= 0x4DBF)
-		|| (0x4E00 <= codepoint && codepoint <= 0x9FFF)) {
+	if ((0x3400 <= codepoint && codepoint <= 0x4DBF) ||
+		(0x4E00 <= codepoint && codepoint <= 0x9FFF)) {
 		if (search)
 			return 'CJK UNIFIED IDEOGRAPH';
 		return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
 	}
-	for (var i = 0; i < global_ranges.length; ++i) {
+	for (i = 0; i < global_ranges.length; ++i) {
 		var range = global_ranges[i];
 		if (codepoint >= range[0] && codepoint <= range[1]) {
 			if (range[2].startsWith('CJK Ideograph')) {
@@ -165,7 +166,7 @@ function getName(codepoint, search) {
 }
 
 function getHtmlNameDescription(codepoint) {
-	if (getName(codepoint) != '')
+	if (getName(codepoint) !== '')
 		return getName(codepoint);
 	if (global_data[codepoint] == '<control>') {
 		var name = [];
@@ -181,7 +182,7 @@ function getHtmlNameDescription(codepoint) {
 		if (name.length > 0)
 			return '<i>' + name.join(' / ') + '</i>';
 	}
-	return '<i>Unknown-' + itos(codepoint, 16, 4) + '</i>'
+	return '<i>Unknown-' + itos(codepoint, 16, 4) + '</i>';
 }
 
 function getUnicodeDataTxtNameField(codepoint) {

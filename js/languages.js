@@ -2,7 +2,8 @@ function initLanguageData(completion) {
 	var parseLanguageData = function(lines) {
 		var languageTags = [];
 		var entries = lines.join('\n').split('\n%%\n');
-		for (var i = 0; i < entries.length; ++i) {
+		var i;
+		for (i = 0; i < entries.length; ++i) {
 			var fieldsStrings = entries[i].split('\n');
 			var fields = {};
 			for (var j = 0; j < fieldsStrings.length; ++j) {
@@ -35,7 +36,7 @@ function initLanguageData(completion) {
 			return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
 		});
 		var htmls = {};
-		for (var i = 0; i < languageTags.length; ++i) {
+		for (i = 0; i < languageTags.length; ++i) {
 			if (!htmls[languageTags[i].type])
 				htmls[languageTags[i].type] = '<option data-code="">None / Default</option>';
 			htmls[languageTags[i].type] += '<option data-code="' + languageTags[i].code + '">' + languageTags[i].name + ' (' + languageTags[i].code + ')</option>';
@@ -47,9 +48,9 @@ function initLanguageData(completion) {
 		$('#showRareLanguages').on('click', function() {
 			$('#showRareLanguages').attr('disabled', 'disabled');
 			parseLanguageData(global_languageData);
-		})
+		});
 		completion();
-	}
+	};
 	requestAsync('data/language-subtag-registry', function(lines) {
 		global_languageData = lines;
 		parseLanguageData(lines);

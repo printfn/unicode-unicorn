@@ -18,7 +18,7 @@ function requestAsync(url, before, each, after) {
 		if (each) {
 			for (var i = 0; i < lines.length; ++i) {
 				var line = lines[i];
-				if (line.length == 0 || line[0] == '#')
+				if (line.length === 0 || line[0] == '#')
 					continue;
 				if (line.indexOf('#') != -1) {
 					line = line.substring(0, line.indexOf('#'));
@@ -43,7 +43,7 @@ function callMultipleAsync(functions, completion) {
 		if (count == functions.length) {
 			completion();
 		}
-	}
+	};
 	for (var i = 0; i < functions.length; ++i) {
 		functions[i](callback);
 	}

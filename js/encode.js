@@ -72,12 +72,12 @@ function initializeMappings(completion) {
 				++count;
 				if (count == totalCount) {
 					$.each(global_encodingNames, function(i, encodingName) {
-						if (global_encodings[encodingName].type == '7-bit mapping'
-							|| global_encodings[encodingName].type == '8-bit mapping') {
+						if (global_encodings[encodingName].type == '7-bit mapping' ||
+							global_encodings[encodingName].type == '8-bit mapping') {
 							$('#codepageEncoding')
-								.append($('<option' 
-									+ (encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') 
-									+ '></option>')
+								.append($('<option' +
+									(encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') +
+									'></option>')
 								.text(encodingName));
 						}
 						$('#outputEncoding')
@@ -149,7 +149,7 @@ function loadEncodingFromURL(type, name, url, completion) {
 			if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
 				return;
 			var components = line.split('\t');
-			if (components[1].trim() == '')
+			if (components[1].trim() === '')
 				return;
 			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
 				throw new Error('Invalid line detected in ' + url);
@@ -173,7 +173,8 @@ function codeUnitsToCodepoints(encoding, codeUnits) {
 
 function bytesToText(format, bytes, hexadecimalPadding) {
 	var chars = [];
-	for (var i = 0; i < bytes.length; ++i) {
+	var i;
+	for (i = 0; i < bytes.length; ++i) {
 		var b = bytes[i];
 		var str = '';
 		if (format.includes('Binary')) {
@@ -193,7 +194,7 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 	}
 	if (format.includes('Prefixed with ')) {
 		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-		for (var i = 0; i < chars.length; ++i) {
+		for (i = 0; i < chars.length; ++i) {
 			chars[i] = prefix + chars[i];
 		}
 	}
@@ -201,14 +202,15 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 }
 
 function textToBytes(format, strings) {
+	var i;
 	if (format.includes('Prefixed with ')) {
 		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-		for (var i = 0; i < strings.length; ++i) {
+		for (i = 0; i < strings.length; ++i) {
 			strings[i] = strings[i].substring(prefix.length);
 		}
 	}
 	var bytes = [];
-	for (var i = 0; i < strings.length; ++i) {
+	for (i = 0; i < strings.length; ++i) {
 		var str = strings[i];
 		if (format.includes('Binary')) {
 			bytes.push(parseInt(str, 2));
@@ -268,11 +270,11 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 	if (typeof bytes == 'number') {
 		// input contains codepoints incompatible with the selected encoding
 		var invalidCodepoint = bytes;
-		return '<span style="color: red">Text cannot be encoded in '
-		    + encoding
-		    + ' because it contains incompatible characters.\nThe first such incompatible character is U+'
-		    + itos(invalidCodepoint, 16, 4).toUpperCase()
-		    + ' - ' + getHtmlNameDescription(invalidCodepoint) + ' (' + displayCodepoint(invalidCodepoint) + ').</span>';
+		return '<span style="color: red">Text cannot be encoded in ' + encoding +
+			' because it contains incompatible characters.\nThe first such incompatible character is U+' +
+			itos(invalidCodepoint, 16, 4) +
+			' - ' + getHtmlNameDescription(invalidCodepoint) +
+			' (' + displayCodepoint(invalidCodepoint) + ').</span>';
 	} else if (typeof bytes == 'string') {
 		var outputString = bytes;
 		return escapeHtml(outputString);
@@ -282,7 +284,7 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 }
 
 function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
-	if (str == '')
+	if (str === '')
 		return;
 	if (encoding.includes('Punycode') && encoding.includes('Text')) {
 		return stoc(punycode.decode(str));

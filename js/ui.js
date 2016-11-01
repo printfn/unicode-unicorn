@@ -8,13 +8,13 @@ global_colorMap = {};
 // }, where each function name refers to a function taking a codepoint and an index into `codepoints`
 function renderCodepointsInTable(codepoints, tableId, buttons) {
 	var table = $('#' + tableId);
-	if (codepoints.length == 0) {
+	if (codepoints.length === 0) {
 		table.html('');
 		return;
 	}
-	var html = ('<thead>'
-	    + '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Character</th><th>Category</th><th>Name</th></tr>'
-	    + '</thead><tbody>');
+	var html = ('<thead>' +
+		'<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Character</th><th>Category</th><th>Name</th></tr>' +
+		'</thead><tbody>');
 	for (var i = 0; i < codepoints.length; ++i) {
 		var codepoint = codepoints[i];
 		var buttonStr = '';
@@ -26,18 +26,18 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 					disabled = 'disabled ';
 				}
 			}
-			buttonStr += '<input type="button" ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')" value="'
-			    + buttonDescription.displayName 
-			    + '">';
+			buttonStr += '<input type="button" ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')" value="' +
+			buttonDescription.displayName +
+			'">';
 		}
-		html += '<tr>'
-		    + '<td>' + buttonStr + '</td>'
-		    + '<td>U+' + itos(codepoint, 16, 4) + '</td>'
-		    + '<td>' + codepoint + '</td>'
-		    + '<td>' + displayCodepoint(codepoint) + '</td>'
-		    + '<td>' + getCharacterCategoryName(codepoint) + '</td>'
-		    + '<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>'
-		    + '</tr>';
+		html += '<tr>' +
+			'<td>' + buttonStr + '</td>' +
+			'<td>U+' + itos(codepoint, 16, 4) + '</td>' +
+			'<td>' + codepoint + '</td>' +
+			'<td>' + displayCodepoint(codepoint) + '</td>' +
+			'<td>' + getCharacterCategoryName(codepoint) + '</td>' +
+			'<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>' +
+			'</tr>';
 	}
 	if (i >= 256) {
 		html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
@@ -63,10 +63,11 @@ function updateRenderedCodepage() {
 	var encoding = global_encodings[encodingName];
 	var isAscii = encoding.type == '7-bit mapping';
 	var html = '<thead><th></th>';
-	for (var i = 0; i < 16; ++i)
+	var i;
+	for (i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
 	html += '</thead><tbody>';
-	for (var i = 0; i < (isAscii ? 8 : 16); ++i) {
+	for (i = 0; i < (isAscii ? 8 : 16); ++i) {
 		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
@@ -75,12 +76,12 @@ function updateRenderedCodepage() {
 				var codepoint = codepoints[0];
 				var color = randomColorForKey(getCharacterCategoryName(codepoint));
 				var displayedCodepoint = displayCodepoint(codepoint);
-				html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' 
-					+ i.toString(16).toUpperCase()
-					+ j.toString(16).toUpperCase()
-					+ '<br>'
-					+ displayedCodepoint
-					+ '</td>';
+				html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' +
+					i.toString(16).toUpperCase() +
+					j.toString(16).toUpperCase() +
+					'<br>' +
+					displayedCodepoint +
+					'</td>';
 			} else {
 				html += '<td style="background-color: white">' + i.toString(16).toUpperCase() + j.toString(16).toUpperCase() + '<br>&nbsp;</td>';
 			}
@@ -102,11 +103,12 @@ function showCodepageDetail(codepoint) {
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
 	var matchingAliases = [];
-	for (var i = 0; i < global_aliases.length; ++i) {
+	var i;
+	for (i = 0; i < global_aliases.length; ++i) {
 		if (global_aliases[i].codepoint == codepoint)
 			matchingAliases.push(global_aliases[i].alias);
 	}
-	if (matchingAliases.length == 0) {
+	if (matchingAliases.length === 0) {
 		$('#detail-aliases').hide();
 	} else {
 		$('#detail-aliases').show();
@@ -142,28 +144,29 @@ function showCodepageDetail(codepoint) {
 	}
 	var variationSequences = variationSequencesForCodepoint(codepoint);
 	var ideographicVariationSequences = ideographicVariationSequencesForCodepoint(codepoint);
-	if (variationSequences.length == 0 && ideographicVariationSequences.length == 0) {
+	if (variationSequences.length === 0 && ideographicVariationSequences.length === 0) {
 		$('#detail-variation-sequences').hide();
 	} else {
 		$('#detail-variation-sequences').show();
 		var variationsString = '';
-		for (var i = 0; i < variationSequences.length; ++i) {
-			var vs = variationSequences[i];
-			if (variationsString != '')
+		var vs;
+		for (i = 0; i < variationSequences.length; ++i) {
+			vs = variationSequences[i];
+			if (variationsString !== '')
 				variationsString += '<br>';
 			variationsString +=
 				'U+' + itos(vs.base, 16, 4) +
 				' U+' + itos(vs.variationSelector, 16, 4) +
-				': ' + escapeHtml(ctos([vs.base, vs.variationSelector]))
-				+ ' <i>' + vs.description;
+				': ' + escapeHtml(ctos([vs.base, vs.variationSelector])) +
+				' <i>' + vs.description;
 			if (vs.shapingEnvironments.length > 0)
 				variationsString += ' (' + vs.shapingEnvironments.join(', ') + ')</i>';
 			else
 				variationsString += '</i>';
 		}
-		for (var i = 0; i < ideographicVariationSequences.length; ++i) {
-			var vs = ideographicVariationSequences[i];
-			if (variationsString != '')
+		for (i = 0; i < ideographicVariationSequences.length; ++i) {
+			vs = ideographicVariationSequences[i];
+			if (variationsString !== '')
 				variationsString += '<br>';
 			variationsString +=
 				'U+' + itos(vs.base, 16, 4) +
