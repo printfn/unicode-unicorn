@@ -33,7 +33,7 @@ function requestAsync(url, before, each, after) {
 }
 
 function deleteUnicodeData() {
-	delete DataZip;
+	DataZip = null;
 }
 
 function callMultipleAsync(functions, completion) {
