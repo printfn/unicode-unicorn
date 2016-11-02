@@ -1,0 +1,6 @@
+build/* linguist-vendored
+libs/* linguist-vendored
+data/Unicode/* linguist-vendored
+complete_data/* linguist-vendored
+licenses.html linguist-vendored
+
