@@ -353,10 +353,10 @@ $(document).ready(function() {
 		var loadDuration = <any> new Date() - <any> startTime; // in ms
 		updateInfo();
 		updateSuggestions();
-		$('#input').on('keyup', function(e) {
+		$('#input').on('input', function(e) {
 			if (e.keyCode == 13) {
 				var input = $('#input').val();
-				if (isNaN(parseInt(input.replace('U+', '0x')))) {
+				if (isNaN(parseInt(input.replace('U+', ''), 16))) {
 					document.body.style.backgroundColor = '#fdd';
 					setTimeout(function() {
 						document.body.style.backgroundColor = '#fff';
@@ -369,14 +369,13 @@ $(document).ready(function() {
 			}
 			updateSuggestions();
 		});
-		$('#output').on('keyup', function() {
+		$('#output').on('input', function() {
 			updateInfo();
 		});
 		$('select').change(function() {
 			updateInfo();
 		});
 		setInterval(function() {
-			updateInfo();
 			updateSpacerHeights();
 		}, 1000);
 		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
