@@ -60,7 +60,6 @@ function callMultipleAsync(functions, completion) {
     var count = 0;
     var callback = function () {
         ++count;
-        $('#jsLoadingProgressBar').val(count / functions.length);
         if (count == functions.length) {
             completion();
         }
