@@ -1,9 +1,32 @@
 declare var JSZipUtils: { getBinaryContent(url: string, callback: (err: Error, data: ArrayBuffer) => void): void; };
-var DataZip: JSZip = null;
+var DataZip = new JSZip();
+
+function loadBinaryData(url: string, progress: (progress: number) => void, completion: (err: Error, data: ArrayBuffer) => void) {
+	var req = new XMLHttpRequest();
+	req.open('GET', url, true);
+	req.responseType = 'arraybuffer';
+
+	req.onload = function () {
+		var arrayBuffer = req.response;
+		if (arrayBuffer) {
+			completion(null, arrayBuffer);
+		} else {
+			JSZipUtils.getBinaryContent(url, completion);
+		}
+	};
+	req.onprogress = function (event) {
+		if (!event.lengthComputable) {
+			return;
+		}
+		progress(event.loaded / event.total);
+	};
+	req.send(null);
+}
 
 function loadUnicodeData(completion: () => void) {
-	DataZip = new JSZip();
-	JSZipUtils.getBinaryContent('data.zip', function(err: Error, data: ArrayBuffer) {
+	loadBinaryData('data.zip', (progress) => {
+		$('#ajaxLoadingProgressBar').val(progress);
+	}, (err, data) => {
 		if (err) {
 			throw err;
 		}
@@ -43,6 +66,7 @@ function callMultipleAsync(functions: ((callback: () => void) => void)[], comple
 	var count = 0;
 	var callback = function() {
 		++count;
+		$('#jsLoadingProgressBar').val(count / functions.length);
 		if (count == functions.length) {
 			completion();
 		}

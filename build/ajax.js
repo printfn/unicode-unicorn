@@ -1,7 +1,29 @@
-var DataZip = null;
+var DataZip = new JSZip();
+function loadBinaryData(url, progress, completion) {
+    var req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.responseType = 'arraybuffer';
+    req.onload = function () {
+        var arrayBuffer = req.response;
+        if (arrayBuffer) {
+            completion(null, arrayBuffer);
+        }
+        else {
+            JSZipUtils.getBinaryContent(url, completion);
+        }
+    };
+    req.onprogress = function (event) {
+        if (!event.lengthComputable) {
+            return;
+        }
+        progress(event.loaded / event.total);
+    };
+    req.send(null);
+}
 function loadUnicodeData(completion) {
-    DataZip = new JSZip();
-    JSZipUtils.getBinaryContent('data.zip', function (err, data) {
+    loadBinaryData('data.zip', function (progress) {
+        $('#ajaxLoadingProgressBar').val(progress);
+    }, function (err, data) {
         if (err) {
             throw err;
         }
@@ -38,6 +60,7 @@ function callMultipleAsync(functions, completion) {
     var count = 0;
     var callback = function () {
         ++count;
+        $('#jsLoadingProgressBar').val(count / functions.length);
         if (count == functions.length) {
             completion();
         }
