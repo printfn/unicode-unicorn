@@ -2,16 +2,16 @@ function jQueryModal(sel, operation) {
     $(sel).modal(operation);
 }
 var global_useInternalString = false;
-var global_internalString = '';
+var global_internalString = [];
 function getStr() {
-    return global_useInternalString ? global_internalString : $('#output').val();
+    return global_useInternalString ? global_internalString : stoc($('#output').val());
 }
 function setStr(str) {
     global_internalString = str;
-    $('#output').val(str);
+    $('#output').val(ctos(str));
 }
 function output(codepoint) {
-    setStr(getStr() + ctos([codepoint]));
+    setStr(getStr().concat([codepoint]));
     updateInfo();
 }
 function updateSuggestions() {
@@ -24,12 +24,12 @@ function normalizeString(form) {
         alert('Your browser currently does not support string normalization.');
         return;
     }
-    setStr(getStr().normalize(form));
+    setStr(stoc(ctos(getStr()).normalize(form)));
     updateInfo();
 }
 function uiState() {
     return $('#output').val()
-        + global_internalString
+        + ctos(global_internalString)
         + $('#encodedInput').val()
         + $('#languageCode').val()
         + $('#useInternalString').is(':checked')
@@ -53,8 +53,7 @@ function updateInfo() {
 function actualUpdateInfo() {
     global_useInternalString = $('#useInternalString').is(':checked');
     setStr(getStr());
-    var input = getStr();
-    var codepoints = stoc(input);
+    var codepoints = getStr();
     if ($('#mojibake').hasClass('active')) {
         var mojibakeOutputs = [];
         $('#outputEncoding option').each(function (i, e) {
@@ -136,7 +135,7 @@ function actualUpdateInfo() {
         encodingLengthsStr += '</tr>';
     }
     $('#encodingLengths').html(encodingLengthsStr + '</tbody>');
-    $('#string').html(escapeHtml(getStr()).replace(/\n/g, '<br>'));
+    $('#string').html(escapeHtml(ctos(getStr())).replace(/\n/g, '<br>'));
     renderCodepointsInTable(codepoints, 'codepointlist', [{
             displayName: 'Delete',
             functionName: 'deleteAtIndex'
@@ -221,31 +220,25 @@ function actualUpdateInfo() {
     $('html').attr('xml:lang', lang);
 }
 function deleteAtIndex(codepoint, index) {
-    var input = getStr();
-    var codepoints = stoc(input);
+    var codepoints = getStr();
     codepoints.splice(index, 1);
-    var output = ctos(codepoints);
-    setStr(output);
+    setStr(codepoints);
     updateInfo();
 }
 function moveUp(codepoint, index) {
-    var input = getStr();
-    var codepoints = stoc(input);
+    var codepoints = getStr();
     var c = codepoints[index];
     codepoints[index] = codepoints[index - 1];
     codepoints[index - 1] = c;
-    var output = ctos(codepoints);
-    setStr(output);
+    setStr(codepoints);
     updateInfo();
 }
 function moveDown(codepoint, index) {
-    var input = getStr();
-    var codepoints = stoc(input);
+    var codepoints = getStr();
     var c = codepoints[index];
     codepoints[index] = codepoints[index + 1];
     codepoints[index + 1] = c;
-    var output = ctos(codepoints);
-    setStr(output);
+    setStr(codepoints);
     updateInfo();
 }
 function initData(completion) {
@@ -296,7 +289,7 @@ $(document).ready(function () {
             for (var i = 0; i < args.length; ++i) {
                 var arg = args[i].split('=');
                 if (arg[0] == 'c') {
-                    setStr(ctos(arg[1].split(',')));
+                    setStr(arg[1].split(',').map(function (str) { return parseInt(str); }));
                 }
                 else if (arg[0] == 'info') {
                     showCodepageDetail(parseInt(arg[1]));

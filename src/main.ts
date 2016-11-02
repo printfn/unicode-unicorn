@@ -6,19 +6,19 @@ function jQueryModal(sel: string, operation: string) {
 }
 
 var global_useInternalString = false;
-var global_internalString = '';
+var global_internalString: number[] = [];
 
-function getStr(): string {
-	return global_useInternalString ? global_internalString : $('#output').val();
+function getStr() {
+	return global_useInternalString ? global_internalString : stoc($('#output').val());
 }
 
-function setStr(str: string) {
+function setStr(str: number[]) {
 	global_internalString = str;
-	$('#output').val(str);
+	$('#output').val(ctos(str));
 }
 
 function output(codepoint: number) {
-	setStr(getStr() + ctos([codepoint]));
+	setStr(getStr().concat([codepoint]));
 	updateInfo();
 }
 
@@ -38,13 +38,13 @@ function normalizeString(form: string) {
 		return;
 	}
 
-	setStr(getStr().normalize(form));
+	setStr(stoc(ctos(getStr()).normalize(form)));
 	updateInfo();
 }
 
 function uiState() {
 	return $('#output').val()
-		+ global_internalString
+		+ ctos(global_internalString)
 		+ $('#encodedInput').val()
 		+ $('#languageCode').val()
 		+ $('#useInternalString').is(':checked')
@@ -70,8 +70,7 @@ function actualUpdateInfo() {
 	global_useInternalString = $('#useInternalString').is(':checked');
 	setStr(getStr());
 
-	var input = getStr();
-	var codepoints = stoc(input);
+	var codepoints = getStr();
 
 	if ($('#mojibake').hasClass('active')) {
 		var mojibakeOutputs: { encoding1Name: string, encoding2Name: string, text: string }[] = [];
@@ -165,7 +164,7 @@ function actualUpdateInfo() {
 		encodingLengthsStr += '</tr>';
 	}
 	$('#encodingLengths').html(encodingLengthsStr + '</tbody>');
-	$('#string').html(escapeHtml(getStr()).replace(/\n/g, '<br>'));
+	$('#string').html(escapeHtml(ctos(getStr())).replace(/\n/g, '<br>'));
 
 	renderCodepointsInTable(codepoints, 'codepointlist', [{
 		displayName: 'Delete',
@@ -270,33 +269,27 @@ function actualUpdateInfo() {
 }
 
 function deleteAtIndex(codepoint: number, index: number) {
-	var input = getStr();
-	var codepoints = stoc(input);
+	var codepoints = getStr();
 	codepoints.splice(index, 1);
-	var output = ctos(codepoints);
-	setStr(output);
+	setStr(codepoints);
 	updateInfo();
 }
 
 function moveUp(codepoint: number, index: number) {
-	var input = getStr();
-	var codepoints = stoc(input);
+	var codepoints = getStr();
 	var c = codepoints[index];
 	codepoints[index] = codepoints[index-1];
 	codepoints[index-1] = c;
-	var output = ctos(codepoints);
-	setStr(output);
+	setStr(codepoints);
 	updateInfo();
 }
 
 function moveDown(codepoint: number, index: number) {
-	var input = getStr();
-	var codepoints = stoc(input);
+	var codepoints = getStr();
 	var c = codepoints[index];
 	codepoints[index] = codepoints[index+1];
 	codepoints[index+1] = c;
-	var output = ctos(codepoints);
-	setStr(output);
+	setStr(codepoints);
 	updateInfo();
 }
 
@@ -350,7 +343,7 @@ $(document).ready(function() {
 			for (var i = 0; i < args.length; ++i) {
 				var arg = args[i].split('=');
 				if (arg[0] == 'c') {
-					setStr(ctos(arg[1].split(',')));
+					setStr(arg[1].split(',').map((str) => parseInt(str)));
 				} else if (arg[0] == 'info') {
 					showCodepageDetail(parseInt(arg[1]));
 				}
