@@ -1,9 +1,9 @@
-function assert(expr, message) {
+function assert(expr: boolean, message: string) {
 	if (!expr)
 		throw message;
 }
 
-function assertEqual(actual, expected, otherInfo) {
+function assertEqual(actual: any, expected: any, otherInfo?: string) {
 	if (actual != expected)
 		throw 'Expected ' + actual + ' to be equal to ' + expected + ': ' + otherInfo;
 }
@@ -42,10 +42,10 @@ function runTests() {
 			test();
 		} catch (e) {
 			$('#unit-tests-text').text('Test #' + (i + 1) + ' failed: ' + e);
-			$('#unit-tests-modal').modal('show');
+			jQueryModal('#unit-tests-modal', 'show');
 			return;
 		}
 	}
 	$('#unit-tests-text').text('All ' + tests.length + ' tests passed.');
-	$('#unit-tests-modal').modal('show');
+	jQueryModal('#unit-tests-modal', 'show');
 }

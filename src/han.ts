@@ -1,7 +1,7 @@
-global_han_meanings = [];
-global_mandarin_readings = [];
-global_kun_readings = [];
-global_on_readings = [];
+var global_han_meanings: { [codepoint: number]: string; } = [];
+var global_mandarin_readings: { [codepoint: number]: string; } = [];
+var global_kun_readings: { [codepoint: number]: string; } = [];
+var global_on_readings: { [codepoint: number]: string; } = [];
 
 function initHanData(completion: () => void) {
 	requestAsync('data/Unicode/Unihan/Unihan_Readings.txt', null, function(line) {

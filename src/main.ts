@@ -1,20 +1,40 @@
-global_useInternalString = false;
-global_internalString = '';
-function getStr() {
+interface ModalJQuery {
+	modal(operation: string): void;
+}
+function jQueryModal(sel: string, operation: string) {
+	(<ModalJQuery> <any> $(sel)).modal(operation);
+}
+
+var global_useInternalString = false;
+var global_internalString = '';
+
+function stringSplice(str: string, index: number, count: number, add?: string) {
+	// We cannot pass negative indexes dirrectly to the 2nd slicing operation.
+	if (index < 0) {
+		index = str.length + index;
+		if (index < 0) {
+			index = 0;
+		}
+	}
+
+	return str.slice(0, index) + (add || '') + str.slice(index + count);
+}
+
+function getStr(): string {
 	return global_useInternalString ? global_internalString : $('#output').val();
 }
 
-function setStr(str) {
+function setStr(str: string) {
 	for (var i = 0; i < str.length; ++i) {
 		if (str.charCodeAt(i) < 0 || str.charCodeAt(i) > 0x10FFFF) {
-			str.splice(i, 1); // remove element at i
+			str = stringSplice(str, i, 1); // remove element at i
 		}
 	}
 	global_internalString = str;
 	$('#output').val(str);
 }
 
-function output(codepoint) {
+function output(codepoint: number) {
 	setStr(getStr() + ctos([codepoint]));
 	updateInfo();
 }
@@ -29,7 +49,7 @@ function updateSuggestions() {
 	);
 }
 
-function normalizeString(form) {
+function normalizeString(form: string) {
 	if (!String.prototype.normalize) {
 		alert('Your browser currently does not support string normalization.');
 		return;
@@ -56,7 +76,7 @@ function uiState() {
 		+ $('#variantList option:selected').text();
 }
 
-global_prevUIState = '';
+var global_prevUIState = '';
 function updateInfo() {
 	if (uiState() == global_prevUIState)
 		return;
@@ -71,7 +91,7 @@ function actualUpdateInfo() {
 	var codepoints = stoc(input);
 
 	if ($('#mojibake').hasClass('active')) {
-		var mojibakeOutputs = [];
+		var mojibakeOutputs: { encoding1Name: string, encoding2Name: string, text: string }[] = [];
 		$('#outputEncoding option').each(function(i, e) {
 			var encoding1Name = $(e).text();
 			if (global_encodings[encoding1Name].type == 'text function')
@@ -247,7 +267,7 @@ function actualUpdateInfo() {
 	$('html').attr('xml:lang', lang);
 }
 
-function deleteAtIndex(codepoint, index) {
+function deleteAtIndex(codepoint: number, index: number) {
 	var input = getStr();
 	var codepoints = stoc(input);
 	codepoints.splice(index, 1);
@@ -256,7 +276,7 @@ function deleteAtIndex(codepoint, index) {
 	updateInfo();
 }
 
-function moveUp(codepoint, index) {
+function moveUp(codepoint: number, index: number) {
 	var input = getStr();
 	var codepoints = stoc(input);
 	var c = codepoints[index];
@@ -267,7 +287,7 @@ function moveUp(codepoint, index) {
 	updateInfo();
 }
 
-function moveDown(codepoint, index) {
+function moveDown(codepoint: number, index: number) {
 	var input = getStr();
 	var codepoints = stoc(input);
 	var c = codepoints[index];
@@ -314,7 +334,7 @@ function updateSpacerHeights() {
 }
 
 var loaded = false;
-$('#loadingModal').modal('show');
+jQueryModal('#loadingModal', 'show');
 $(document).ready(function() {
 	if (loaded)
 		return;
@@ -334,8 +354,8 @@ $(document).ready(function() {
 				}
 			}
 		};
-		window.onpopstate();
-		var loadDuration = new Date() - startTime; // in ms
+		window.onpopstate(null);
+		var loadDuration = <any> new Date() - <any> startTime; // in ms
 		updateInfo();
 		updateSuggestions();
 		$('#input').on('keyup', function(e) {
@@ -368,7 +388,7 @@ $(document).ready(function() {
 			updateSpacerHeights();
 			actualUpdateInfo();
 		});
-		$('#loadingModal').modal('hide');
+		jQueryModal('#loadingModal', 'hide');
 		console.log('Loaded in ' + loadDuration + 'ms');
 	});
 });

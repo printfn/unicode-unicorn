@@ -1,10 +1,15 @@
-global_encodingNames = [];
-global_encodings = [];
-// dictionary of name: {
-//     type: 'typename',
-//     encode: function(codepoints/str),
-//     decode: function(codeUnits/str)
-// }
+declare var punycode: any;
+declare var utf8: any;
+
+interface Encoding {
+	type: string;
+	encode: (codepoints: number[]) => number[] | number;
+	decode: (codeUnits: number[]) => number[];
+	table?: { [codepoint: number]: number };
+}
+
+var global_encodingNames: string[] = [];
+var global_encodings: { [encodingName: string]: Encoding; } = {};
 
 function escapeHtml(string: string): string {
 	return he.encode(string);
@@ -23,7 +28,7 @@ function displayCodepoint(codepoint?: number): string {
 	return escapeHtml(ctos(codepoints));
 }
 
-function ctos(codepoints: (number | string)[]): string {
+function ctos(codepoints: any): string {
 	return punycode.ucs2.encode(codepoints);
 }
 
@@ -54,6 +59,8 @@ function itos(int: number, base: number, padding: number = 0) {
 	return res;
 }
 
+var totalCount = 0;
+var count = 0;
 function initializeMappings(completion: () => void) {
 	requestAsync('data/encodings.txt', function() {
 		totalCount = 0;
@@ -89,9 +96,12 @@ function initializeMappings(completion: () => void) {
 	});
 }
 
-function loadEncodingFromURL(type, name: string, url: string, completion: () => void) {
-	var encoding = {};
-	encoding.type = type;
+function loadEncodingFromURL(type: string, name: string, url: string, completion: () => void) {
+	var encoding: Encoding = {
+		type: type,
+		encode: null,
+		decode: null
+	};
 	requestAsync(url, function(lines) {
 		if (type.includes('function')) {
 			encoding = eval(lines.join('\n'));
@@ -99,7 +109,10 @@ function loadEncodingFromURL(type, name: string, url: string, completion: () => 
 			encoding.encode = function(codepoints) {
 				var bytes: number[] = [];
 				for (let i = 0; i < codepoints.length; ++i) {
-					var codepoint = parseInt(codepoints[i]);
+					var codepoint = codepoints[i];
+					if (typeof codepoint == 'string') {
+						codepoint = parseInt(codepoint);
+					}
 					var number = encoding.table[codepoint];
 					if (typeof number == 'undefined') {
 						// if (codepoint <= 0xFF)
@@ -118,14 +131,16 @@ function loadEncodingFromURL(type, name: string, url: string, completion: () => 
 			};
 			encoding.decode = function(bytes) {
 				var table = encoding.table;
-				var codepointForByteUsingMapping = function(byte) {
-					byte = parseInt(byte);
+				var codepointForByteUsingMapping = function(byte: number | string) {
+					if (typeof byte == 'string') {
+						byte = parseInt(byte);
+					}
 					for (var codepoint in table) {
 						if (byte == table[codepoint])
 							return parseInt(codepoint);
 					}
 				};
-				var codepoints = [];
+				var codepoints: number[] = [];
 				for (var i = 0; i < bytes.length; ++i) {
 					var cp = codepointForByteUsingMapping(bytes[i]);
 					if (typeof cp != 'undefined') {
@@ -161,18 +176,17 @@ function loadEncodingFromURL(type, name: string, url: string, completion: () => 
 	});
 }
 
-function codepointsToEncoding(encoding, codepoints) {
+function codepointsToEncoding(encoding: string, codepoints: number[]) {
 	return global_encodings[encoding].encode(codepoints);
 }
 
-function codeUnitsToCodepoints(encoding, codeUnits) {
+function codeUnitsToCodepoints(encoding: string, codeUnits: number[]) {
 	return global_encodings[encoding].decode(codeUnits);
 }
 
-function bytesToText(format, bytes, hexadecimalPadding) {
-	var chars = [];
-	var i;
-	for (i = 0; i < bytes.length; ++i) {
+function bytesToText(format: string, bytes: number[], hexadecimalPadding: number) {
+	var chars: string[] = [];
+	for (let i = 0; i < bytes.length; ++i) {
 		var b = bytes[i];
 		var str = '';
 		if (format.includes('Binary')) {
@@ -192,23 +206,22 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 	}
 	if (format.includes('Prefixed with ')) {
 		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-		for (i = 0; i < chars.length; ++i) {
+		for (let i = 0; i < chars.length; ++i) {
 			chars[i] = prefix + chars[i];
 		}
 	}
 	return chars;
 }
 
-function textToBytes(format, strings) {
-	var i;
+function textToBytes(format: string, strings: string[]) {
 	if (format.includes('Prefixed with ')) {
 		var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-		for (i = 0; i < strings.length; ++i) {
+		for (let i = 0; i < strings.length; ++i) {
 			strings[i] = strings[i].substring(prefix.length);
 		}
 	}
-	var bytes = [];
-	for (i = 0; i < strings.length; ++i) {
+	var bytes: number[] = [];
+	for (let i = 0; i < strings.length; ++i) {
 		var str = strings[i];
 		if (format.includes('Binary')) {
 			bytes.push(parseInt(str, 2));
@@ -223,7 +236,7 @@ function textToBytes(format, strings) {
 	return bytes;
 }
 
-function stringForJoiner(joiner, bytes) {
+function stringForJoiner(joiner: string) {
 	switch (joiner) {
 		case 'Unseparated':
 			return '';
@@ -244,15 +257,15 @@ function stringForJoiner(joiner, bytes) {
 	}
 }
 
-function joinBytes(joiner, bytes) {
+function joinBytes(joiner: string, bytes: any[]) {
 	return bytes.join(stringForJoiner(joiner));
 }
 
-function splitBytes(joiner, str) {
+function splitBytes(joiner: string, str: string) {
 	return str.split(stringForJoiner(joiner));
 }
 
-function hexadecimalPaddingFromEncoding(encoding) {
+function hexadecimalPaddingFromEncoding(encoding: string) {
 	if (encoding.includes('16-bit code units'))
 		return 4;
 	if (encoding.includes('32-bit code units'))
@@ -260,7 +273,7 @@ function hexadecimalPaddingFromEncoding(encoding) {
 	return 2;
 }
 
-function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
+function encodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, codepoints: number[]) {
 	var useBOM = byteOrderMark.startsWith('Use');
 	if (useBOM)
 		codepoints.unshift(0xFEFF);
@@ -281,7 +294,7 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
 	return escapeHtml(joinBytes(joiner, chars));
 }
 
-function decodeOutput(byteOrderMark, encoding, format, joiner, str: string) {
+function decodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, str: string) {
 	if (str === '')
 		return;
 	if (encoding.includes('Punycode') && encoding.includes('Text')) {

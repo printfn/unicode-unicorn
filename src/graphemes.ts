@@ -1,4 +1,4 @@
-global_graphemeBreakData = [];
+var global_graphemeBreakData: { [codepoint: number]: string; } = [];
 
 function initGraphemeData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
@@ -6,7 +6,7 @@ function initGraphemeData(completion: () => void) {
 		var startCodepoint: number | string = '';
 		var endCodepoint: number | string = '';
 		var value = '';
-		for (var j in line) {
+		for (var j = 0; j < line.length; ++j) {
 			var c = line[j];
 			if (c == '#')
 				break;

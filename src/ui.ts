@@ -1,12 +1,16 @@
-global_colorMap = {};
-// codepoints is an int array, 
-// tableId a string to a <table class="table table-striped">
-// and buttons is an array of {
-//   displayName: "Display name",
-//   functionName: "function name",
-//   require: function(idx, length) -> bool
-// }, where each function name refers to a function taking a codepoint and an index into `codepoints`
-function renderCodepointsInTable(codepoints, tableId, buttons) {
+declare function randomColor(desc: { luminosity?: string; }): string;
+
+var global_colorMap: { [key: string]: string; } = {};
+
+interface ButtonInfo {
+	displayName: string; // text displayed on button
+	functionName: string; // name of global function called on click
+
+	// if provided, if it returns false for row i and row count length, button will be disabled
+	require?: (idx: number, length: number) => boolean;
+}
+
+function renderCodepointsInTable(codepoints: number[], tableId: string, buttons: ButtonInfo[]) {
 	var table = $('#' + tableId);
 	if (codepoints.length === 0) {
 		table.html('');
@@ -48,10 +52,10 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 	table.show();
 }
 
-function randomColorForKey(key) {
+function randomColorForKey(key: string): string {
 	if (global_colorMap[key])
 		return global_colorMap[key];
-	var color = randomColor({
+	var color = randomColor({ // format: "#a0ff9b"
 		luminosity: 'light'
 	});
 	global_colorMap[key] = color;
@@ -63,11 +67,10 @@ function updateRenderedCodepage() {
 	var encoding = global_encodings[encodingName];
 	var isAscii = encoding.type == '7-bit mapping';
 	var html = '<thead><th></th>';
-	var i;
-	for (i = 0; i < 16; ++i)
+	for (let i = 0; i < 16; ++i)
 		html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
 	html += '</thead><tbody>';
-	for (i = 0; i < (isAscii ? 8 : 16); ++i) {
+	for (let i = 0; i < (isAscii ? 8 : 16); ++i) {
 		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
@@ -92,7 +95,7 @@ function updateRenderedCodepage() {
 	$('#codepage').html(html);
 }
 
-function showCodepageDetail(codepoint) {
+function showCodepageDetail(codepoint: number) {
 	$('#detail-codepoint-hex').text(itos(codepoint, 16, 4));
 	$('#detail-codepoint-decimal').text(codepoint);
 	$('#detail-name').html('"' + getName(codepoint) + '"');
@@ -102,9 +105,8 @@ function showCodepageDetail(codepoint) {
 	$('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
 	$('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
 	$('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
-	var matchingAliases = [];
-	var i;
-	for (i = 0; i < global_aliases.length; ++i) {
+	var matchingAliases: string[] = [];
+	for (let i = 0; i < global_aliases.length; ++i) {
 		if (global_aliases[i].codepoint == codepoint)
 			matchingAliases.push(global_aliases[i].alias);
 	}
@@ -149,29 +151,28 @@ function showCodepageDetail(codepoint) {
 	} else {
 		$('#detail-variation-sequences').show();
 		var variationsString = '';
-		var vs;
-		for (i = 0; i < variationSequences.length; ++i) {
-			vs = variationSequences[i];
+		for (let i = 0; i < variationSequences.length; ++i) {
+			let vs = variationSequences[i];
 			if (variationsString !== '')
 				variationsString += '<br>';
 			variationsString +=
-				'U+' + itos(vs.base, 16, 4) +
+				'U+' + itos(vs.baseCodepoint, 16, 4) +
 				' U+' + itos(vs.variationSelector, 16, 4) +
-				': ' + escapeHtml(ctos([vs.base, vs.variationSelector])) +
+				': ' + escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector])) +
 				' <i>' + vs.description;
 			if (vs.shapingEnvironments.length > 0)
 				variationsString += ' (' + vs.shapingEnvironments.join(', ') + ')</i>';
 			else
 				variationsString += '</i>';
 		}
-		for (i = 0; i < ideographicVariationSequences.length; ++i) {
-			vs = ideographicVariationSequences[i];
+		for (let i = 0; i < ideographicVariationSequences.length; ++i) {
+			let vs = ideographicVariationSequences[i];
 			if (variationsString !== '')
 				variationsString += '<br>';
 			variationsString +=
-				'U+' + itos(vs.base, 16, 4) +
+				'U+' + itos(vs.baseCodepoint, 16, 4) +
 				' U+' + itos(vs.variationSelector, 16, 4) +
-				': ' + escapeHtml(ctos([vs.base, vs.variationSelector]));
+				': ' + escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector]));
 		}
 		$('#detail-variation-sequences-content').html(variationsString);
 	}
@@ -192,7 +193,7 @@ function showCodepageDetail(codepoint) {
 	});
 
 	$('#detail-encoding-outputs').html(encodingsString);
-	$('#codepoint-detail').modal('show');
+	jQueryModal('#codepoint-detail', 'show');
 }
 
 function initLicenseInfo(completion: () => void) {

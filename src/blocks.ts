@@ -1,7 +1,7 @@
-global_blockRanges = [];
-global_syllableRanges = [];
-global_shortJamoNames = [];
-global_scriptRanges = [];
+var global_blockRanges: { startCodepoint: number; endCodepoint: number; blockName: string; }[] = [];
+var global_syllableRanges: { startCodepoint: number; endCodepoint: number; syllableType: string; }[] = [];
+var global_shortJamoNames: { [codepoint: number]: string; } = [];
+var global_scriptRanges: { startCodepoint: number; endCodepoint: number; scriptName: string; }[] = [];
 
 function initBlockData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/Blocks.txt', null, function(line) {
@@ -56,7 +56,7 @@ function getSyllableTypeForCodepoint(codepoint: number): string {
 function initShortJamoNames(completion: () => void) {
 	requestAsync('data/Unicode/UCD/Jamo.txt', null, function(line) {
 		var splitLine = line.split(';');
-		var codepoint = parseInt('0x' + splitLine[0].trim());
+		var codepoint = parseInt(splitLine[0].trim(), 16);
 		var shortJamoName = splitLine[1].trim();
 		global_shortJamoNames[codepoint] = shortJamoName;
 	}, completion);

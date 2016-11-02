@@ -1,4 +1,6 @@
-function getSearchString(codepoint) {
+var global_search_strings: { [codepoint: number]: string; } = [];
+
+function getSearchString(codepoint: number) {
 	var res = ctos([codepoint]) +
 		'|U+' + itos(codepoint, 16, 4) +
 		'|cp:' + codepoint +
@@ -23,8 +25,6 @@ function getSearchString(codepoint) {
 }
 
 function initializeSearchStrings() {
-	global_search_strings = [];
-
 	for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
 		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
@@ -35,7 +35,7 @@ function initializeSearchStrings() {
 	}
 }
 
-function testSearch(searchString, words) {
+function testSearch(searchString: string, words: string[]) {
 	if (!searchString.includes(words[0]))
 		return false;
 	for (var i = 1; i < words.length; ++i) {
@@ -45,20 +45,20 @@ function testSearch(searchString, words) {
 	return true;
 }
 
-function searchCodepoints(str) {
-	var results = [];
-	var i;
+function searchCodepoints(str: string) {
+	var results: number[] = [];
 
-	var reachedMaxResults = function(results) {
+	var reachedMaxResults = function(results: number[]) {
 		return results.length >= 256;
 	};
 
 	str = str.toUpperCase();
 	var words = str.split(',');
-	for (i = 0; i < words.length; ++i)
+	for (let i = 0; i < words.length; ++i) {
 		words[i] = words[i].trim();
+	}
 
-	for (i = 0; i < global_all_assigned_ranges.length; ++i) {
+	for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
 		var range = global_all_assigned_ranges[i];
 		var end = range.endCodepoint;
 		for (var c = range.startCodepoint; c <= end; ++c) {

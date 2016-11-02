@@ -1,3 +1,6 @@
+declare var JSZipUtils: { getBinaryContent(url: string, callback: (err: Error, data: ArrayBuffer) => void): void; };
+var DataZip: JSZip = null;
+
 function loadUnicodeData(completion: () => void) {
 	DataZip = new JSZip();
 	JSZipUtils.getBinaryContent('data.zip', function(err: Error, data: ArrayBuffer) {

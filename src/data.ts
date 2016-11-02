@@ -1,10 +1,10 @@
-global_data = [];
-global_ranges = [];
-global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
-global_category = [];
-global_categoryRanges = [];
-global_aliases = [];
-global_generalCategoryNames = [];
+var global_data: { [codepoint: number]: string; } = [];
+var global_ranges: [number, number, string][] = []; // startCodepoint, endCodepoint, Block name/description
+var global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
+var global_category: { [codepoint: number]: string; } = [];
+var global_categoryRanges: [number, number, string][] = []; // startCodepoint, endCodepoint, categoryCode
+var global_aliases: { codepoint: number; alias: string; type: string; }[] = [];
+var global_generalCategoryNames: { [categoryCode: string]: string; } = {};
 
 function getCharacterCategoryCode(codepoint: number): string {
 	var categoryCode = global_category[codepoint];
@@ -25,8 +25,10 @@ function getCharacterCategoryName(codepoint: number): string {
 	return global_generalCategoryNames[categoryCode] || 'Unknown';
 }
 
-function getCodepointDescription(codepoint: number, name: string): string {
-	codepoint = parseInt(codepoint);
+function getCodepointDescription(codepoint: number | string, name: string): string {
+	if (typeof codepoint == 'string') {
+		codepoint = parseInt(codepoint);
+	}
 	return name + ' ' + ctos([codepoint]);
 }
 
