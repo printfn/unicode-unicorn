@@ -59,19 +59,21 @@ function initializeMappings(completion) {
             loadEncodingFromURL(type, name, url, function () {
                 ++count;
                 if (count == totalCount) {
+                    var codepageOptionStrings_1 = '';
+                    var outputEncodingOptionStrings_1 = '';
                     $.each(global_encodingNames, function (i, encodingName) {
                         if (global_encodings[encodingName].type == '7-bit mapping' ||
                             global_encodings[encodingName].type == '8-bit mapping') {
-                            $('#codepageEncoding')
-                                .append($('<option' +
+                            codepageOptionStrings_1 += '<option' +
                                 (encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') +
-                                '></option>')
-                                .text(encodingName));
+                                '>' +
+                                encodingName +
+                                '</option>';
                         }
-                        $('#outputEncoding')
-                            .append($('<option></option>')
-                            .text(encodingName));
+                        outputEncodingOptionStrings_1 += '<option>' + encodingName + '</option>';
                     });
+                    updateSelectOptions('codepageEncoding', codepageOptionStrings_1);
+                    updateSelectOptions('outputEncoding', outputEncodingOptionStrings_1);
                     completion();
                 }
             });

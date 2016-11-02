@@ -42,10 +42,10 @@ function initLanguageData(completion: () => void) {
 				htmls[languageTags[i].type] = '<option data-code="">None / Default</option>';
 			htmls[languageTags[i].type] += '<option data-code="' + languageTags[i].code + '">' + languageTags[i].name + ' (' + languageTags[i].code + ')</option>';
 		}
-		$('#languageList').html(htmls['language']);
-		$('#scriptList').html(htmls['script']);
-		$('#regionList').html(htmls['region']);
-		$('#variantList').html(htmls['variant']);
+		updateSelectOptions('languageList', htmls['language']);
+		updateSelectOptions('scriptList', htmls['script']);
+		updateSelectOptions('regionList', htmls['region']);
+		updateSelectOptions('variantList', htmls['variant']);
 		$('#showRareLanguages').on('click', function() {
 			$('#showRareLanguages').attr('disabled', 'disabled');
 			parseLanguageData(global_languageData);

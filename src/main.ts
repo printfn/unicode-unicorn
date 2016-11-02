@@ -44,6 +44,7 @@ var global_event_listeners: TextListener[] = [{
 }];
 
 function callEventListenersForElemId(elemId: string) {
+	console.log('callEventListenersForElemId(' + arguments + ')');
 	for (var i = 0; i < global_event_listeners.length; ++i) {
 		var listener = global_event_listeners[i];
 		if (listener.elementId != elemId)
@@ -91,6 +92,7 @@ function normalizeString(form: string) {
 }
 
 function updateInfo() {
+	console.log('updateInfo()');
 	var codepoints = getStr();
 	setStr(codepoints);
 
@@ -170,6 +172,7 @@ $(document).ready(function() {
 	if (loaded)
 		return;
 	loaded = true;
+	(<any> $('select')).chosen({ disable_search_threshold: 10, width: '50%' });
 	updateSpacerHeights();
 	var startTime = new Date();
 	initData(function() {
@@ -209,7 +212,7 @@ $(document).ready(function() {
 		$('#output').on('input', function() {
 			updateInfo();
 		});
-		$('select').change(function() {
+		$('select').on('change', function() {
 			updateInfo();
 		});
 		setInterval(function() {

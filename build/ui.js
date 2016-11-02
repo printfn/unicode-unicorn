@@ -358,3 +358,7 @@ function updateLanguage() {
 function updateUseInternalString() {
     global_useInternalString = $('#useInternalString').is(':checked');
 }
+function updateSelectOptions(selectId, html) {
+    $('#' + selectId).html(html);
+    $('#' + selectId).trigger('chosen:updated');
+}
