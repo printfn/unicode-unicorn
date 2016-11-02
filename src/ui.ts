@@ -202,3 +202,205 @@ function initLicenseInfo(completion: () => void) {
 		completion();
 	});
 }
+
+function updateMojibake() {
+	var codepoints = getStr();
+	var mojibakeOutputs: { encoding1Name: string, encoding2Name: string, text: string }[] = [];
+	$('#outputEncoding option').each(function(i, e) {
+		var encoding1Name = $(e).text();
+		if (global_encodings[encoding1Name].type == 'text function')
+			return;
+		var encodedString = encodeOutput(
+			'Don\'t use a byte order mark',
+			encoding1Name,
+			'Decimal',
+			'Separated using commas and spaces',
+			codepoints);
+		if (encodedString.startsWith('<'))
+			return;
+		$('#outputEncoding option').each(function(j, f) {
+			if (i == j)
+				return;
+			var encoding2Name = $(f).text();
+			if (global_encodings[encoding2Name].type == 'text function')
+				return;
+			var decodedString = decodeOutput(
+				'Don\'t use a byte order mark',
+				encoding2Name,
+				'Decimal',
+				'Separated using commas and spaces',
+				encodedString);
+			if (!decodedString)
+				return;
+			for (var k = 0; k < mojibakeOutputs.length; ++k) {
+				if (mojibakeOutputs[k].text == ctos(decodedString))
+					return;
+			}
+			mojibakeOutputs.push({
+				encoding1Name: encoding1Name,
+				encoding2Name: encoding2Name,
+				text: ctos(decodedString)
+			});
+		});
+	});
+	var mojibakeOutputStr = '';
+	var lastEncoding1 = '';
+	for (var i = 0; i < mojibakeOutputs.length; ++i) {
+		var o = mojibakeOutputs[i];
+		if (o.encoding1Name != lastEncoding1) {
+			lastEncoding1 = o.encoding1Name;
+			mojibakeOutputStr += 'Assuming the input was erroneously interpreted as ' + o.encoding1Name + ':<br>';
+		}
+		mojibakeOutputStr += '    If the original encoding was ' + o.encoding2Name + ':<br>        ' + mojibakeOutputs[i].text + '<br>';
+	}
+	$('#mojibakeOutput').html(mojibakeOutputStr);
+}
+
+function updateEncodedLengths() {
+	var codepoints = getStr();
+	$('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
+	$('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
+	$('#numCodepoints').text(codepoints.length);
+	var encodingLengthsStr =
+		'<thead><tr>' +
+		'<th>Encoding</th>' +
+		'<th>Number of code units</th>' +
+		'<th>Number of bytes</th>' +
+		'<th>Number of code units (incl. BOM)</th>' +
+		'<th>Number of bytes (incl. BOM)</th>' +
+		'</tr></thead><tbody>';
+	let bomCodepoints = [0xFEFF];
+	for (var i = 0; i < codepoints.length; ++i) {
+		bomCodepoints.push(codepoints[i]);
+	}
+	for (var name in global_encodings) {
+		var encoding = global_encodings[name];
+		var codeUnits = encoding.encode(codepoints);
+		var cellEntries = ['', '', '', ''];
+		if (typeof codeUnits === 'number') {
+			cellEntries[0] = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
+			cellEntries[3] = cellEntries[2] = cellEntries[1] = cellEntries[0];
+		} else {
+			cellEntries[0] = codeUnits.length + ' code units';
+			cellEntries[1] = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+			let bomCodeUnits = encoding.encode(bomCodepoints);
+			if (typeof bomCodeUnits === 'number') {
+				cellEntries[3] = cellEntries[2] = '<span style="color:red">Unable to encode BOM (U+FEFF)</span>'
+			} else {
+				cellEntries[2] = bomCodeUnits.length + ' code units';
+				cellEntries[3] = bomCodeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+			}
+		}
+		encodingLengthsStr += '<tr>';
+		encodingLengthsStr += '<td>' + name + '</td><td>' + cellEntries.join('</td><td>') + '</td>';
+		encodingLengthsStr += '</tr>';
+	}
+	$('#encodingLengths').html(encodingLengthsStr + '</tbody>');
+	$('#string').html(escapeHtml(ctos(getStr())).replace(/\n/g, '<br>'));
+}
+
+function updateCodepointList() {
+	var codepoints = getStr();
+	renderCodepointsInTable(codepoints, 'codepointlist', [{
+		displayName: 'Delete',
+		functionName: 'deleteAtIndex'
+	}, {
+		displayName: 'Move up',
+		functionName: 'moveUp',
+		require: function(i, length) { return i != 0; }
+	}, {
+		displayName: 'Move down',
+		functionName: 'moveDown',
+		require: function(i, length) { return i != length - 1; }
+	}]);
+}
+
+function updateEncodedAndDecodedStrings() {
+	var codepoints = getStr();
+	$('#encodedOutput').html(encodeOutput(
+		$('#byteOrderMark option:selected').text(),
+		$('#outputEncoding option:selected').text(),
+		$('#outputFormat option:selected').text(),
+		$('#outputJoiner option:selected').text(),
+		codepoints
+	));
+
+	var decodedOutput = decodeOutput(
+		$('#byteOrderMark option:selected').text(),
+		$('#outputEncoding option:selected').text(),
+		$('#outputFormat option:selected').text(),
+		$('#outputJoiner option:selected').text(),
+		$('#encodedInput').val()
+	);
+	if (decodedOutput)
+		renderCodepointsInTable(
+			decodedOutput,
+			'decodedCodepoints',
+			[{displayName: 'Insert', functionName: 'output'}]);
+}
+
+function updateLanguage() {
+	var lang = '';
+	var textboxCode = $('#languageCode').val();
+	var dropdownCode = '';
+	var langComponentStrings = [
+		$('#languageList option:selected').attr('data-code'),
+		$('#scriptList option:selected').attr('data-code'),
+		$('#regionList option:selected').attr('data-code'),
+		$('#variantList option:selected').attr('data-code')
+	];
+	for (var i = 0; i < langComponentStrings.length; ++i) {
+		var component = langComponentStrings[i];
+		if (!component)
+			continue;
+		if (dropdownCode != '')
+			dropdownCode += '-';
+		dropdownCode += component;
+	}
+	// valid states:
+	//   everything enabled, textboxCode and dropdownCode empty
+	//   dropdownCode non-empty: textboxCode set to dropdownCode, textbox disabled
+	//   dropdownCode empty: dropdown disabled
+
+	if ($('#languageCode')[0].hasAttribute('disabled')) {
+		$('#languageCode').val(''); // occurs when dropdownCode is reset to blank
+	}
+		
+	if (textboxCode == '' && dropdownCode == '') {
+		$('#languageCode').removeAttr('disabled');
+		$('#languageList').removeAttr('disabled');
+		$('#scriptList').removeAttr('disabled');
+		$('#regionList').removeAttr('disabled');
+		$('#variantList').removeAttr('disabled');
+		lang = '';
+	} else if (textboxCode == '' && dropdownCode != '') {
+		$('#languageCode').attr('disabled', 'disabled');
+		$('#languageList').removeAttr('disabled');
+		$('#scriptList').removeAttr('disabled');
+		$('#regionList').removeAttr('disabled');
+		$('#variantList').removeAttr('disabled');
+		lang = dropdownCode;
+		$('#languageCode').val(lang);
+	} else if (textboxCode != '' && dropdownCode == '') {
+		$('#languageCode').removeAttr('disabled');
+		$('#languageList').attr('disabled', 'disabled');
+		$('#scriptList').attr('disabled', 'disabled');
+		$('#regionList').attr('disabled', 'disabled');
+		$('#variantList').attr('disabled', 'disabled');
+		lang = textboxCode;
+	} else {
+		if ($('#languageCode')[0].hasAttribute('disabled')) {
+			lang = dropdownCode;
+			$('#languageCode').val(lang);
+		} else {
+			lang = textboxCode;
+		}
+	}
+	
+	$('html').attr('lang', lang);
+	$('html').attr('xml:lang', lang);
+}
+
+function updateUseInternalString() {
+	global_useInternalString = $('#useInternalString').is(':checked');
+}
