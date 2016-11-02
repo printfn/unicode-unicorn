@@ -87,6 +87,7 @@ function loadEncodingFromURL(type, name, url, completion) {
     requestAsync(url, function (lines) {
         if (type.includes('function')) {
             encoding = eval(lines.join('\n'));
+            encoding.type = type;
         }
         else {
             encoding.encode = function (codepoints) {

@@ -110,20 +110,39 @@ function actualUpdateInfo() {
     $('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
     $('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
     $('#numCodepoints').text(codepoints.length);
-    var encodingLengthsStr = '<thead><tr><th>Encoding</th><th>Number of code units</th><th>Number of bytes</th></tr></thead><tbody>';
+    var encodingLengthsStr = '<thead><tr>' +
+        '<th>Encoding</th>' +
+        '<th>Number of code units</th>' +
+        '<th>Number of bytes</th>' +
+        '<th>Number of code units (incl. BOM)</th>' +
+        '<th>Number of bytes (incl. BOM)</th>' +
+        '</tr></thead><tbody>';
+    var bomCodepoints = [0xFEFF];
+    for (var i = 0; i < codepoints.length; ++i) {
+        bomCodepoints.push(codepoints[i]);
+    }
     for (var name in global_encodings) {
         var encoding = global_encodings[name];
         var codeUnits = encoding.encode(codepoints);
+        var cellEntries = ['', '', '', ''];
         if (typeof codeUnits === 'number') {
-            var codeUnitsCount = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
-            var bytesCount = codeUnitsCount;
+            cellEntries[0] = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
+            cellEntries[3] = cellEntries[2] = cellEntries[1] = cellEntries[0];
         }
         else {
-            var codeUnitsCount = codeUnits.length + ' code units';
-            var bytesCount = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+            cellEntries[0] = codeUnits.length + ' code units';
+            cellEntries[1] = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+            var bomCodeUnits = encoding.encode(bomCodepoints);
+            if (typeof bomCodeUnits === 'number') {
+                cellEntries[3] = cellEntries[2] = '<span style="color:red">Unable to encode BOM (U+FEFF)</span>';
+            }
+            else {
+                cellEntries[2] = bomCodeUnits.length + ' code units';
+                cellEntries[3] = bomCodeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
+            }
         }
         encodingLengthsStr += '<tr>';
-        encodingLengthsStr += '<td>' + name + '</td><td>' + codeUnitsCount + '</td><td>' + bytesCount + '</td>';
+        encodingLengthsStr += '<td>' + name + '</td><td>' + cellEntries.join('</td><td>') + '</td>';
         encodingLengthsStr += '</tr>';
     }
     $('#encodingLengths').html(encodingLengthsStr + '</tbody>');

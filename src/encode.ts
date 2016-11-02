@@ -105,6 +105,7 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 	requestAsync(url, function(lines) {
 		if (type.includes('function')) {
 			encoding = eval(lines.join('\n'));
+			encoding.type = type;
 		} else {
 			encoding.encode = function(codepoints) {
 				var bytes: number[] = [];
