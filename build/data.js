@@ -1,8 +1,8 @@
 var global_data = [];
-var global_ranges = []; // startCodepoint, endCodepoint, Block name/description
-var global_all_assigned_ranges = [{ startCodepoint: 0, endCodepoint: 0 }];
+var global_ranges = [];
+var global_all_assigned_ranges = [{ startCodepoint: 0, endCodepoint: 0 }]; // this element is modified as data is loaded, so don't change it
 var global_category = [];
-var global_categoryRanges = []; // startCodepoint, endCodepoint, categoryCode
+var global_categoryRanges = [];
 var global_aliases = [];
 var global_generalCategoryNames = {};
 function getCharacterCategoryCode(codepoint) {
@@ -10,8 +10,8 @@ function getCharacterCategoryCode(codepoint) {
     if (!categoryCode) {
         for (var i = 0; i < global_categoryRanges.length; ++i) {
             var range = global_categoryRanges[i];
-            if (codepoint >= range[0] && codepoint <= range[1]) {
-                categoryCode = range[2];
+            if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
+                categoryCode = range.categoryCode;
                 break;
             }
         }
@@ -67,22 +67,22 @@ function initUnicodeData(completion) {
         }
         else if (data_line[1].endsWith(', Last>')) {
             var endCodepoint = parseInt(data_line[0], 16);
-            global_ranges.push([
-                startCodepoint,
-                endCodepoint,
-                data_line[1].substring(1, data_line[1].length - 7)
-            ]);
+            global_ranges.push({
+                startCodepoint: startCodepoint,
+                endCodepoint: endCodepoint,
+                rangeName: data_line[1].substring(1, data_line[1].length - 7)
+            });
             if (data_line[1].startsWith('<CJK Ideograph') || data_line[1].startsWith('<Hangul Syllable')) {
                 global_all_assigned_ranges.push({
                     startCodepoint: startCodepoint,
                     endCodepoint: endCodepoint
                 });
             }
-            global_categoryRanges.push([
-                startCodepoint,
-                endCodepoint,
-                data_line[2]
-            ]);
+            global_categoryRanges.push({
+                startCodepoint: startCodepoint,
+                endCodepoint: endCodepoint,
+                categoryCode: data_line[2]
+            });
         }
         else {
             var codepoint = parseInt(data_line[0], 16);
@@ -148,8 +148,8 @@ function getName(codepoint, search) {
     }
     for (var i = 0; i < global_ranges.length; ++i) {
         var range = global_ranges[i];
-        if (codepoint >= range[0] && codepoint <= range[1]) {
-            if (range[2].startsWith('CJK Ideograph')) {
+        if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
+            if (range.rangeName.startsWith('CJK Ideograph')) {
                 if (search)
                     return 'CJK UNIFIED IDEOGRAPH';
                 return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
@@ -182,8 +182,8 @@ function getUnicodeDataTxtNameField(codepoint) {
         return global_data[codepoint];
     for (var i = 0; i < global_ranges.length; ++i) {
         var range = global_ranges[i];
-        if (codepoint >= range[0] && codepoint <= range[1])
-            return range[2];
+        if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint)
+            return range.rangeName;
     }
     return 'Unknown';
 }
