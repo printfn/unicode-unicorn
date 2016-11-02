@@ -35,7 +35,7 @@ function getCodepointDescription(codepoint: number | string, name: string): stri
 function initAliasData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/NameAliases.txt', null, function(line) {
 		var splitLine = line.split(';');
-		var codepoint = parseInt('0x' + splitLine[0]);
+		var codepoint = parseInt(splitLine[0], 16);
 		global_aliases.push({codepoint: codepoint, alias: splitLine[1], type: splitLine[2]});
 	}, completion);
 	global_aliases.sort(function(a, b) {
@@ -69,9 +69,9 @@ function initUnicodeData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/UnicodeData.txt', null, function(line) {
 		var data_line = line.split(';');
 		if (data_line[1].endsWith(', First>')) {
-			startCodepoint = parseInt('0x' + data_line[0]);
+			startCodepoint = parseInt(data_line[0], 16);
 		} else if (data_line[1].endsWith(', Last>')) {
-			var endCodepoint = parseInt('0x' + data_line[0]);
+			var endCodepoint = parseInt(data_line[0], 16);
 			global_ranges.push([
 				startCodepoint,
 				endCodepoint,
@@ -89,7 +89,7 @@ function initUnicodeData(completion: () => void) {
 				data_line[2]
 			]);
 		} else {
-			var codepoint = parseInt('0x' + data_line[0]);
+			var codepoint = parseInt(data_line[0], 16);
 			global_data[codepoint] = data_line[1];
 			global_category[codepoint] = data_line[2];
 			if (global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint >= codepoint - 1) {

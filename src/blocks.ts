@@ -6,8 +6,8 @@ var global_scriptRanges: { startCodepoint: number; endCodepoint: number; scriptN
 function initBlockData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/Blocks.txt', null, function(line) {
 		var splitLine = line.split(';');
-		var startCodepoint = parseInt('0x' + splitLine[0].split('..')[0]);
-		var endCodepoint = parseInt('0x' + splitLine[0].split('..')[1]);
+		var startCodepoint = parseInt(splitLine[0].split('..')[0], 16);
+		var endCodepoint = parseInt(splitLine[0].split('..')[1], 16);
 		var blockName = splitLine[1].trim();
 		global_blockRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, blockName: blockName});
 	}, completion);
@@ -28,10 +28,10 @@ function initHangulSyllableTypes(completion: () => void) {
 		var splitLine = line.split(';');
 		var startCodepoint: number, endCodepoint: number;
 		if (splitLine[0].trim().split('..').length == 2) {
-			startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
-			endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+			startCodepoint = parseInt(splitLine[0].trim().split('..')[0], 16);
+			endCodepoint = parseInt(splitLine[0].trim().split('..')[1], 16);
 		} else {
-			startCodepoint = parseInt('0x' + splitLine[0].trim());
+			startCodepoint = parseInt(splitLine[0].trim(), 16);
 			endCodepoint = startCodepoint;
 		}
 		var syllableType = splitLine[1].trim();
@@ -71,10 +71,10 @@ function initScriptData(completion: () => void) {
 		var splitLine = line.split(';');
 		var startCodepoint: number, endCodepoint: number;
 		if (splitLine[0].trim().split('..').length == 2) {
-			startCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[0]);
-			endCodepoint = parseInt('0x' + splitLine[0].trim().split('..')[1]);
+			startCodepoint = parseInt(splitLine[0].trim().split('..')[0], 16);
+			endCodepoint = parseInt(splitLine[0].trim().split('..')[1], 16);
 		} else {
-			startCodepoint = parseInt('0x' + splitLine[0].trim());
+			startCodepoint = parseInt(splitLine[0].trim(), 16);
 			endCodepoint = startCodepoint;
 		}
 		var scriptName = splitLine[1].trim();

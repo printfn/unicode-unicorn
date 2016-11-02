@@ -9,3 +9,9 @@ if (!String.prototype.endsWith) {
 		return lastIndex !== -1 && lastIndex === position;
 	};
 }
+
+/*enum Codepoint {}
+function toCodepoint(cp: number): number & Codepoint {
+	return cp;
+}
+const cp = toCodepoint;*/

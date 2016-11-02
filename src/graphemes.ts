@@ -46,8 +46,8 @@ function initGraphemeData(completion: () => void) {
 					break;
 			}
 		}
-		startCodepoint = parseInt('0x' + startCodepoint);
-		endCodepoint = endCodepoint === '' ? startCodepoint : parseInt('0x' + endCodepoint);
+		startCodepoint = parseInt(startCodepoint, 16);
+		endCodepoint = endCodepoint === '' ? startCodepoint : parseInt(endCodepoint, 16);
 		for (var x = startCodepoint; x <= endCodepoint; ++x) {
 			global_graphemeBreakData[x] = value;
 		}
