@@ -17,11 +17,6 @@ function getStr() {
     return global_useInternalString ? global_internalString : $('#output').val();
 }
 function setStr(str) {
-    for (var i = 0; i < str.length; ++i) {
-        if (str.charCodeAt(i) < 0 || str.charCodeAt(i) > 0x10FFFF) {
-            str = stringSplice(str, i, 1); // remove element at i
-        }
-    }
     global_internalString = str;
     $('#output').val(str);
 }
