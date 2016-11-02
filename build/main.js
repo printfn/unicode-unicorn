@@ -27,30 +27,7 @@ function normalizeString(form) {
     setStr(stoc(ctos(getStr()).normalize(form)));
     updateInfo();
 }
-function uiState() {
-    return $('#output').val()
-        + ctos(global_internalString)
-        + $('#encodedInput').val()
-        + $('#languageCode').val()
-        + $('#useInternalString').is(':checked')
-        + $('#outputEncoding option:selected').text()
-        + $('#outputFormat option:selected').text()
-        + $('#outputJoiner option:selected').text()
-        + $('#byteOrderMark option:selected').text()
-        + $('#codepageEncoding option:selected').text()
-        + $('#languageList option:selected').text()
-        + $('#scriptList option:selected').text()
-        + $('#regionList option:selected').text()
-        + $('#variantList option:selected').text();
-}
-var global_prevUIState = '';
 function updateInfo() {
-    if (uiState() == global_prevUIState)
-        return;
-    actualUpdateInfo();
-    global_prevUIState = uiState();
-}
-function actualUpdateInfo() {
     global_useInternalString = $('#useInternalString').is(':checked');
     setStr(getStr());
     var codepoints = getStr();
@@ -300,10 +277,10 @@ $(document).ready(function () {
         var loadDuration = new Date() - startTime; // in ms
         updateInfo();
         updateSuggestions();
-        $('#input').on('keyup', function (e) {
+        $('#input').on('input', function (e) {
             if (e.keyCode == 13) {
                 var input = $('#input').val();
-                if (isNaN(parseInt(input.replace('U+', '0x')))) {
+                if (isNaN(parseInt(input.replace('U+', ''), 16))) {
                     document.body.style.backgroundColor = '#fdd';
                     setTimeout(function () {
                         document.body.style.backgroundColor = '#fff';
@@ -317,19 +294,18 @@ $(document).ready(function () {
             }
             updateSuggestions();
         });
-        $('#output').on('keyup', function () {
+        $('#output').on('input', function () {
             updateInfo();
         });
         $('select').change(function () {
             updateInfo();
         });
         setInterval(function () {
-            updateInfo();
             updateSpacerHeights();
         }, 1000);
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             updateSpacerHeights();
-            actualUpdateInfo();
+            updateInfo();
         });
         jQueryModal('#loadingModal', 'hide');
         console.log('Loaded in ' + loadDuration + 'ms');

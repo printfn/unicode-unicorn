@@ -42,31 +42,7 @@ function normalizeString(form: string) {
 	updateInfo();
 }
 
-function uiState() {
-	return $('#output').val()
-		+ ctos(global_internalString)
-		+ $('#encodedInput').val()
-		+ $('#languageCode').val()
-		+ $('#useInternalString').is(':checked')
-		+ $('#outputEncoding option:selected').text()
-		+ $('#outputFormat option:selected').text()
-		+ $('#outputJoiner option:selected').text()
-		+ $('#byteOrderMark option:selected').text()
-		+ $('#codepageEncoding option:selected').text()
-		+ $('#languageList option:selected').text()
-		+ $('#scriptList option:selected').text()
-		+ $('#regionList option:selected').text()
-		+ $('#variantList option:selected').text();
-}
-
-var global_prevUIState = '';
 function updateInfo() {
-	if (uiState() == global_prevUIState)
-		return;
-	actualUpdateInfo();
-	global_prevUIState = uiState();
-}
-function actualUpdateInfo() {
 	global_useInternalString = $('#useInternalString').is(':checked');
 	setStr(getStr());
 
@@ -380,7 +356,7 @@ $(document).ready(function() {
 		}, 1000);
 		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 			updateSpacerHeights();
-			actualUpdateInfo();
+			updateInfo();
 		});
 		jQueryModal('#loadingModal', 'hide');
 		console.log('Loaded in ' + loadDuration + 'ms');
