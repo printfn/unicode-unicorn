@@ -329,7 +329,7 @@ $(document).ready(function() {
 		var loadDuration = <any> new Date() - <any> startTime; // in ms
 		updateInfo();
 		updateSuggestions();
-		$('#input').on('input', function(e) {
+		$('#input').on('keyup', function(e) {
 			if (e.keyCode == 13) {
 				var input = $('#input').val();
 				if (isNaN(parseInt(input.replace('U+', ''), 16))) {
@@ -338,11 +338,12 @@ $(document).ready(function() {
 						document.body.style.backgroundColor = '#fff';
 					}, 1000);
 				} else {
-					output(parseInt(input.replace('U+', '0x')));
-					updateInfo();
+					output(parseInt(input.replace('U+', ''), 16));
 					$('#input').val('');
 				}
 			}
+		});
+		$('#input').on('keyup', function(e) {
 			updateSuggestions();
 		});
 		$('#output').on('input', function() {
