@@ -179,7 +179,7 @@ $(document).ready(function () {
         $('#input').on('input', function (e) {
             updateSuggestions();
         });
-        $('#output').on('input', function () {
+        $('#output, #encodedInput').on('input', function () {
             updateInfo();
         });
         $('select').on('change', function () {
