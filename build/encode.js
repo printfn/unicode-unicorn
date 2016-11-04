@@ -61,6 +61,7 @@ function initializeMappings(completion) {
                 if (count == totalCount) {
                     var codepageOptionStrings_1 = '';
                     var outputEncodingOptionStrings_1 = '';
+                    var mojibakeOptionStrings_1 = '';
                     $.each(global_encodingNames, function (i, encodingName) {
                         if (global_encodings[encodingName].type == '7-bit mapping' ||
                             global_encodings[encodingName].type == '8-bit mapping') {
@@ -71,9 +72,15 @@ function initializeMappings(completion) {
                                 '</option>';
                         }
                         outputEncodingOptionStrings_1 += '<option>' + encodingName + '</option>';
+                        mojibakeOptionStrings_1 += '<option' +
+                            //(encodingName == 'Unicode UTF-8' || encodingName.startsWith('Code page 1252') ? ' selected' : '') +
+                            '>' +
+                            encodingName +
+                            '</option>';
                     });
                     updateSelectOptions('codepageEncoding', codepageOptionStrings_1);
                     updateSelectOptions('outputEncoding', outputEncodingOptionStrings_1);
+                    updateSelectOptions('mojibakeEncodings', mojibakeOptionStrings_1);
                     completion();
                 }
             });

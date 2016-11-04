@@ -78,6 +78,7 @@ function initializeMappings(completion: () => void) {
 				if (count == totalCount) {
 					let codepageOptionStrings = '';
 					let outputEncodingOptionStrings = '';
+					let mojibakeOptionStrings = '';
 					$.each(global_encodingNames, function(i, encodingName) {
 						if (global_encodings[encodingName].type == '7-bit mapping' ||
 							global_encodings[encodingName].type == '8-bit mapping') {
@@ -88,9 +89,15 @@ function initializeMappings(completion: () => void) {
 								'</option>';
 						}
 						outputEncodingOptionStrings += '<option>' + encodingName + '</option>';
+						mojibakeOptionStrings += '<option' +
+								//(encodingName == 'Unicode UTF-8' || encodingName.startsWith('Code page 1252') ? ' selected' : '') +
+								'>' + 
+								encodingName +
+								'</option>';
 					});
 					updateSelectOptions('codepageEncoding', codepageOptionStrings);
 					updateSelectOptions('outputEncoding', outputEncodingOptionStrings);
+					updateSelectOptions('mojibakeEncodings', mojibakeOptionStrings);
 					completion();
 				}
 			});

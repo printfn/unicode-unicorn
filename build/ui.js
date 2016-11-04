@@ -189,15 +189,19 @@ function initLicenseInfo(completion) {
 function updateMojibake() {
     var codepoints = getStr();
     var mojibakeOutputs = [];
-    $('#outputEncoding option').each(function (i, e) {
+    $('#mojibakeEncodings option').each(function (i, e) {
+        if (!e.selected)
+            return;
         var encoding1Name = $(e).text();
         if (global_encodings[encoding1Name].type == 'text function')
             return;
         var encodedString = encodeOutput('Don\'t use a byte order mark', encoding1Name, 'Decimal', 'Separated using commas and spaces', codepoints);
         if (encodedString.startsWith('<'))
             return;
-        $('#outputEncoding option').each(function (j, f) {
+        $('#mojibakeEncodings option').each(function (j, f) {
             if (i == j)
+                return;
+            if (!f.selected)
                 return;
             var encoding2Name = $(f).text();
             if (global_encodings[encoding2Name].type == 'text function')
@@ -205,10 +209,6 @@ function updateMojibake() {
             var decodedString = decodeOutput('Don\'t use a byte order mark', encoding2Name, 'Decimal', 'Separated using commas and spaces', encodedString);
             if (!decodedString)
                 return;
-            for (var k = 0; k < mojibakeOutputs.length; ++k) {
-                if (mojibakeOutputs[k].text == ctos(decodedString))
-                    return;
-            }
             mojibakeOutputs.push({
                 encoding1Name: encoding1Name,
                 encoding2Name: encoding2Name,

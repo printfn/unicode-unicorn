@@ -206,7 +206,9 @@ function initLicenseInfo(completion: () => void) {
 function updateMojibake() {
 	var codepoints = getStr();
 	var mojibakeOutputs: { encoding1Name: string, encoding2Name: string, text: string }[] = [];
-	$('#outputEncoding option').each(function(i, e) {
+	$('#mojibakeEncodings option').each(function(i: number, e: Element & { selected: boolean; }) {
+		if (!e.selected)
+			return;
 		var encoding1Name = $(e).text();
 		if (global_encodings[encoding1Name].type == 'text function')
 			return;
@@ -218,8 +220,10 @@ function updateMojibake() {
 			codepoints);
 		if (encodedString.startsWith('<'))
 			return;
-		$('#outputEncoding option').each(function(j, f) {
+		$('#mojibakeEncodings option').each(function(j: number, f: Element & { selected: boolean; }) {
 			if (i == j)
+				return;
+			if (!f.selected)
 				return;
 			var encoding2Name = $(f).text();
 			if (global_encodings[encoding2Name].type == 'text function')
@@ -232,10 +236,6 @@ function updateMojibake() {
 				encodedString);
 			if (!decodedString)
 				return;
-			for (var k = 0; k < mojibakeOutputs.length; ++k) {
-				if (mojibakeOutputs[k].text == ctos(decodedString))
-					return;
-			}
 			mojibakeOutputs.push({
 				encoding1Name: encoding1Name,
 				encoding2Name: encoding2Name,

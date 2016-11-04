@@ -33,7 +33,6 @@ var global_event_listeners = [{
         f: updateLanguage
     }];
 function callEventListenersForElemId(elemId) {
-    console.log('callEventListenersForElemId(' + arguments + ')');
     for (var i = 0; i < global_event_listeners.length; ++i) {
         var listener = global_event_listeners[i];
         if (listener.elementId != elemId)
@@ -70,7 +69,6 @@ function normalizeString(form) {
     updateInfo();
 }
 function updateInfo() {
-    console.log('updateInfo()');
     var codepoints = getStr();
     setStr(codepoints);
     callEventListenersForElemId('output');
