@@ -33,3 +33,6 @@ pre {
 .modal-xl {
 	width: 700px;
 }
+.table {
+	margin-bottom: 0px !important; /* override bootstrap */
+}

@@ -86,14 +86,17 @@ function updateSuggestions() {
             '</tr>');
     }
     if (!clusterize) {
+        $('.clusterize-no-data').each(function (i, e) { e.parentNode.removeChild(e); });
         clusterize = new Clusterize({
             rows: markup,
             scrollId: 'scrollArea',
-            contentId: 'contentArea'
+            contentId: 'contentArea',
+            show_no_data_row: false
         });
     }
     else {
         clusterize.update(markup);
+        $('.clusterize-no-data').each(function (i, e) { e.parentNode.removeChild(e); });
     }
     /*renderCodepointsInTable(
         results,
@@ -165,6 +168,9 @@ function initData(completion) {
     });
 }
 function updateSpacerHeights() {
+    for (var i = 0; i < $('.clusterize-scroll').length; ++i) {
+        $('.clusterize-scroll')[i].style.maxHeight = $(window).height() - $($('.clusterize-scroll')[i]).position().top - 15 + 'px';
+    }
     $('.fixed').each(function (i, e) {
         var spacerId = $(e).attr('data-spacer-id');
         var spacer = $('#' + spacerId);
