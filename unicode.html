@@ -186,6 +186,16 @@
 					<input type="checkbox" id="useInternalString"> Use internal string<br>
 					Use internal memory instead of above textarea for storing the Unicode string. This prevents browsers from doing some automatic conversions, including line ending conversions.
 				</p>
+				<b>Language, Script and Region Settings:</b>
+				<p>
+					The shapes of some characters may change depending on your browser's language. For example, Han characters have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
+					<input type="button" id="showRareLanguages" value="Show rare languages (slows down the browser)"><br>
+					Language: <select id="languageList"></select><br>
+					Script: <select id="scriptList"></select><br>
+					Region: <select id="regionList"></select><br>
+					Variant: <select id="variantList"></select><br>
+					Code: <input type="text" id="languageCode" placeholder="Language code (e.g. en, en-US, zh-Hant)">
+				</p>
 				<b>Search syntax:</b>
 				<p>
 					Use commas to separate multiple terms.<br>
@@ -206,16 +216,6 @@ mandarin:shuǐ</pre>
 				<b>Unit Tests</b>
 				<p>
 					<input type="button" onclick="runTests()" value="Run Unit Tests">
-				</p>
-				<b>Language, Script and Region Settings:</b>
-				<p>
-					The shapes of some characters may change depending on your browser's language. For example, Han characters have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
-					<input type="button" id="showRareLanguages" value="Show rare languages (slows down the browser)"><br>
-					Language: <select id="languageList"></select><br>
-					Script: <select id="scriptList"></select><br>
-					Region: <select id="regionList"></select><br>
-					Variant: <select id="variantList"></select><br>
-					Code: <input type="text" id="languageCode" placeholder="Language code (e.g. en, en-US, zh-Hant)">
 				</p>
 				<p>
 					<a onclick="$('#licenses-modal').modal('show');" style="cursor: pointer;">Third-Party Licenses</a>
