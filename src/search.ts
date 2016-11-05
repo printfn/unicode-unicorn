@@ -48,10 +48,6 @@ function testSearch(searchString: string, words: string[]) {
 function searchCodepoints(str: string) {
 	var results: number[] = [];
 
-	var reachedMaxResults = function(results: number[]) {
-		return results.length >= 256;
-	};
-
 	str = str.toUpperCase();
 	var words = str.split(',');
 	for (let i = 0; i < words.length; ++i) {
@@ -67,8 +63,6 @@ function searchCodepoints(str: string) {
 				continue;
 			if (testSearch(searchString, words)) {
 				results.push(c);
-				if (reachedMaxResults(results))
-					return results;
 			}
 		}
 	}

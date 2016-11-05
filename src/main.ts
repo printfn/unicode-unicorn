@@ -70,14 +70,51 @@ function output(codepoint: number) {
 	updateInfo();
 }
 
+var clusterize: any = null;
+declare var Clusterize: any;
 function updateSuggestions() {
 	var input = $('#input').val();
-	var results = searchCodepoints(input);
-	renderCodepointsInTable(
+	var codepoints = searchCodepoints(input);
+	var markup: string[] = [];
+	var buttons = [{displayName: 'Insert', functionName: 'output'}];
+	for (var i = 0; i < codepoints.length; ++i) {
+		var codepoint = codepoints[i];
+		var buttonStr = '';
+		for (var j in buttons) {
+			var buttonDescription = buttons[j];
+			var disabled = '';
+			/*if (buttonDescription.require) {
+				if (!buttonDescription.require(i, codepoints.length)) {
+					disabled = 'disabled ';
+				}
+			}*/
+			buttonStr += '<input type="button" ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')" value="' +
+			buttonDescription.displayName +
+			'">';
+		}
+		markup.push('<tr>' +
+			'<td>' + buttonStr + '</td>' +
+			'<td>U+' + itos(codepoint, 16, 4) + '</td>' +
+			'<td>' + codepoint + '</td>' +
+			'<td>' + displayCodepoint(codepoint) + '</td>' +
+			'<td>' + getCharacterCategoryName(codepoint) + '</td>' +
+			'<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>' +
+			'</tr>');
+	}
+	if (!clusterize) {
+		clusterize = new Clusterize({
+			rows: markup,
+			scrollId: 'scrollArea',
+			contentId: 'contentArea'
+		});
+	} else {
+		clusterize.update(markup);
+	}
+	/*renderCodepointsInTable(
 		results,
 		'searchResults',
 		[{displayName: 'Insert', functionName: 'output'}]
-	);
+	);*/
 }
 
 function normalizeString(form: string) {

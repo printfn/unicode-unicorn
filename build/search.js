@@ -44,7 +44,8 @@ function testSearch(searchString, words) {
 function searchCodepoints(str) {
     var results = [];
     var reachedMaxResults = function (results) {
-        return results.length >= 256;
+        return false;
+        //return results.length >= 256;
     };
     str = str.toUpperCase();
     var words = str.split(',');

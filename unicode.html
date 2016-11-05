@@ -7,13 +7,14 @@
 
 	<link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link href="libs/chosen.min.css" rel="stylesheet">
-
+	<link href="libs/clusterize.css" rel="stylesheet">
 	<link href="css/stylesheet.css" rel="stylesheet">
 </head>
 <body>
 	<script src="libs/jquery-3.1.1.min.js"></script>
 	<script src="libs/bootstrap/js/bootstrap.min.js"></script>
 	<script src="libs/chosen.jquery.min.js"></script>
+	<script src="libs/clusterize.min.js"></script>
 	<script src="libs/he.js"></script>
 	<script src="libs/jszip.min.js"></script>
 	<script src="libs/jszip-utils.min.js"></script>
@@ -79,7 +80,29 @@
 					<input type="text" id="input" placeholder="Search for a character... (use commas to separate terms)">
 				</div>
 				<div id="input-spacer" class="spacer"></div>
-				<table class="table table-striped" id="searchResults"></table>
+				<div class="clusterize">
+					<table class="table table-striped" style="table-layout: fixed">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Codepoint (Hex)</th>
+								<th>Codepoint (Decimal)</th>
+								<th>Character</th>
+								<th>Category</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+					</table>
+					<div id="scrollArea" class="clusterize-scroll">
+						<table class="table table-striped" id="searchResults" style="table-layout: fixed">
+							<tbody id="contentArea" class="clusterize-content">
+								<tr class="clusterize-no-data">
+									<td>Loading data…</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="stats">
 				<p>
