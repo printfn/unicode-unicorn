@@ -33,9 +33,3 @@ pre {
 .modal-xl {
 	width: 700px;
 }
-
-/* needed to prevent chosen selects from rendering in front of fixed header
-   delete when removing fixed header*/
-.chosen-container {
-	z-index: -1;
-}
