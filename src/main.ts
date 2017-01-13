@@ -185,7 +185,8 @@ function initData(completion: () => void) {
 			initLicenseInfo,
 			initLanguageData,
 			initVariationSequences,
-			initIdeographicVariationSequences], function() {
+			initIdeographicVariationSequences,
+			initIdeographicVariationCollections], function() {
 				deleteUnicodeData();
 				completion();
 			});

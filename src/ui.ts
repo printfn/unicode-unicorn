@@ -144,9 +144,8 @@ function showCodepageDetail(codepoint: number) {
 	} else {
 		$('#detail-on').hide();
 	}
-	var variationSequences = variationSequencesForCodepoint(codepoint);
-	var ideographicVariationSequences = ideographicVariationSequencesForCodepoint(codepoint);
-	if (variationSequences.length === 0 && ideographicVariationSequences.length === 0) {
+	var variationSequences = variationSequencesForCodepoint(codepoint).concat(ideographicVariationSequencesForCodepoint(codepoint));
+	if (variationSequences.length === 0) {
 		$('#detail-variation-sequences').hide();
 	} else {
 		$('#detail-variation-sequences').show();
@@ -155,6 +154,8 @@ function showCodepageDetail(codepoint: number) {
 			let vs = variationSequences[i];
 			if (variationsString !== '')
 				variationsString += '<br>';
+			if (!vs.shapingEnvironments)
+				vs.shapingEnvironments = [];
 			variationsString +=
 				'U+' + itos(vs.baseCodepoint, 16, 4) +
 				' U+' + itos(vs.variationSelector, 16, 4) +
@@ -164,15 +165,6 @@ function showCodepageDetail(codepoint: number) {
 				variationsString += ' (' + vs.shapingEnvironments.join(', ') + ')</i>';
 			else
 				variationsString += '</i>';
-		}
-		for (let i = 0; i < ideographicVariationSequences.length; ++i) {
-			let vs = ideographicVariationSequences[i];
-			if (variationsString !== '')
-				variationsString += '<br>';
-			variationsString +=
-				'U+' + itos(vs.baseCodepoint, 16, 4) +
-				' U+' + itos(vs.variationSelector, 16, 4) +
-				': ' + escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector]));
 		}
 		$('#detail-variation-sequences-content').html(variationsString);
 	}
@@ -201,6 +193,7 @@ function showCodepageDetail(codepoint: number) {
 }
 
 function changeDetail(elem: HTMLElement) {
+	$(elem).blur(); // remove focus
 	var codepointToShow = parseInt($(elem).attr('data-cp'), 10);
 	showCodepageDetail(codepointToShow);
 }

@@ -5,8 +5,14 @@ interface VariationSequence {
 	shapingEnvironments?: string[];
 }
 
+interface VariationCollection {
+	name: string;
+	url: string;
+}
+
 var global_variationSequences: VariationSequence[] = [];
 var global_ideographicVariationSequences: VariationSequence[] = [];
+var global_ideographicVariationCollections: VariationCollection[] = [];
 
 function initVariationSequences(completion: () => void) {
 	requestAsync('data/Unicode/UCD/StandardizedVariants.txt', null, function(line) {
@@ -38,9 +44,31 @@ function initIdeographicVariationSequences(completion: () => void) {
 	requestAsync('data/Unicode/IVD/IVD_Sequences.txt', null, function(line) {
 		var fields = line.split(';');
 		var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
+		var collection = fields[1].trim();
+		var item = fields[2].trim();
 		global_ideographicVariationSequences.push({
 			baseCodepoint: codepoints[0],
-			variationSelector: codepoints[1]
+			variationSelector: codepoints[1],
+			description: 'ideographic (entry ' + item + ' in collection <a target="_blank" href="' + urlForIdeographicCollection(collection) + '">' + collection + '</a>)'
+		});
+	}, completion);
+}
+
+function urlForIdeographicCollection(name: string) {
+	for (var i = 0; i < global_ideographicVariationCollections.length; ++i) {
+		var collection = global_ideographicVariationCollections[i];
+		if (collection.name != name)
+			continue;
+		return collection.url;
+	}
+}
+
+function initIdeographicVariationCollections(completion: () => void) {
+	requestAsync('data/Unicode/IVD/IVD_Collections.txt', null, function(line) {
+		var fields = line.split(';');
+		global_ideographicVariationCollections.push({
+			name: fields[0],
+			url: fields[2] // fields[1] is a regex describing item identifiers
 		});
 	}, completion);
 }
