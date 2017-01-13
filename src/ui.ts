@@ -193,7 +193,16 @@ function showCodepageDetail(codepoint: number) {
 	});
 
 	$('#detail-encoding-outputs').html(encodingsString);
+
+	$('#detail-previous-cp').attr('data-cp', codepoint != 0 ? itos(codepoint - 1, 10) : itos(0x10FFFF, 10));
+	$('#detail-next-cp').attr('data-cp', codepoint != 0x10FFFF ? itos(codepoint + 1, 10) : itos(0, 10));
+	
 	jQueryModal('#codepoint-detail', 'show');
+}
+
+function changeDetail(elem: HTMLElement) {
+	var codepointToShow = parseInt($(elem).attr('data-cp'), 10);
+	showCodepageDetail(codepointToShow);
 }
 
 function initLicenseInfo(completion: () => void) {
