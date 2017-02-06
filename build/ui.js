@@ -33,7 +33,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
             '</tr>';
     }
     if (i >= 256) {
-        html += '<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>';
+        html += '<tr><td colspan="6">Showing only the first 256 rows.</td></tr>';
     }
     html += '</tbody>';
     table.hide();

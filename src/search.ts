@@ -63,6 +63,8 @@ function searchCodepoints(str: string) {
 				continue;
 			if (testSearch(searchString, words)) {
 				results.push(c);
+				if (results.length >= 256)
+					return results;
 			}
 		}
 	}
