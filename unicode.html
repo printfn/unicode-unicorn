@@ -74,10 +74,18 @@
 		<!-- Tab panes -->
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="search">
-				<div class="fixed" data-spacer-id="input-spacer">
-					<input type="text" id="input" placeholder="Search for a character... (use commas to separate terms)">
+				<div id="advanced-search-div">
+					<table style="width: 100%">
+						<tr><td colspan="2"><b>Search for a codepoint:</b></td></tr>
+						<tr><td colspan="2"><input type="text" id="input"></td></tr>
+						<tr>
+							<td>Block:</td>
+							<td>
+								<select class="all-blocks" id="searchBlock"></select>
+							</td>
+						</tr>
+					</table>
 				</div>
-				<div id="input-spacer" class="spacer"></div>
 				<table class="table table-striped" id="searchResults">
 				</table>
 			</div>

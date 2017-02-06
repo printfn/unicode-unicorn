@@ -48,10 +48,13 @@ function searchCodepoints(str) {
     for (var i = 0; i < words.length; ++i) {
         words[i] = words[i].trim();
     }
+    var block = $('#searchBlock option:selected').attr('data-block');
     for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
         var range = global_all_assigned_ranges[i];
         var end = range.endCodepoint;
         for (var c = range.startCodepoint; c <= end; ++c) {
+            if (block && getBlockForCodepoint(c) != block)
+                continue;
             var searchString = global_search_strings[c];
             if (!searchString)
                 continue;

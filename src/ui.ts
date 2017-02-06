@@ -407,7 +407,7 @@ function updateUseInternalString() {
 	global_useInternalString = $('#useInternalString').is(':checked');
 }
 
-function updateSelectOptions(selectId: string, html: string) {
-	$('#' + selectId).html(html);
-	$('#' + selectId).trigger('chosen:updated');
+function updateSelectOptions(selector: string, html: string) {
+	$(selector).html(html);
+	$(selector).trigger('chosen:updated');
 }

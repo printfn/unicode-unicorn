@@ -73,33 +73,6 @@ function output(codepoint: number) {
 function updateSuggestions() {
 	var input = $('#input').val();
 	var results = searchCodepoints(input);
-	// var markup: string[] = [];
-	// var buttons = [{displayName: 'Insert', functionName: 'output'}];
-	// for (var i = 0; i < codepoints.length; ++i) {
-	// 	var codepoint = codepoints[i];
-	// 	var buttonStr = '';
-	// 	for (var j in buttons) {
-	// 		var buttonDescription = buttons[j];
-	// 		var disabled = '';
-	// 		/*if (buttonDescription.require) {
-	// 			if (!buttonDescription.require(i, codepoints.length)) {
-	// 				disabled = 'disabled ';
-	// 			}
-	// 		}*/
-	// 		buttonStr += '<input type="button" ' + disabled + 'onclick="' + buttonDescription.functionName + '(' + codepoint + ', ' + i + ')" value="' +
-	// 		buttonDescription.displayName +
-	// 		'">';
-	// 	}
-	// 	markup.push('<tr>' +
-	// 		'<td>' + buttonStr + '</td>' +
-	// 		'<td>U+' + itos(codepoint, 16, 4) + '</td>' +
-	// 		'<td>' + codepoint + '</td>' +
-	// 		'<td>' + displayCodepoint(codepoint) + '</td>' +
-	// 		'<td>' + getCharacterCategoryName(codepoint) + '</td>' +
-	// 		'<td style="cursor: pointer;" onclick="showCodepageDetail(' + codepoint + ')">' + getHtmlNameDescription(codepoint) + '</td>' +
-	// 		'</tr>');
-	// }
-	// document.getElementById('searchResults').innerHTML = mark
 	renderCodepointsInTable(
 		results,
 		'searchResults',
@@ -198,7 +171,7 @@ $(document).ready(function() {
 	if (loaded)
 		return;
 	loaded = true;
-	(<any> $('select')).chosen({ disable_search_threshold: 10, width: '50%' });
+	(<any> $('select')).chosen({ disable_search_threshold: 10, width: '100%' });
 	updateSpacerHeights();
 	var startTime = new Date();
 	initData(function() {
@@ -233,6 +206,9 @@ $(document).ready(function() {
 			}
 		});
 		$('#input').on('input', function(e) {
+			updateSuggestions();
+		});
+		$('#searchBlock').on('change', function(e) {
 			updateSuggestions();
 		});
 		$('#output, #encodedInput').on('input', function() {

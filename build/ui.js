@@ -357,7 +357,7 @@ function updateLanguage() {
 function updateUseInternalString() {
     global_useInternalString = $('#useInternalString').is(':checked');
 }
-function updateSelectOptions(selectId, html) {
-    $('#' + selectId).html(html);
-    $('#' + selectId).trigger('chosen:updated');
+function updateSelectOptions(selector, html) {
+    $(selector).html(html);
+    $(selector).trigger('chosen:updated');
 }

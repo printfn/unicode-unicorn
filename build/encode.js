@@ -78,9 +78,9 @@ function initializeMappings(completion) {
                             encodingName +
                             '</option>';
                     });
-                    updateSelectOptions('codepageEncoding', codepageOptionStrings_1);
-                    updateSelectOptions('outputEncoding', outputEncodingOptionStrings_1);
-                    updateSelectOptions('mojibakeEncodings', mojibakeOptionStrings_1);
+                    updateSelectOptions('#codepageEncoding', codepageOptionStrings_1);
+                    updateSelectOptions('#outputEncoding', outputEncodingOptionStrings_1);
+                    updateSelectOptions('#mojibakeEncodings', mojibakeOptionStrings_1);
                     completion();
                 }
             });

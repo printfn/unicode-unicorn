@@ -36,3 +36,12 @@ pre {
 .table {
 	margin-bottom: 0px !important; /* override bootstrap */
 }
+#advanced-search-div {
+    width: 70%;
+    border: 1px solid black;
+    margin: 10px auto;
+    padding: 10px;
+}
+#advanced-search-div td {
+	padding: 2px;
+}

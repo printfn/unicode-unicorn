@@ -10,7 +10,16 @@ function initBlockData(completion: () => void) {
 		var endCodepoint = parseInt(splitLine[0].split('..')[1], 16);
 		var blockName = splitLine[1].trim();
 		global_blockRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, blockName: blockName});
-	}, completion);
+	}, function() {
+        var html = '<option>All Blocks</option>';
+        for (var i = 0; i < global_blockRanges.length; ++i) {
+            var b = global_blockRanges[i];
+            html += ('<option data-block="' + b.blockName + '">' +
+                b.blockName + ' (from U+' + itos(b.startCodepoint, 16, 4) + ' to U+' + itos(b.endCodepoint, 16, 4) + ')</option>');
+        }
+        updateSelectOptions('.all-blocks', html);
+        completion();
+    });
 }
 
 function getBlockForCodepoint(codepoint: number): string {
