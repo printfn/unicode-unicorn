@@ -117,10 +117,7 @@ function initData(completion) {
         initLanguageData,
         initVariationSequences,
         initIdeographicVariationSequences,
-        initIdeographicVariationCollections], function () {
-        deleteUnicodeData();
-        completion();
-    });
+        initIdeographicVariationCollections], completion);
 }
 function updateSpacerHeights() {
     $('.fixed').each(function (i, e) {

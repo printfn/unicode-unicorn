@@ -145,10 +145,7 @@ function initData(completion: () => void) {
 		initLanguageData,
 		initVariationSequences,
 		initIdeographicVariationSequences,
-		initIdeographicVariationCollections], function() {
-			deleteUnicodeData();
-			completion();
-		});
+		initIdeographicVariationCollections], completion);
 }
 
 function updateSpacerHeights() {

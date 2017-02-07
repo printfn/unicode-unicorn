@@ -1,4 +1,3 @@
-var DataZip = new JSZip();
 function requestAsync(url, before, each, after) {
     var req = new XMLHttpRequest();
     req.open('GET', url, true);
@@ -23,9 +22,6 @@ function requestAsync(url, before, each, after) {
         }
     };
     req.send(null);
-}
-function deleteUnicodeData() {
-    DataZip = null;
 }
 function callMultipleAsync(functions, completion) {
     var count = 0;

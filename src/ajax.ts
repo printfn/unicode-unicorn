@@ -1,6 +1,3 @@
-declare var JSZipUtils: { getBinaryContent(url: string, callback: (err: Error, data: ArrayBuffer) => void): void; };
-var DataZip = new JSZip();
-
 function requestAsync(url: string, before?: (lines: string[]) => void, each?: (line: string) => void, after?: () => void) {
 	var req = new XMLHttpRequest();
 	req.open('GET', url, true);
@@ -26,10 +23,6 @@ function requestAsync(url: string, before?: (lines: string[]) => void, each?: (l
 		}
 	};
 	req.send(null);
-}
-
-function deleteUnicodeData() {
-	DataZip = null;
 }
 
 function callMultipleAsync(functions: ((callback: () => void) => void)[], completion: () => void) {
