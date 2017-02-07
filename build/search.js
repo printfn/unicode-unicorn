@@ -4,7 +4,6 @@ function getSearchString(codepoint) {
         '|U+' + itos(codepoint, 16, 4) +
         '|cp:' + codepoint +
         '|name:' + getName(codepoint, true) +
-        '|block:' + getBlockForCodepoint(codepoint).replace(/_/g, ' ') +
         '|script:' + getScriptForCodepoint(codepoint).replace(/_/g, ' ') +
         '|category:' + getCharacterCategoryName(codepoint);
     for (var i = 0; i < global_aliases.length; ++i) {
@@ -45,15 +44,19 @@ function searchCodepoints(str) {
     var results = [];
     str = str.toUpperCase();
     var words = str.split(',');
-    for (var i = 0; i < words.length; ++i) {
-        words[i] = words[i].trim();
+    for (var i_1 = 0; i_1 < words.length; ++i_1) {
+        words[i_1] = words[i_1].trim();
     }
-    var block = $('#searchBlock option:selected').attr('data-block');
-    for (var i = 0; i < global_all_assigned_ranges.length; ++i) {
-        var range = global_all_assigned_ranges[i];
+    var selectedElements = $('#searchBlock option:selected');
+    var blocks = [];
+    for (var i = 0; i < selectedElements.length; ++i) {
+        blocks.push(selectedElements[i].getAttribute('data-block'));
+    }
+    for (var i_2 = 0; i_2 < global_all_assigned_ranges.length; ++i_2) {
+        var range = global_all_assigned_ranges[i_2];
         var end = range.endCodepoint;
         for (var c = range.startCodepoint; c <= end; ++c) {
-            if (block && getBlockForCodepoint(c) != block)
+            if (blocks.length > 0 && blocks.indexOf(getBlockForCodepoint(c)) == -1)
                 continue;
             var searchString = global_search_strings[c];
             if (!searchString)

@@ -102,26 +102,24 @@ function moveDown(codepoint, index) {
     updateInfo();
 }
 function initData(completion) {
-    loadUnicodeData(function () {
-        callMultipleAsync([
-            initializeMappings,
-            initHanData,
-            initGraphemeData,
-            initUnicodeData,
-            initGeneralCategoryNames,
-            initAliasData,
-            initBlockData,
-            initHangulSyllableTypes,
-            initShortJamoNames,
-            initScriptData,
-            initLicenseInfo,
-            initLanguageData,
-            initVariationSequences,
-            initIdeographicVariationSequences,
-            initIdeographicVariationCollections], function () {
-            deleteUnicodeData();
-            completion();
-        });
+    callMultipleAsync([
+        initializeMappings,
+        initHanData,
+        initGraphemeData,
+        initUnicodeData,
+        initGeneralCategoryNames,
+        initAliasData,
+        initBlockData,
+        initHangulSyllableTypes,
+        initShortJamoNames,
+        initScriptData,
+        initLicenseInfo,
+        initLanguageData,
+        initVariationSequences,
+        initIdeographicVariationSequences,
+        initIdeographicVariationCollections], function () {
+        deleteUnicodeData();
+        completion();
     });
 }
 function updateSpacerHeights() {

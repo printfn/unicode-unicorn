@@ -1,39 +1,9 @@
 var DataZip = new JSZip();
-function loadBinaryData(url, progress, completion) {
+function requestAsync(url, before, each, after) {
     var req = new XMLHttpRequest();
     req.open('GET', url, true);
-    req.responseType = 'arraybuffer';
     req.onload = function () {
-        var arrayBuffer = req.response;
-        if (arrayBuffer) {
-            completion(null, arrayBuffer);
-        }
-        else {
-            JSZipUtils.getBinaryContent(url, completion);
-        }
-    };
-    req.onprogress = function (event) {
-        if (!event.lengthComputable) {
-            return;
-        }
-        progress(event.loaded / event.total);
-    };
-    req.send(null);
-}
-function loadUnicodeData(completion) {
-    loadBinaryData('data.zip', function (progress) {
-        $('#ajaxLoadingProgressBar').val(progress);
-    }, function (err, data) {
-        if (err) {
-            throw err;
-        }
-        DataZip.loadAsync(data).then(function () {
-            completion();
-        });
-    });
-}
-function requestAsync(url, before, each, after) {
-    DataZip.file(url).async('string').then(function (str) {
+        var str = req.response;
         var lines = str.split('\n');
         if (before)
             before(lines);
@@ -51,7 +21,8 @@ function requestAsync(url, before, each, after) {
         if (after) {
             after();
         }
-    });
+    };
+    req.send(null);
 }
 function deleteUnicodeData() {
     DataZip = null;

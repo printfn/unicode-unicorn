@@ -10,7 +10,7 @@ function initBlockData(completion) {
         var blockName = splitLine[1].trim();
         global_blockRanges.push({ startCodepoint: startCodepoint, endCodepoint: endCodepoint, blockName: blockName });
     }, function () {
-        var html = '<option>All Blocks</option>';
+        var html = '';
         for (var i = 0; i < global_blockRanges.length; ++i) {
             var b = global_blockRanges[i];
             html += ('<option data-block="' + b.blockName + '">' +
