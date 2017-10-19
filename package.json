@@ -1,0 +1,36 @@
+{
+  "name": "unicode-unicorn",
+  "version": "1.0.0",
+  "description": "A JavaScript Unicode IDE",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "chosen-js": "^1.8.2",
+    "he": "^1.1.1",
+    "jquery": "^3.2.1",
+    "punycode": "^2.1.0",
+    "randomcolor": "^0.5.3",
+    "utf8": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/he": "^0.5.29",
+    "@types/jquery": "^2.0.48",
+    "awesome-typescript-loader": "^3.2.3",
+    "source-map-loader": "^0.2.2",
+    "typescript": "^2.5.3",
+    "webpack": "^3.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/printfn/unicode-unicorn.git"
+  },
+  "author": "printfn",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/printfn/unicode-unicorn/issues"
+  },
+  "homepage": "https://github.com/printfn/unicode-unicorn#readme"
+}
