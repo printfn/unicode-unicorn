@@ -1,4 +1,3 @@
-build/
 
 # while we're not using webpack
 index.js
