@@ -1,6 +1,6 @@
 # Unicode Unicorn
 
-Click [here](https://printfn.github.io/unicode/unicode.html) for a live demo of Unicode Unicorn.
+Click [here](http://unicode.website/) for a live demo of Unicode Unicorn.
 
 ## Sources
 
