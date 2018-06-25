@@ -1,6 +1,6 @@
 # Unicode Unicorn
 
-Click [here](http://unicode.website/) for a live demo of Unicode Unicorn.
+Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 
 ## Sources
 
