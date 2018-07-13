@@ -1,4 +1,11 @@
-var global_colorMap = {};
+var global_colorMap = {
+    'C': '#f97e77',
+    'L': '#f9e776',
+    'N': '#b7f976',
+    'P': '#76f9ee',
+    'S': '#7680f9',
+    'Z': '#a8a8a8',
+};
 function renderCodepointsInTable(codepoints, tableId, buttons) {
     var table = $('#' + tableId);
     if (codepoints.length === 0) {

@@ -1,6 +1,13 @@
 declare function randomColor(desc: { luminosity?: string; }): string;
 
-var global_colorMap: { [key: string]: string; } = {};
+var global_colorMap: { [key: string]: string; } = {
+	'C': '#f97e77',
+	'L': '#f9e776',
+	'N': '#b7f976',
+	'P': '#76f9ee',
+	'S': '#7680f9',
+	'Z': '#a8a8a8',
+};
 
 interface ButtonInfo {
 	displayName: string; // text displayed on button
