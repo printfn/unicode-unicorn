@@ -53,7 +53,7 @@ function searchCodepoints(str: string) {
 		words[i] = words[i].trim();
 	}
 	var selectedElements = $('#searchBlock option:selected');
-	var blocks = [];
+	var blocks: string[] = [];
 	for (var i = 0; i < selectedElements.length; ++i) {
 		blocks.push(selectedElements[i].getAttribute('data-block'));
 	}
