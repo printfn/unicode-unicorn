@@ -1,10 +1,11 @@
 #
 # Unihan_Variants.txt
-# Date: 2017-05-14 07:01:48 GMT [JHJ]
-# Unicode version: 10.0.0
+# Date: 2018-05-18 02:15:26 GMT [JHJ]
+# Unicode version: 11.0.0
 #
 # Unicode Character Database
-# © 1991-2017 Unicode®, Inc.
+# © 2018 Unicode®, Inc.
+# Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 # For documentation, see http://www.unicode.org/reports/tr44/
 #
@@ -1276,7 +1277,7 @@ U+5395	kTraditionalVariant	U+5EC1
 U+5395	kZVariant	U+5EC1
 U+5396	kSemanticVariant	U+5EAC<kMeyerWempe
 U+5396	kZVariant	U+9F90
-U+5398	kSemanticVariant	U+91D0<kLau,kMatthews,kMeyerWempe
+U+5398	kSemanticVariant	U+91D0<kFennIndex:T,kLau,kMatthews,kMeyerWempe U+2D016<kFennIndex:T
 U+5398	kTraditionalVariant	U+91D0
 U+5399	kSimplifiedVariant	U+538D
 U+539B	kZVariant	U+5EF3
@@ -3450,7 +3451,7 @@ U+64C7	kSimplifiedVariant	U+62E9
 U+64C7	kZVariant	U+629E
 U+64CA	kSimplifiedVariant	U+51FB
 U+64CA	kZVariant	U+6483
-U+64CB	kSemanticVariant	U+6529<kLau,kMatthews,kMeyerWempe
+U+64CB	kSemanticVariant	U+6529<kFennIndex:T,kLau:T,kMatthews,kMeyerWempe U+2BF6E<kFennIndex:T,kLau:T
 U+64CB	kSimplifiedVariant	U+6321
 U+64D2	kSemanticVariant	U+6366<kMatthews,kMeyerWempe
 U+64D3	kSimplifiedVariant	U+39DF
@@ -3508,7 +3509,7 @@ U+6522	kSpecializedSemanticVariant	U+63DD<kFenn U+648D<kFenn
 U+6522	kZVariant	U+6505
 U+6523	kSimplifiedVariant	U+631B
 U+6524	kSimplifiedVariant	U+644A
-U+6529	kSemanticVariant	U+64CB<kLau,kMatthews,kMeyerWempe
+U+6529	kSemanticVariant	U+64CB<kFennIndex:T,kLau:T,kMeyerWempe U+2BF6E<kFennIndex:T,kLau:T
 U+652A	kSemanticVariant	U+641E<kLau
 U+652A	kSimplifiedVariant	U+6405
 U+652C	kSemanticVariant	U+3A5C<kMeyerWempe U+64E5<kLau,kMatthews,kMeyerWempe
@@ -5488,7 +5489,7 @@ U+7779	kSemanticVariant	U+89A9<kMatthews,kMeyerWempe
 U+777E	kSemanticVariant	U+768B<kMatthews
 U+777F	kSemanticVariant	U+53E1<kMatthews,kMeyerWempe
 U+777F	kZVariant	U+53E1
-U+7785	kSemanticVariant	U+77C1<kFenn
+U+7785	kSemanticVariant	U+77C1<kFennIndex:T U+2C461<kFennIndex:T
 U+7786	kTraditionalVariant	U+77B6
 U+778D	kSemanticVariant	U+2521F<kHanYu,kMeyerWempe
 U+7792	kTraditionalVariant	U+779E
@@ -5510,7 +5511,7 @@ U+77B7	kSemanticVariant	U+77AF<kMeyerWempe
 U+77B9	kSemanticVariant	U+66D6<kMeyerWempe
 U+77BC	kSimplifiedVariant	U+7751
 U+77BF	kSemanticVariant	U+4020<kMatthews
-U+77C1	kSemanticVariant	U+7785<kFenn
+U+77C1	kSemanticVariant	U+7785<kFennIndex:T U+2C461<kFennIndex:T
 U+77C7	kSpecializedSemanticVariant	U+6726
 U+77C7	kZVariant	U+8499
 U+77C8	kZVariant	U+77CF
@@ -5780,6 +5781,7 @@ U+7A61	kSimplifiedVariant	U+7A51
 U+7A62	kSimplifiedVariant	U+79FD
 U+7A63	kZVariant	U+7A70
 U+7A64	kSemanticVariant	U+7CEF<kFenn
+U+7A68	kSimplifiedVariant	U+2C4FC
 U+7A69	kSemanticVariant	U+349A<kMatthews
 U+7A69	kSimplifiedVariant	U+7A33
 U+7A69	kSpecializedSemanticVariant	U+6587<kFenn
@@ -6202,6 +6204,7 @@ U+7D93	kZVariant	U+7D4C
 U+7D99	kZVariant	U+7E7C
 U+7D9A	kZVariant	U+7E8C
 U+7D9C	kSimplifiedVariant	U+7EFC
+U+7D9D	kSimplifiedVariant	U+2C62D
 U+7D9E	kSimplifiedVariant	U+7F0D
 U+7DA0	kSemanticVariant	U+6C2F<kMatthews
 U+7DA0	kSimplifiedVariant	U+7EFF
@@ -7242,6 +7245,7 @@ U+84FD	kSimplifiedVariant	U+835C
 U+8502	kTraditionalVariant	U+8646
 U+8514	kSemanticVariant	U+83D4<kMeyerWempe
 U+8514	kZVariant	U+83D4
+U+8517	kSemanticVariant	U+27039<kFennIndex:T
 U+851A	kSemanticVariant	U+5D8E<kMatthews
 U+851E	kSimplifiedVariant	U+848C
 U+851E	kSpecializedSemanticVariant	U+8938<kMeyerWempe
@@ -8027,6 +8031,7 @@ U+8B4E	kSemanticVariant	U+61B0<kMatthews
 U+8B4E	kSimplifiedVariant	U+8C32
 U+8B4F	kSimplifiedVariant	U+8BA5
 U+8B50	kSemanticVariant	U+5642<kMeyerWempe
+U+8B54	kSimplifiedVariant	U+2C925
 U+8B56	kSimplifiedVariant	U+8C2E
 U+8B58	kSimplifiedVariant	U+8BC6
 U+8B59	kSemanticVariant	U+8A9A<kFenn
@@ -9052,7 +9057,7 @@ U+91CC	kZVariant	U+88CF
 U+91CE	kSemanticVariant	U+57DC<kLau,kMatthews
 U+91CE	kZVariant	U+57DC
 U+91CF	kZVariant	U+F97E
-U+91D0	kSemanticVariant	U+5398<kLau,kMatthews,kMeyerWempe
+U+91D0	kSemanticVariant	U+5398<kFennIndex:T,kLau,kMatthews,kMeyerWempe
 U+91D0	kSimplifiedVariant	U+5398
 U+91D1	kSemanticVariant	U+91D2<kMatthews
 U+91D1	kZVariant	U+9485
@@ -9151,6 +9156,7 @@ U+9264	kSemanticVariant	U+920E<kHKGlyph,kLau,kMatthews
 U+9264	kSimplifiedVariant	U+94A9
 U+9264	kZVariant	U+920E
 U+9266	kSimplifiedVariant	U+94B2
+U+9268	kSimplifiedVariant	U+9FED
 U+926C	kSimplifiedVariant	U+94BC
 U+926D	kSimplifiedVariant	U+94BD
 U+9271	kZVariant	U+7926
@@ -9404,6 +9410,7 @@ U+9438	kZVariant	U+922C
 U+943A	kSimplifiedVariant	U+94DB
 U+943F	kSimplifiedVariant	U+9571
 U+9444	kSimplifiedVariant	U+94F8
+U+9448	kSimplifiedVariant	U+9FED
 U+944A	kSimplifiedVariant	U+956C
 U+944C	kSimplifiedVariant	U+9554
 U+9451	kSemanticVariant	U+9452<kHKGlyph,kMatthews,kMeyerWempe
@@ -9920,6 +9927,7 @@ U+96A0	kZVariant	U+96B1
 U+96A3	kSemanticVariant	U+9130<kLau,kMatthews,kMeyerWempe
 U+96A3	kZVariant	U+9130
 U+96A4	kSemanticVariant	U+58A4<kMatthews,kMeyerWempe
+U+96A4	kSimplifiedVariant	U+2CBCE
 U+96A7	kSemanticVariant	U+2145E<kLau,kMeyerWempe
 U+96A8	kSimplifiedVariant	U+968F
 U+96A9	kSemanticVariant	U+21483<kMeyerWempe
@@ -10877,6 +10885,7 @@ U+9C68	kSimplifiedVariant	U+9CBF
 U+9C6D	kSimplifiedVariant	U+9C9A
 U+9C6E	kSimplifiedVariant	U+2B688
 U+9C6F	kSimplifiedVariant	U+9CE0
+U+9C72	kSimplifiedVariant	U+2B6AD
 U+9C77	kSemanticVariant	U+9C10<kLau,kMatthews
 U+9C77	kSimplifiedVariant	U+9CC4
 U+9C78	kSimplifiedVariant	U+9C88
@@ -11081,6 +11090,7 @@ U+9DAA	kSimplifiedVariant	U+4D17
 U+9DAC	kSimplifiedVariant	U+9E27
 U+9DAF	kSemanticVariant	U+9E0E<kMatthews
 U+9DAF	kSimplifiedVariant	U+83BA
+U+9DB1	kSimplifiedVariant	U+2CE23
 U+9DB2	kSimplifiedVariant	U+9E5F
 U+9DB4	kSimplifiedVariant	U+9E64
 U+9DB5	kSemanticVariant	U+96DB<kMatthews,kMeyerWempe
@@ -11411,6 +11421,7 @@ U+9FD0	kSimplifiedVariant	U+4CA4
 U+9FD2	kSimplifiedVariant	U+9FD3
 U+9FD3	kTraditionalVariant	U+9FD2
 U+9FD4	kTraditionalVariant	U+93B6
+U+9FED	kTraditionalVariant	U+9268 U+9448
 U+F900	kZVariant	U+8C48
 U+F901	kZVariant	U+66F4
 U+F902	kZVariant	U+8ECA
@@ -11981,6 +11992,7 @@ U+26C44	kSemanticVariant	U+83C7<kLau
 U+26CB7	kSemanticVariant	U+849E<kLau
 U+26DDD	kSemanticVariant	U+82BB
 U+26F4A	kSemanticVariant	U+9A4A<kMeyerWempe
+U+27039	kSemanticVariant	U+8517<kFennIndex:T
 U+2725E	kTraditionalVariant	U+45FF
 U+272CD	kSemanticVariant	U+8707<kFenn
 U+27313	kSemanticVariant	U+86D7<kHanYu
@@ -12363,12 +12375,21 @@ U+2B692	kTraditionalVariant	U+9B84
 U+2B694	kTraditionalVariant	U+9BB0
 U+2B695	kTraditionalVariant	U+9C24
 U+2B699	kTraditionalVariant	U+9BC6
+U+2B6AD	kTraditionalVariant	U+9C72
 U+2B6DB	kTraditionalVariant	U+9CF7
 U+2B6DE	kTraditionalVariant	U+9D03
 U+2B6E2	kTraditionalVariant	U+9E0B
 U+2B6F6	kTraditionalVariant	U+9D92
 U+2B6F8	kTraditionalVariant	U+9D97
+U+2BF6E	kSemanticVariant	U+64CB<kFennIndex:T,kLau:T,kMeyerWempe U+6529<kFennIndex:T,kLau:T,kMatthews,kMeyerWempe
+U+2C461	kSemanticVariant	U+7785<kFennIndex:T U+77C1<kFennIndex:T
+U+2C4FC	kTraditionalVariant	U+7A68
+U+2C62D	kTraditionalVariant	U+7D9D
 U+2C88D	kTraditionalVariant	U+27835
+U+2C925	kTraditionalVariant	U+8B54
+U+2CBCE	kTraditionalVariant	U+96A4
+U+2CE23	kTraditionalVariant	U+9DB1
+U+2D016	kSemanticVariant	U+5398<kFennIndex:T U+91D0<kFennIndex:T U+2D016<kFennIndex:T
 U+2F817	kSemanticVariant	U+5197<kMeyerWempe
 U+2F835	kSemanticVariant	U+7070<kFenn
 U+2F8D2	kSemanticVariant	U+5192<kHKGlyph
