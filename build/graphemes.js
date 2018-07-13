@@ -1,4 +1,5 @@
 var global_graphemeBreakData = [];
+var global_extendedPictograph = [];
 function initGraphemeData(completion) {
     requestAsync('data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt', function () { }, function (line) {
         var state = 1;
@@ -57,6 +58,34 @@ function initGraphemeData(completion) {
         }
     }, completion);
 }
+function initEmojiData(completion) {
+    requestAsync('data/Unicode/emoji-data.txt', undefined, function (line) {
+        var components = line.split(';');
+        if (components.length != 2)
+            return;
+        if (components[1].trim() != 'Extended_Pictographic')
+            return;
+        if (components[0].includes('..')) {
+            var arr = components[0].trim().split('..');
+            var start = parseInt(arr[0], 16);
+            var end = parseInt(arr[1], 16);
+            for (var i = start; i <= end; ++i) {
+                global_extendedPictograph.push(i);
+            }
+        }
+        else {
+            global_extendedPictograph.push(parseInt(components[0].trim(), 16));
+        }
+    }, completion);
+}
+function isExtendedPictographic(codepoint) {
+    for (var i in global_extendedPictograph) {
+        if (global_extendedPictograph[i] == codepoint) {
+            return true;
+        }
+    }
+    return false;
+}
 function graphemeBreakValueForCodepoint(codepoint) {
     if (global_graphemeBreakData[codepoint])
         return global_graphemeBreakData[codepoint];
@@ -67,7 +96,7 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
         return 0;
     // for GB12 and GB13
     var numberOfContinuousRegionalIndicatorSymbols = 0;
-    var value1OfGB10 = false; // true if and only if LHS matches (E_Base | E_Base_GAZ) Extend*
+    var value1OfGB11 = false; // true if and only if LHS matches \p{Extended_Pictographic} Extend*
     var breaks = 0;
     for (var i = 1; i < codepoints.length; ++i) {
         // increment `breaks` if we should break between codepoints[i-1] and codepoints[i]
@@ -76,16 +105,6 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
         // see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
         // skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string
         // Nontrivial rules:
-        // GB10 LHS: (E_Base | E_Base_GAZ) Extend* × ...
-        if (value1 == 'E_Base' || value1 == 'E_Base_GAZ') {
-            value1OfGB10 = true;
-        }
-        else if (value1 == 'Extend' && value1OfGB10 === true) {
-            // do nothing
-        }
-        else {
-            value1OfGB10 = false;
-        }
         // handle value1 of GB12 and GB13
         //   GB12:     ^ (RI RI)* RI × ...
         //   GB13: [^RI] (RI RI)* RI × ...
@@ -116,14 +135,22 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
         }
         else if (useExtended && value1 == 'Prepend') { // GB9b
         }
-        else if (value1OfGB10 && value2 == 'E_Modifier') { // GB10
-        }
-        else if (value1 == 'ZWJ' && (value2 == 'Glue_After_Zwj' || value2 == 'E_Base_GAZ')) { // GB11
+        else if (value1OfGB11 && value1 == 'ZWJ' && isExtendedPictographic(codepoints[i])) { // GB11
         }
         else if (numberOfContinuousRegionalIndicatorSymbols % 2 == 1 && value2 == 'Regional_Indicator') { // GB12 and GB13
         }
         else { // GB999
             ++breaks;
+        }
+        // GB10 LHS: (E_Base | E_Base_GAZ) Extend* × ...
+        if (isExtendedPictographic(codepoints[i - 1])) {
+            value1OfGB11 = true;
+        }
+        else if (value1 == 'Extend' && value1OfGB11 === true) {
+            // do nothing
+        }
+        else {
+            value1OfGB11 = false;
         }
     }
     return breaks + 1;

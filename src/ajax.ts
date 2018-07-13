@@ -3,7 +3,7 @@ function requestAsync(url: string, before?: (lines: string[]) => void, each?: (l
 	req.open('GET', url, true);
 
 	req.onload = function () {
-		var str = req.response;
+		var str = req.response as string;
 		var lines = str.split('\n');
 		if (before)
 			before(lines);

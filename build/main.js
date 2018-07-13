@@ -106,6 +106,7 @@ function initData(completion) {
         initializeMappings,
         initHanData,
         initGraphemeData,
+        initEmojiData,
         initUnicodeData,
         initGeneralCategoryNames,
         initAliasData,

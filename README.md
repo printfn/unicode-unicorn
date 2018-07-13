@@ -21,3 +21,5 @@ Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `lib
 Download `utf8.js` from `https://github.com/mathiasbynens/utf8.js` and place it in `libs/`.
 
 Download `language-subtag-registry` from IANA (`https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry`) and place it in the repo directory.
+
+Download `emoji-data.txt` from `https://unicode.org/Public/emoji/latest/emoji-data.txt` and place it in `data/Unicode/`.
