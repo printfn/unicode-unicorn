@@ -117,7 +117,8 @@ function initData(completion) {
         initLanguageData,
         initVariationSequences,
         initIdeographicVariationSequences,
-        initIdeographicVariationCollections], completion);
+        initIdeographicVariationCollections
+    ], completion);
 }
 function updateSpacerHeights() {
     $('.fixed').each(function (i, e) {

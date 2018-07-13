@@ -81,6 +81,7 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
             value1OfGB10 = true;
         }
         else if (value1 == 'Extend' && value1OfGB10 === true) {
+            // do nothing
         }
         else {
             value1OfGB10 = false;
@@ -95,33 +96,33 @@ function countGraphemesForCodepoints(codepoints, useExtended) {
         else {
             numberOfContinuousRegionalIndicatorSymbols = 0;
         }
-        if (value1 == 'CR' && value2 == 'LF') {
+        if (value1 == 'CR' && value2 == 'LF') { // GB3
         }
-        else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') {
+        else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') { // GB4
             ++breaks;
         }
-        else if (value2 == 'Control' || value2 == 'CR' || value2 == 'LF') {
+        else if (value2 == 'Control' || value2 == 'CR' || value2 == 'LF') { // GB5
             ++breaks;
         }
-        else if (value1 == 'L' && (value2 == 'L' || value2 == 'V' || value2 == 'LV' || value2 == 'LVT')) {
+        else if (value1 == 'L' && (value2 == 'L' || value2 == 'V' || value2 == 'LV' || value2 == 'LVT')) { // GB6
         }
-        else if ((value1 == 'LV' || value1 == 'V') && (value2 == 'V' || value2 == 'T')) {
+        else if ((value1 == 'LV' || value1 == 'V') && (value2 == 'V' || value2 == 'T')) { // GB7
         }
-        else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') {
+        else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') { // GB8
         }
-        else if (value2 == 'Extend' || value2 == 'ZWJ') {
+        else if (value2 == 'Extend' || value2 == 'ZWJ') { // GB9
         }
-        else if (useExtended && value2 == 'SpacingMark') {
+        else if (useExtended && value2 == 'SpacingMark') { // GB9a
         }
-        else if (useExtended && value1 == 'Prepend') {
+        else if (useExtended && value1 == 'Prepend') { // GB9b
         }
-        else if (value1OfGB10 && value2 == 'E_Modifier') {
+        else if (value1OfGB10 && value2 == 'E_Modifier') { // GB10
         }
-        else if (value1 == 'ZWJ' && (value2 == 'Glue_After_Zwj' || value2 == 'E_Base_GAZ')) {
+        else if (value1 == 'ZWJ' && (value2 == 'Glue_After_Zwj' || value2 == 'E_Base_GAZ')) { // GB11
         }
-        else if (numberOfContinuousRegionalIndicatorSymbols % 2 == 1 && value2 == 'Regional_Indicator') {
+        else if (numberOfContinuousRegionalIndicatorSymbols % 2 == 1 && value2 == 'Regional_Indicator') { // GB12 and GB13
         }
-        else {
+        else { // GB999
             ++breaks;
         }
     }

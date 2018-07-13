@@ -153,7 +153,7 @@ function loadEncodingFromURL(type, name, url, completion) {
         }
     }, function (line) {
         if (type.includes('mapping')) {
-            if (line.length == 1 && line.charCodeAt(0) == 26)
+            if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
                 return;
             var components = line.split('\t');
             if (components[1].trim() === '')
