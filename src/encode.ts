@@ -3,8 +3,8 @@ declare var utf8: any;
 
 interface Encoding {
 	type: string;
-	encode: (codepoints: number[]) => number[] | number;
-	decode: (codeUnits: number[]) => number[];
+	encode?: (codepoints: number[]) => (number[] | number);
+	decode?: (codeUnits: number[]) => number[];
 	table?: { [codepoint: number]: number };
 }
 
@@ -17,7 +17,7 @@ function escapeHtml(string: string): string {
 
 function displayCodepoint(codepoint?: number): string {
 	if (typeof codepoint == 'undefined')
-		return;
+		return '';
 	if (codepoint < 0x20)
 		codepoint += 0x2400;
 	if (codepoint == 0x7F)
@@ -108,8 +108,8 @@ function initializeMappings(completion: () => void) {
 function loadEncodingFromURL(type: string, name: string, url: string, completion: () => void) {
 	var encoding: Encoding = {
 		type: type,
-		encode: null,
-		decode: null
+		encode: undefined,
+		decode: undefined
 	};
 	requestAsync(url, function(lines) {
 		if (type.includes('function')) {
@@ -123,7 +123,7 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 					if (typeof codepoint == 'string') {
 						codepoint = parseInt(codepoint);
 					}
-					var number = encoding.table[codepoint];
+					var number = encoding.table![codepoint];
 					if (typeof number == 'undefined') {
 						// if (codepoint <= 0xFF)
 						// 	bytes.push(codepoint);
@@ -145,8 +145,8 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 					if (typeof byte == 'string') {
 						byte = parseInt(byte);
 					}
-					for (var codepoint in table) {
-						if (byte == table[codepoint])
+					for (var codepoint in table!) {
+						if (byte == table![codepoint])
 							return parseInt(codepoint);
 					}
 				};
@@ -159,7 +159,7 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 					}
 					cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i+1]);
 					if (typeof cp == 'undefined') {
-						return;
+						return [];
 					}
 					codepoints.push(cp);
 					++i;
@@ -187,11 +187,11 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 }
 
 function codepointsToEncoding(encoding: string, codepoints: number[]) {
-	return global_encodings[encoding].encode(codepoints);
+	return global_encodings[encoding].encode!(codepoints);
 }
 
 function codeUnitsToCodepoints(encoding: string, codeUnits: number[]) {
-	return global_encodings[encoding].decode(codeUnits);
+	return global_encodings[encoding].decode!(codeUnits);
 }
 
 function bytesToText(format: string, bytes: number[], hexadecimalPadding: number) {
@@ -264,6 +264,8 @@ function stringForJoiner(joiner: string) {
 			return '\n';
 		case 'Separated using commas and linebreaks':
 			return ',\n';
+		default:
+			return ' ';
 	}
 }
 

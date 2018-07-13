@@ -50,7 +50,10 @@ function searchCodepoints(str) {
     var selectedElements = $('#searchBlock option:selected');
     var blocks = [];
     for (var i = 0; i < selectedElements.length; ++i) {
-        blocks.push(selectedElements[i].getAttribute('data-block'));
+        var block = selectedElements[i].getAttribute('data-block');
+        if (block) {
+            blocks.push(block);
+        }
     }
     for (var i_2 = 0; i_2 < global_all_assigned_ranges.length; ++i_2) {
         var range = global_all_assigned_ranges[i_2];

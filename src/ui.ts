@@ -74,7 +74,7 @@ function updateRenderedCodepage() {
 		html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
 		for (var j = 0; j < 16; ++j) {
 			var byte = (i << 4) + j;
-			var codepoints = encoding.decode([byte]);
+			var codepoints = encoding.decode!([byte]);
 			if (codepoints) {
 				var codepoint = codepoints[0];
 				var color = randomColorForKey(getCharacterCategoryName(codepoint));
@@ -277,7 +277,7 @@ function updateEncodedLengths() {
 	}
 	for (var name in global_encodings) {
 		var encoding = global_encodings[name];
-		var codeUnits = encoding.encode(codepoints);
+		var codeUnits = encoding.encode!(codepoints);
 		var cellEntries = ['', '', '', ''];
 		if (typeof codeUnits === 'number') {
 			cellEntries[0] = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
@@ -285,7 +285,7 @@ function updateEncodedLengths() {
 		} else {
 			cellEntries[0] = codeUnits.length + ' code units';
 			cellEntries[1] = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
-			let bomCodeUnits = encoding.encode(bomCodepoints);
+			let bomCodeUnits = encoding.encode!(bomCodepoints);
 			if (typeof bomCodeUnits === 'number') {
 				cellEntries[3] = cellEntries[2] = '<span style="color:red">Unable to encode BOM (U+FEFF)</span>'
 			} else {

@@ -154,7 +154,7 @@ $(document).ready(function () {
                 }
             }
         };
-        window.onpopstate(null);
+        window.onpopstate(new PopStateEvent(''));
         var loadDuration = new Date() - startTime; // in ms
         updateInfo();
         updateSuggestions();

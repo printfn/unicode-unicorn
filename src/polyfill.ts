@@ -1,6 +1,6 @@
 if (!String.prototype.endsWith) {
 	String.prototype.endsWith = function(searchString: string, position?: number): boolean {
-		let subjectString = this.toString();
+		let subjectString = this.toString() as string;
 		if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
 			position = subjectString.length;
 		}

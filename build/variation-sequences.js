@@ -2,7 +2,7 @@ var global_variationSequences = [];
 var global_ideographicVariationSequences = [];
 var global_ideographicVariationCollections = [];
 function initVariationSequences(completion) {
-    requestAsync('data/Unicode/UCD/StandardizedVariants.txt', null, function (line) {
+    requestAsync('data/Unicode/UCD/StandardizedVariants.txt', undefined, function (line) {
         var fields = line.split(';');
         var codepoints = fields[0].split(' ').map(function (str) { return parseInt(str, 16); });
         var description = fields[1].trim();
@@ -26,7 +26,7 @@ function variationSequencesForCodepoint(codepoint) {
     return results;
 }
 function initIdeographicVariationSequences(completion) {
-    requestAsync('data/Unicode/IVD/IVD_Sequences.txt', null, function (line) {
+    requestAsync('data/Unicode/IVD/IVD_Sequences.txt', undefined, function (line) {
         var fields = line.split(';');
         var codepoints = fields[0].split(' ').map(function (str) { return parseInt(str, 16); });
         var collection = fields[1].trim();
@@ -47,7 +47,7 @@ function urlForIdeographicCollection(name) {
     }
 }
 function initIdeographicVariationCollections(completion) {
-    requestAsync('data/Unicode/IVD/IVD_Collections.txt', null, function (line) {
+    requestAsync('data/Unicode/IVD/IVD_Collections.txt', undefined, function (line) {
         var fields = line.split(';');
         global_ideographicVariationCollections.push({
             name: fields[0],

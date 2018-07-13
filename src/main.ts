@@ -182,7 +182,7 @@ $(document).ready(function() {
 				}
 			}
 		};
-		window.onpopstate(null);
+		window.onpopstate(new PopStateEvent(''));
 		var loadDuration = <any> new Date() - <any> startTime; // in ms
 		updateInfo();
 		updateSuggestions();

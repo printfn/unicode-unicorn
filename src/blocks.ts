@@ -4,7 +4,7 @@ var global_shortJamoNames: { [codepoint: number]: string; } = [];
 var global_scriptRanges: { startCodepoint: number; endCodepoint: number; scriptName: string; }[] = [];
 
 function initBlockData(completion: () => void) {
-	requestAsync('data/Unicode/UCD/Blocks.txt', null, function(line) {
+	requestAsync('data/Unicode/UCD/Blocks.txt', undefined, function(line) {
 		var splitLine = line.split(';');
 		var startCodepoint = parseInt(splitLine[0].split('..')[0], 16);
 		var endCodepoint = parseInt(splitLine[0].split('..')[1], 16);
@@ -33,7 +33,7 @@ function getBlockForCodepoint(codepoint: number): string {
 }
 
 function initHangulSyllableTypes(completion: () => void) {
-	requestAsync('data/Unicode/UCD/HangulSyllableType.txt', null, function(line) {
+	requestAsync('data/Unicode/UCD/HangulSyllableType.txt', undefined, function(line) {
 		var splitLine = line.split(';');
 		var startCodepoint: number, endCodepoint: number;
 		if (splitLine[0].trim().split('..').length == 2) {
@@ -63,7 +63,7 @@ function getSyllableTypeForCodepoint(codepoint: number): string {
 }
 
 function initShortJamoNames(completion: () => void) {
-	requestAsync('data/Unicode/UCD/Jamo.txt', null, function(line) {
+	requestAsync('data/Unicode/UCD/Jamo.txt', undefined, function(line) {
 		var splitLine = line.split(';');
 		var codepoint = parseInt(splitLine[0].trim(), 16);
 		var shortJamoName = splitLine[1].trim();
@@ -76,7 +76,7 @@ function getShortJamoName(codepoint: number): string {
 }
 
 function initScriptData(completion: () => void) {
-	requestAsync('data/Unicode/UCD/Scripts.txt', null, function(line) {
+	requestAsync('data/Unicode/UCD/Scripts.txt', undefined, function(line) {
 		var splitLine = line.split(';');
 		var startCodepoint: number, endCodepoint: number;
 		if (splitLine[0].trim().split('..').length == 2) {

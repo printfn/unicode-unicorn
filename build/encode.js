@@ -5,7 +5,7 @@ function escapeHtml(string) {
 }
 function displayCodepoint(codepoint) {
     if (typeof codepoint == 'undefined')
-        return;
+        return '';
     if (codepoint < 0x20)
         codepoint += 0x2400;
     if (codepoint == 0x7F)
@@ -90,8 +90,8 @@ function initializeMappings(completion) {
 function loadEncodingFromURL(type, name, url, completion) {
     var encoding = {
         type: type,
-        encode: null,
-        decode: null
+        encode: undefined,
+        decode: undefined
     };
     requestAsync(url, function (lines) {
         if (type.includes('function')) {
@@ -143,7 +143,7 @@ function loadEncodingFromURL(type, name, url, completion) {
                     }
                     cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i + 1]);
                     if (typeof cp == 'undefined') {
-                        return;
+                        return [];
                     }
                     codepoints.push(cp);
                     ++i;
@@ -249,6 +249,8 @@ function stringForJoiner(joiner) {
             return '\n';
         case 'Separated using commas and linebreaks':
             return ',\n';
+        default:
+            return ' ';
     }
 }
 function joinBytes(joiner, bytes) {

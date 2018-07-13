@@ -29,7 +29,7 @@ function getCodepointDescription(codepoint, name) {
     return name + ' ' + ctos([codepoint]);
 }
 function initAliasData(completion) {
-    requestAsync('data/Unicode/UCD/NameAliases.txt', null, function (line) {
+    requestAsync('data/Unicode/UCD/NameAliases.txt', undefined, function (line) {
         var splitLine = line.split(';');
         var codepoint = parseInt(splitLine[0], 16);
         global_aliases.push({ codepoint: codepoint, alias: splitLine[1], type: splitLine[2] });
@@ -47,7 +47,7 @@ function initAliasData(completion) {
     });
 }
 function initGeneralCategoryNames(completion) {
-    requestAsync('data/Unicode/UCD/PropertyValueAliases.txt', null, function (line) {
+    requestAsync('data/Unicode/UCD/PropertyValueAliases.txt', undefined, function (line) {
         var splitLine = line.split('#');
         splitLine = splitLine[0];
         splitLine = splitLine.split(';');
@@ -60,7 +60,7 @@ function initGeneralCategoryNames(completion) {
 }
 function initUnicodeData(completion) {
     var startCodepoint = 0;
-    requestAsync('data/Unicode/UCD/UnicodeData.txt', null, function (line) {
+    requestAsync('data/Unicode/UCD/UnicodeData.txt', undefined, function (line) {
         var data_line = line.split(';');
         if (data_line[1].endsWith(', First>')) {
             startCodepoint = parseInt(data_line[0], 16);

@@ -15,7 +15,7 @@ var global_ideographicVariationSequences: VariationSequence[] = [];
 var global_ideographicVariationCollections: VariationCollection[] = [];
 
 function initVariationSequences(completion: () => void) {
-	requestAsync('data/Unicode/UCD/StandardizedVariants.txt', null, function(line) {
+	requestAsync('data/Unicode/UCD/StandardizedVariants.txt', undefined, function(line) {
 		var fields = line.split(';');
 		var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
 		var description = fields[1].trim();
@@ -41,7 +41,7 @@ function variationSequencesForCodepoint(codepoint: number) {
 }
 
 function initIdeographicVariationSequences(completion: () => void) {
-	requestAsync('data/Unicode/IVD/IVD_Sequences.txt', null, function(line) {
+	requestAsync('data/Unicode/IVD/IVD_Sequences.txt', undefined, function(line) {
 		var fields = line.split(';');
 		var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
 		var collection = fields[1].trim();
@@ -64,7 +64,7 @@ function urlForIdeographicCollection(name: string) {
 }
 
 function initIdeographicVariationCollections(completion: () => void) {
-	requestAsync('data/Unicode/IVD/IVD_Collections.txt', null, function(line) {
+	requestAsync('data/Unicode/IVD/IVD_Collections.txt', undefined, function(line) {
 		var fields = line.split(';');
 		global_ideographicVariationCollections.push({
 			name: fields[0],
