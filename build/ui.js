@@ -64,7 +64,7 @@ function updateRenderedCodepage() {
             var codepoints = encoding.decode([byte]);
             if (codepoints) {
                 var codepoint = codepoints[0];
-                var color = randomColorForKey(getCharacterCategoryName(codepoint));
+                var color = randomColorForKey(getCharacterCategoryCode(codepoint)[0]);
                 var displayedCodepoint = displayCodepoint(codepoint);
                 html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' +
                     i.toString(16).toUpperCase() +
