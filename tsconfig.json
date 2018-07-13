@@ -3,7 +3,7 @@
         "outDir": "./build",
     	/*"outFile":"./build/build.js",
     	"module":"amd",*/
-    	"noImplicitAny":true,
+    	"noImplicitAny": true,
         "allowJs": true,
         "target": "es5",
         "strictNullChecks": true,
