@@ -4,7 +4,7 @@ var global_ideographicVariationCollections = [];
 function initVariationSequences(completion) {
     requestAsync('data/Unicode/UCD/StandardizedVariants.txt', undefined, function (line) {
         var fields = line.split(';');
-        var codepoints = fields[0].split(' ').map(function (str) { return parseInt(str, 16); });
+        var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
         var description = fields[1].trim();
         var shapingEnvironments = fields[2].trim().split(' ');
         if (shapingEnvironments.length == 1 && shapingEnvironments[0] === '')
@@ -28,7 +28,7 @@ function variationSequencesForCodepoint(codepoint) {
 function initIdeographicVariationSequences(completion) {
     requestAsync('data/Unicode/IVD/IVD_Sequences.txt', undefined, function (line) {
         var fields = line.split(';');
-        var codepoints = fields[0].split(' ').map(function (str) { return parseInt(str, 16); });
+        var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
         var collection = fields[1].trim();
         var item = fields[2].trim();
         global_ideographicVariationSequences.push({

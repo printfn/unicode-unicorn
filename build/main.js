@@ -148,7 +148,7 @@ $(document).ready(function () {
             for (var i = 0; i < args.length; ++i) {
                 var arg = args[i].split('=');
                 if (arg[0] == 'c') {
-                    setStr(arg[1].split(',').map(function (str) { return parseInt(str); }));
+                    setStr(arg[1].split(',').map((str) => parseInt(str)));
                 }
                 else if (arg[0] == 'info') {
                     showCodepageDetail(parseInt(arg[1]));

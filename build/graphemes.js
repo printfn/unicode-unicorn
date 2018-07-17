@@ -91,6 +91,7 @@ function graphemeBreakValueForCodepoint(codepoint) {
         return global_graphemeBreakData[codepoint];
     return 'Other';
 }
+// Updated for revision 33
 function countGraphemesForCodepoints(codepoints, useExtended) {
     if (codepoints.length === 0)
         return 0;

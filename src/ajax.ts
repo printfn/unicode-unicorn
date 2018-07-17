@@ -1,17 +1,18 @@
 function requestAsync(url: string, before?: (lines: string[]) => void, each?: (line: string) => void, after?: () => void) {
-	var req = new XMLHttpRequest();
+	const req = new XMLHttpRequest();
 	req.open('GET', url, true);
 
 	req.onload = function () {
-		var str = req.response as string;
-		var lines = str.split('\n');
+		const str = req.response as string;
+		const lines = str.split('\n');
 		if (before)
 			before(lines);
 		if (each) {
-			for (var i = 0; i < lines.length; ++i) {
-				var line = lines[i];
-				if (line.length === 0 || line[0] == '#')
+			for (let i = 0; i < lines.length; ++i) {
+				let line = lines[i];
+				if (line.length === 0 || line[0] == '#') {
 					continue;
+				}
 				if (line.indexOf('#') != -1) {
 					line = line.substring(0, line.indexOf('#'));
 				}

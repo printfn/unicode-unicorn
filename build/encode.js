@@ -34,8 +34,7 @@ function u8toc(bytes) {
         u8str += String.fromCharCode(bytes[i]);
     return stoc(utf8.decode(u8str));
 }
-function itos(int, base, padding) {
-    if (padding === void 0) { padding = 0; }
+function itos(int, base, padding = 0) {
     var res = int.toString(base).toUpperCase();
     while (res.length < padding) {
         res = '0' + res;
@@ -59,28 +58,28 @@ function initializeMappings(completion) {
             loadEncodingFromURL(type, name, url, function () {
                 ++count;
                 if (count == totalCount) {
-                    var codepageOptionStrings_1 = '';
-                    var outputEncodingOptionStrings_1 = '';
-                    var mojibakeOptionStrings_1 = '';
+                    let codepageOptionStrings = '';
+                    let outputEncodingOptionStrings = '';
+                    let mojibakeOptionStrings = '';
                     $.each(global_encodingNames, function (i, encodingName) {
                         if (global_encodings[encodingName].type == '7-bit mapping' ||
                             global_encodings[encodingName].type == '8-bit mapping') {
-                            codepageOptionStrings_1 += '<option' +
+                            codepageOptionStrings += '<option' +
                                 (encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') +
                                 '>' +
                                 encodingName +
                                 '</option>';
                         }
-                        outputEncodingOptionStrings_1 += '<option>' + encodingName + '</option>';
-                        mojibakeOptionStrings_1 += '<option' +
+                        outputEncodingOptionStrings += '<option>' + encodingName + '</option>';
+                        mojibakeOptionStrings += '<option' +
                             //(encodingName == 'Unicode UTF-8' || encodingName.startsWith('Code page 1252') ? ' selected' : '') +
                             '>' +
                             encodingName +
                             '</option>';
                     });
-                    updateSelectOptions('#codepageEncoding', codepageOptionStrings_1);
-                    updateSelectOptions('#outputEncoding', outputEncodingOptionStrings_1);
-                    updateSelectOptions('#mojibakeEncodings', mojibakeOptionStrings_1);
+                    updateSelectOptions('#codepageEncoding', codepageOptionStrings);
+                    updateSelectOptions('#outputEncoding', outputEncodingOptionStrings);
+                    updateSelectOptions('#mojibakeEncodings', mojibakeOptionStrings);
                     completion();
                 }
             });
@@ -101,7 +100,7 @@ function loadEncodingFromURL(type, name, url, completion) {
         else {
             encoding.encode = function (codepoints) {
                 var bytes = [];
-                for (var i = 0; i < codepoints.length; ++i) {
+                for (let i = 0; i < codepoints.length; ++i) {
                     var codepoint = codepoints[i];
                     if (typeof codepoint == 'string') {
                         codepoint = parseInt(codepoint);
@@ -177,7 +176,7 @@ function codeUnitsToCodepoints(encoding, codeUnits) {
 }
 function bytesToText(format, bytes, hexadecimalPadding) {
     var chars = [];
-    for (var i = 0; i < bytes.length; ++i) {
+    for (let i = 0; i < bytes.length; ++i) {
         var b = bytes[i];
         var str = '';
         if (format.includes('Binary')) {
@@ -200,7 +199,7 @@ function bytesToText(format, bytes, hexadecimalPadding) {
     }
     if (format.includes('Prefixed with ')) {
         var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-        for (var i = 0; i < chars.length; ++i) {
+        for (let i = 0; i < chars.length; ++i) {
             chars[i] = prefix + chars[i];
         }
     }
@@ -209,12 +208,12 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 function textToBytes(format, strings) {
     if (format.includes('Prefixed with ')) {
         var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
-        for (var i = 0; i < strings.length; ++i) {
+        for (let i = 0; i < strings.length; ++i) {
             strings[i] = strings[i].substring(prefix.length);
         }
     }
     var bytes = [];
-    for (var i = 0; i < strings.length; ++i) {
+    for (let i = 0; i < strings.length; ++i) {
         var str = strings[i];
         if (format.includes('Binary')) {
             bytes.push(parseInt(str, 2));

@@ -44,8 +44,8 @@ function searchCodepoints(str) {
     var results = [];
     str = str.toUpperCase();
     var words = str.split(',');
-    for (var i_1 = 0; i_1 < words.length; ++i_1) {
-        words[i_1] = words[i_1].trim();
+    for (let i = 0; i < words.length; ++i) {
+        words[i] = words[i].trim();
     }
     var selectedElements = $('#searchBlock option:selected');
     var blocks = [];
@@ -55,8 +55,8 @@ function searchCodepoints(str) {
             blocks.push(block);
         }
     }
-    for (var i_2 = 0; i_2 < global_all_assigned_ranges.length; ++i_2) {
-        var range = global_all_assigned_ranges[i_2];
+    for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
+        var range = global_all_assigned_ranges[i];
         var end = range.endCodepoint;
         for (var c = range.startCodepoint; c <= end; ++c) {
             if (blocks.length > 0 && blocks.indexOf(getBlockForCodepoint(c)) == -1)

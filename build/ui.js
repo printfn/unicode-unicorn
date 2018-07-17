@@ -61,10 +61,10 @@ function updateRenderedCodepage() {
     var encoding = global_encodings[encodingName];
     var isAscii = encoding.type == '7-bit mapping';
     var html = '<thead><th></th>';
-    for (var i = 0; i < 16; ++i)
+    for (let i = 0; i < 16; ++i)
         html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
     html += '</thead><tbody>';
-    for (var i = 0; i < (isAscii ? 8 : 16); ++i) {
+    for (let i = 0; i < (isAscii ? 8 : 16); ++i) {
         html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
         for (var j = 0; j < 16; ++j) {
             var byte = (i << 4) + j;
@@ -100,7 +100,7 @@ function showCodepageDetail(codepoint) {
     $('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
     $('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
     var matchingAliases = [];
-    for (var i = 0; i < global_aliases.length; ++i) {
+    for (let i = 0; i < global_aliases.length; ++i) {
         if (global_aliases[i].codepoint == codepoint)
             matchingAliases.push(global_aliases[i].alias);
     }
@@ -150,8 +150,8 @@ function showCodepageDetail(codepoint) {
     else {
         $('#detail-variation-sequences').show();
         var variationsString = '';
-        for (var i = 0; i < variationSequences.length; ++i) {
-            var vs = variationSequences[i];
+        for (let i = 0; i < variationSequences.length; ++i) {
+            let vs = variationSequences[i];
             if (variationsString !== '')
                 variationsString += '<br>';
             if (!vs.shapingEnvironments)
@@ -246,7 +246,7 @@ function updateEncodedLengths() {
         '<th>Number of code units (incl. BOM)</th>' +
         '<th>Number of bytes (incl. BOM)</th>' +
         '</tr></thead><tbody>';
-    var bomCodepoints = [0xFEFF];
+    let bomCodepoints = [0xFEFF];
     for (var i = 0; i < codepoints.length; ++i) {
         bomCodepoints.push(codepoints[i]);
     }
@@ -261,7 +261,7 @@ function updateEncodedLengths() {
         else {
             cellEntries[0] = codeUnits.length + ' code units';
             cellEntries[1] = codeUnits.length * hexadecimalPaddingFromEncoding(name) / 2 + ' bytes';
-            var bomCodeUnits = encoding.encode(bomCodepoints);
+            let bomCodeUnits = encoding.encode(bomCodepoints);
             if (typeof bomCodeUnits === 'number') {
                 cellEntries[3] = cellEntries[2] = '<span style="color:red">Unable to encode BOM (U+FEFF)</span>';
             }

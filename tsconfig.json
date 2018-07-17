@@ -5,9 +5,9 @@
     	"module":"amd",*/
     	"noImplicitAny": true,
         "allowJs": true,
-        "target": "es5",
+        "target": "es6",
         "strictNullChecks": true,
-        "lib": ["dom", "es5", "es2015"]
+        "lib": ["dom", "es6", "es2015"]
     },
     "include": [
         "./src/**/*"
