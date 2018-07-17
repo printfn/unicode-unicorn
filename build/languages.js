@@ -1,13 +1,13 @@
-var global_languageData = [];
+let global_languageData = [];
 function initLanguageData(completion) {
-    var parseLanguageData = function (lines) {
-        var languageTags = [];
-        var entries = lines.join('\n').split('\n%%\n');
+    const parseLanguageData = function (lines) {
+        const languageTags = [];
+        const entries = lines.join('\n').split('\n%%\n');
         for (let i = 0; i < entries.length; ++i) {
-            var fieldsStrings = entries[i].split('\n');
-            var fields = {};
-            for (var j = 0; j < fieldsStrings.length; ++j) {
-                var kv = fieldsStrings[j].split(': ');
+            const fieldsStrings = entries[i].split('\n');
+            const fields = {};
+            for (let j = 0; j < fieldsStrings.length; ++j) {
+                const kv = fieldsStrings[j].split(': ');
                 if (!fields[kv[0]])
                     fields[kv[0]] = kv[1];
                 else
@@ -35,7 +35,7 @@ function initLanguageData(completion) {
         languageTags.sort(function (a, b) {
             return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
         });
-        var htmls = {};
+        const htmls = {};
         for (let i = 0; i < languageTags.length; ++i) {
             if (!htmls[languageTags[i].type])
                 htmls[languageTags[i].type] = '<option data-code="">None / Default</option>';

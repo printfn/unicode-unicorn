@@ -1,5 +1,5 @@
-var global_encodingNames = [];
-var global_encodings = {};
+let global_encodingNames = [];
+let global_encodings = {};
 function escapeHtml(string) {
     return he.encode(string);
 }
@@ -10,7 +10,7 @@ function displayCodepoint(codepoint) {
         codepoint += 0x2400;
     if (codepoint == 0x7F)
         codepoint = 0x2421;
-    var codepoints = [codepoint];
+    let codepoints = [codepoint];
     if (graphemeBreakValueForCodepoint(codepoint) == 'Extend')
         codepoints = [0x25CC, codepoint];
     return escapeHtml(ctos(codepoints));
@@ -22,37 +22,37 @@ function stoc(string) {
     return punycode.ucs2.decode(string);
 }
 function ctou8(codepoints) {
-    var u8str = utf8.encode(ctos(codepoints));
-    var res = [];
-    for (var i = 0; i < u8str.length; ++i)
+    const u8str = utf8.encode(ctos(codepoints));
+    const res = [];
+    for (let i = 0; i < u8str.length; ++i)
         res.push(u8str.charCodeAt(i));
     return res;
 }
 function u8toc(bytes) {
-    var u8str = '';
-    for (var i = 0; i < bytes.length; ++i)
+    let u8str = '';
+    for (let i = 0; i < bytes.length; ++i)
         u8str += String.fromCharCode(bytes[i]);
     return stoc(utf8.decode(u8str));
 }
 function itos(int, base, padding = 0) {
-    var res = int.toString(base).toUpperCase();
+    let res = int.toString(base).toUpperCase();
     while (res.length < padding) {
         res = '0' + res;
     }
     return res;
 }
-var totalCount = 0;
-var count = 0;
+let totalCount = 0;
+let count = 0;
 function initializeMappings(completion) {
     requestAsync('data/encodings.txt', function () {
         totalCount = 0;
         count = 0;
     }, function (line) {
-        var parts = line.split('\t');
+        const parts = line.split('\t');
         ++totalCount;
-        var type = parts[0];
-        var name = parts[1];
-        var url = parts[2];
+        const type = parts[0];
+        const name = parts[1];
+        const url = parts[2];
         global_encodingNames.push(name);
         window.setTimeout(function () {
             loadEncodingFromURL(type, name, url, function () {
@@ -87,7 +87,7 @@ function initializeMappings(completion) {
     });
 }
 function loadEncodingFromURL(type, name, url, completion) {
-    var encoding = {
+    let encoding = {
         type: type,
         encode: undefined,
         decode: undefined
@@ -99,13 +99,13 @@ function loadEncodingFromURL(type, name, url, completion) {
         }
         else {
             encoding.encode = function (codepoints) {
-                var bytes = [];
+                let bytes = [];
                 for (let i = 0; i < codepoints.length; ++i) {
-                    var codepoint = codepoints[i];
+                    let codepoint = codepoints[i];
                     if (typeof codepoint == 'string') {
                         codepoint = parseInt(codepoint);
                     }
-                    var number = encoding.table[codepoint];
+                    const number = encoding.table[codepoint];
                     if (typeof number == 'undefined') {
                         // if (codepoint <= 0xFF)
                         // 	bytes.push(codepoint);
@@ -123,19 +123,19 @@ function loadEncodingFromURL(type, name, url, completion) {
                 return bytes;
             };
             encoding.decode = function (bytes) {
-                var table = encoding.table;
-                var codepointForByteUsingMapping = function (byte) {
+                const table = encoding.table;
+                const codepointForByteUsingMapping = function (byte) {
                     if (typeof byte == 'string') {
                         byte = parseInt(byte);
                     }
-                    for (var codepoint in table) {
+                    for (let codepoint in table) {
                         if (byte == table[codepoint])
                             return parseInt(codepoint);
                     }
                 };
-                var codepoints = [];
-                for (var i = 0; i < bytes.length; ++i) {
-                    var cp = codepointForByteUsingMapping(bytes[i]);
+                const codepoints = [];
+                for (let i = 0; i < bytes.length; ++i) {
+                    let cp = codepointForByteUsingMapping(bytes[i]);
                     if (typeof cp != 'undefined') {
                         codepoints.push(cp);
                         continue;
@@ -154,7 +154,7 @@ function loadEncodingFromURL(type, name, url, completion) {
         if (type.includes('mapping')) {
             if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
                 return;
-            var components = line.split('\t');
+            const components = line.split('\t');
             if (components[1].trim() === '')
                 return;
             if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
@@ -175,14 +175,15 @@ function codeUnitsToCodepoints(encoding, codeUnits) {
     return global_encodings[encoding].decode(codeUnits);
 }
 function bytesToText(format, bytes, hexadecimalPadding) {
-    var chars = [];
+    const chars = [];
     for (let i = 0; i < bytes.length; ++i) {
-        var b = bytes[i];
-        var str = '';
+        const b = bytes[i];
+        let str = '';
         if (format.includes('Binary')) {
             str = b.toString(2);
-            if (format.includes('Padded'))
+            if (format.includes('Padded')) {
                 str = (Array(hexadecimalPadding * 4 + 1).join('0') + str).substring(str.length);
+            }
         }
         else if (format.includes('Octal')) {
             str = b.toString(8);
@@ -192,13 +193,14 @@ function bytesToText(format, bytes, hexadecimalPadding) {
         }
         else if (format.includes('Hexadecimal')) {
             str = b.toString(16).toUpperCase();
-            if (format.includes('Padded'))
+            if (format.includes('Padded')) {
                 str = (Array(hexadecimalPadding + 1).join('0') + str).substring(str.length);
+            }
         }
         chars.push(str);
     }
     if (format.includes('Prefixed with ')) {
-        var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
+        const prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
         for (let i = 0; i < chars.length; ++i) {
             chars[i] = prefix + chars[i];
         }
@@ -207,14 +209,14 @@ function bytesToText(format, bytes, hexadecimalPadding) {
 }
 function textToBytes(format, strings) {
     if (format.includes('Prefixed with ')) {
-        var prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
+        const prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
         for (let i = 0; i < strings.length; ++i) {
             strings[i] = strings[i].substring(prefix.length);
         }
     }
-    var bytes = [];
+    const bytes = [];
     for (let i = 0; i < strings.length; ++i) {
-        var str = strings[i];
+        const str = strings[i];
         if (format.includes('Binary')) {
             bytes.push(parseInt(str, 2));
         }
@@ -266,13 +268,14 @@ function hexadecimalPaddingFromEncoding(encoding) {
     return 2;
 }
 function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
-    var useBOM = byteOrderMark.startsWith('Use');
-    if (useBOM)
+    const useBOM = byteOrderMark.startsWith('Use');
+    if (useBOM) {
         codepoints.unshift(0xFEFF);
-    var bytes = codepointsToEncoding(encoding, codepoints);
+    }
+    const bytes = codepointsToEncoding(encoding, codepoints);
     if (typeof bytes == 'number') {
         // input contains codepoints incompatible with the selected encoding
-        var invalidCodepoint = bytes;
+        const invalidCodepoint = bytes;
         return '<span style="color: red">Text cannot be encoded in ' + encoding +
             ' because it contains incompatible characters.\nThe first such incompatible character is U+' +
             itos(invalidCodepoint, 16, 4) +
@@ -280,10 +283,10 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
             ' (' + displayCodepoint(invalidCodepoint) + ').</span>';
     }
     else if (typeof bytes == 'string') {
-        var outputString = bytes;
+        const outputString = bytes;
         return escapeHtml(outputString);
     }
-    var chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
+    const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
     return escapeHtml(joinBytes(joiner, chars));
 }
 function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
@@ -295,14 +298,17 @@ function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
     if (encoding.includes('HTML Entities')) {
         return stoc(he.decode(ctos(str)));
     }
-    var strings = splitBytes(joiner, str);
-    var codeUnits = textToBytes(format, strings);
-    for (var i = 0; i < codeUnits.length; ++i)
+    const strings = splitBytes(joiner, str);
+    const codeUnits = textToBytes(format, strings);
+    for (let i = 0; i < codeUnits.length; ++i)
         if (isNaN(codeUnits[i]))
             return;
-    var codepoints = codeUnitsToCodepoints(encoding, codeUnits);
-    var useBOM = byteOrderMark.startsWith('Use');
-    if (useBOM)
+    const codepoints = codeUnitsToCodepoints(encoding, codeUnits);
+    if (!codepoints)
+        return;
+    const useBOM = byteOrderMark.startsWith('Use');
+    if (useBOM) {
         codepoints.unshift(1);
+    }
     return codepoints;
 }

@@ -27,14 +27,14 @@ function requestAsync(url: string, before?: (lines: string[]) => void, each?: (l
 }
 
 function callMultipleAsync(functions: ((callback: () => void) => void)[], completion: () => void) {
-	var count = 0;
-	var callback = function() {
+	let count = 0;
+	const callback = function() {
 		++count;
 		if (count == functions.length) {
 			completion();
 		}
 	};
-	for (var i = 0; i < functions.length; ++i) {
+	for (let i = 0; i < functions.length; ++i) {
 		functions[i](callback);
 	}
 }

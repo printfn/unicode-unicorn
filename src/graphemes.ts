@@ -1,14 +1,14 @@
-var global_graphemeBreakData: { [codepoint: number]: string; } = [];
-var global_extendedPictograph: number[] = [];
+let global_graphemeBreakData: { [codepoint: number]: string; } = [];
+let global_extendedPictograph: number[] = [];
 
 function initGraphemeData(completion: () => void) {
 	requestAsync('data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt', function() {}, function(line) {
-		var state = 1;
-		var startCodepoint: number | string = '';
-		var endCodepoint: number | string = '';
-		var value = '';
-		for (var j = 0; j < line.length; ++j) {
-			var c = line[j];
+		let state = 1;
+		let startCodepoint: number | string = '';
+		let endCodepoint: number | string = '';
+		let value = '';
+		for (let j = 0; j < line.length; ++j) {
+			const c = line[j];
 			if (c == '#')
 				break;
 			if (state == 1) {
@@ -49,7 +49,7 @@ function initGraphemeData(completion: () => void) {
 		}
 		startCodepoint = parseInt(startCodepoint, 16);
 		endCodepoint = endCodepoint === '' ? startCodepoint : parseInt(endCodepoint, 16);
-		for (var x = startCodepoint; x <= endCodepoint; ++x) {
+		for (let x = startCodepoint; x <= endCodepoint; ++x) {
 			global_graphemeBreakData[x] = value;
 		}
 	}, completion);
@@ -57,14 +57,14 @@ function initGraphemeData(completion: () => void) {
 
 function initEmojiData(completion: () => void) {
 	requestAsync('data/Unicode/emoji-data.txt', undefined, function(line) {
-		var components = line.split(';');
+		const components = line.split(';');
 		if (components.length != 2) return;
 		if (components[1].trim() != 'Extended_Pictographic') return;
 		if (components[0].includes('..')) {
-			var arr = components[0].trim().split('..');
-			var start = parseInt(arr[0], 16);
-			var end = parseInt(arr[1], 16);
-			for (var i = start; i <= end; ++i) {
+			const arr = components[0].trim().split('..');
+			const start = parseInt(arr[0], 16);
+			const end = parseInt(arr[1], 16);
+			for (let i = start; i <= end; ++i) {
 				global_extendedPictograph.push(i);
 			}
 		} else {
@@ -74,7 +74,7 @@ function initEmojiData(completion: () => void) {
 }
 
 function isExtendedPictographic(codepoint: number): boolean {
-	for (var i in global_extendedPictograph) {
+	for (const i in global_extendedPictograph) {
 		if (global_extendedPictograph[i] == codepoint) {
 			return true;
 		}
@@ -94,14 +94,14 @@ function countGraphemesForCodepoints(codepoints: number[], useExtended: boolean)
 		return 0;
 
 	// for GB12 and GB13
-	var numberOfContinuousRegionalIndicatorSymbols = 0;
-	var value1OfGB11 = false; // true if and only if LHS matches \p{Extended_Pictographic} Extend*
+	let numberOfContinuousRegionalIndicatorSymbols = 0;
+	let value1OfGB11 = false; // true if and only if LHS matches \p{Extended_Pictographic} Extend*
 	
-	var breaks = 0;
-	for (var i = 1; i < codepoints.length; ++i) {
+	let breaks = 0;
+	for (let i = 1; i < codepoints.length; ++i) {
 		// increment `breaks` if we should break between codepoints[i-1] and codepoints[i]
-		var value1 = graphemeBreakValueForCodepoint(codepoints[i-1]);
-		var value2 = graphemeBreakValueForCodepoint(codepoints[i]);
+		const value1 = graphemeBreakValueForCodepoint(codepoints[i-1]);
+		const value2 = graphemeBreakValueForCodepoint(codepoints[i]);
 
 		// see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
 		// skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string

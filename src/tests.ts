@@ -8,10 +8,10 @@ function assertEqual(actual: any, expected: any, otherInfo?: string) {
 		throw 'Expected ' + actual + ' to be equal to ' + expected + ': ' + otherInfo;
 }
 
-var tests = [
+const tests = [
 	function() {
-		for (var cp = 0; cp < 0x300; ++cp) {
-			var block = getBlockForCodepoint(cp);
+		for (let cp = 0; cp < 0x300; ++cp) {
+			const block = getBlockForCodepoint(cp);
 			if (cp <= 0x7F)
 				assertEqual(block, 'Basic Latin', 'Codepoint ' + itos(cp, 16, 4));
 			else if (cp <= 0xFF)
@@ -36,8 +36,8 @@ var tests = [
 ];
 
 function runTests() {
-	for (var i = 0; i < tests.length; ++i) {
-		var test = tests[i];
+	for (let i = 0; i < tests.length; ++i) {
+		const test = tests[i];
 		try {
 			test();
 		} catch (e) {

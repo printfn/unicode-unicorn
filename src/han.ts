@@ -1,12 +1,12 @@
-var global_han_meanings: { [codepoint: number]: string; } = [];
-var global_mandarin_readings: { [codepoint: number]: string; } = [];
-var global_kun_readings: { [codepoint: number]: string; } = [];
-var global_on_readings: { [codepoint: number]: string; } = [];
+let global_han_meanings: { [codepoint: number]: string; } = [];
+let global_mandarin_readings: { [codepoint: number]: string; } = [];
+let global_kun_readings: { [codepoint: number]: string; } = [];
+let global_on_readings: { [codepoint: number]: string; } = [];
 
 function initHanData(completion: () => void) {
 	requestAsync('data/Unicode/Unihan/Unihan_Readings.txt', undefined, function(line) {
-		var fields = line.split('\t');
-		var codepoint = parseInt(fields[0].substring(2), 16);
+		const fields = line.split('\t');
+		const codepoint = parseInt(fields[0].substring(2), 16);
 		if (fields[1] == 'kDefinition') {
 			global_han_meanings[codepoint] = fields[2];
 		} else if (fields[1] == 'kMandarin') {

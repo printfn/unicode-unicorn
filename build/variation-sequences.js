@@ -1,12 +1,12 @@
-var global_variationSequences = [];
-var global_ideographicVariationSequences = [];
-var global_ideographicVariationCollections = [];
+let global_variationSequences = [];
+let global_ideographicVariationSequences = [];
+let global_ideographicVariationCollections = [];
 function initVariationSequences(completion) {
     requestAsync('data/Unicode/UCD/StandardizedVariants.txt', undefined, function (line) {
-        var fields = line.split(';');
-        var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
-        var description = fields[1].trim();
-        var shapingEnvironments = fields[2].trim().split(' ');
+        const fields = line.split(';');
+        const codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
+        const description = fields[1].trim();
+        let shapingEnvironments = fields[2].trim().split(' ');
         if (shapingEnvironments.length == 1 && shapingEnvironments[0] === '')
             shapingEnvironments = [];
         global_variationSequences.push({
@@ -18,8 +18,8 @@ function initVariationSequences(completion) {
     }, completion);
 }
 function variationSequencesForCodepoint(codepoint) {
-    var results = [];
-    for (var i = 0; i < global_variationSequences.length; ++i) {
+    const results = [];
+    for (let i = 0; i < global_variationSequences.length; ++i) {
         if (global_variationSequences[i].baseCodepoint == codepoint)
             results.push(global_variationSequences[i]);
     }
@@ -27,10 +27,10 @@ function variationSequencesForCodepoint(codepoint) {
 }
 function initIdeographicVariationSequences(completion) {
     requestAsync('data/Unicode/IVD/IVD_Sequences.txt', undefined, function (line) {
-        var fields = line.split(';');
-        var codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
-        var collection = fields[1].trim();
-        var item = fields[2].trim();
+        const fields = line.split(';');
+        const codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
+        const collection = fields[1].trim();
+        const item = fields[2].trim();
         global_ideographicVariationSequences.push({
             baseCodepoint: codepoints[0],
             variationSelector: codepoints[1],
@@ -39,8 +39,8 @@ function initIdeographicVariationSequences(completion) {
     }, completion);
 }
 function urlForIdeographicCollection(name) {
-    for (var i = 0; i < global_ideographicVariationCollections.length; ++i) {
-        var collection = global_ideographicVariationCollections[i];
+    for (let i = 0; i < global_ideographicVariationCollections.length; ++i) {
+        const collection = global_ideographicVariationCollections[i];
         if (collection.name != name)
             continue;
         return collection.url;
@@ -48,7 +48,7 @@ function urlForIdeographicCollection(name) {
 }
 function initIdeographicVariationCollections(completion) {
     requestAsync('data/Unicode/IVD/IVD_Collections.txt', undefined, function (line) {
-        var fields = line.split(';');
+        const fields = line.split(';');
         global_ideographicVariationCollections.push({
             name: fields[0],
             url: fields[2] // fields[1] is a regex describing item identifiers
@@ -56,8 +56,8 @@ function initIdeographicVariationCollections(completion) {
     }, completion);
 }
 function ideographicVariationSequencesForCodepoint(codepoint) {
-    var results = [];
-    for (var i = 0; i < global_ideographicVariationSequences.length; ++i) {
+    const results = [];
+    for (let i = 0; i < global_ideographicVariationSequences.length; ++i) {
         if (global_ideographicVariationSequences[i].baseCodepoint == codepoint)
             results.push(global_ideographicVariationSequences[i]);
     }

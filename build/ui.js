@@ -1,4 +1,4 @@
-var global_colorMap = {
+let global_colorMap = {
     'C': '#f97e77',
     'L': '#f9e776',
     'N': '#b7f976',
@@ -7,20 +7,21 @@ var global_colorMap = {
     'Z': '#a8a8a8',
 };
 function renderCodepointsInTable(codepoints, tableId, buttons) {
-    var table = $('#' + tableId);
+    const table = $('#' + tableId);
     if (codepoints.length === 0) {
         table.html('');
         return;
     }
-    var html = ('<thead>' +
+    let html = ('<thead>' +
         '<tr><th></th><th>Codepoint (Hex)</th><th>Codepoint (Decimal)</th><th>Character</th><th>Category</th><th>Name</th></tr>' +
         '</thead><tbody>');
-    for (var i = 0; i < codepoints.length; ++i) {
-        var codepoint = codepoints[i];
-        var buttonStr = '';
-        for (var j in buttons) {
-            var buttonDescription = buttons[j];
-            var disabled = '';
+    let i = 0;
+    for (i = 0; i < codepoints.length; ++i) {
+        const codepoint = codepoints[i];
+        let buttonStr = '';
+        for (const j in buttons) {
+            const buttonDescription = buttons[j];
+            let disabled = '';
             if (buttonDescription.require) {
                 if (!buttonDescription.require(i, codepoints.length)) {
                     disabled = 'disabled ';
@@ -48,31 +49,31 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
     table.show();
 }
 function randomColorForKey(key) {
-    if (global_colorMap[key])
+    if (global_colorMap[key]) {
         return global_colorMap[key];
-    var color = randomColor({
+    }
+    return global_colorMap[key] = randomColor({
         luminosity: 'light'
     });
-    global_colorMap[key] = color;
-    return color;
 }
 function updateRenderedCodepage() {
-    var encodingName = $('#codepageEncoding option:selected').text();
-    var encoding = global_encodings[encodingName];
-    var isAscii = encoding.type == '7-bit mapping';
-    var html = '<thead><th></th>';
-    for (let i = 0; i < 16; ++i)
+    const encodingName = $('#codepageEncoding option:selected').text();
+    const encoding = global_encodings[encodingName];
+    const isAscii = encoding.type == '7-bit mapping';
+    let html = '<thead><th></th>';
+    for (let i = 0; i < 16; ++i) {
         html += '<th>_' + i.toString(16).toUpperCase() + '</th>';
+    }
     html += '</thead><tbody>';
     for (let i = 0; i < (isAscii ? 8 : 16); ++i) {
         html += '<tr><td style="font-weight:bold">' + i.toString(16).toUpperCase() + '_</td>';
-        for (var j = 0; j < 16; ++j) {
-            var byte = (i << 4) + j;
-            var codepoints = encoding.decode([byte]);
+        for (let j = 0; j < 16; ++j) {
+            const byte = (i << 4) + j;
+            const codepoints = encoding.decode([byte]);
             if (codepoints) {
-                var codepoint = codepoints[0];
-                var color = randomColorForKey(getCharacterCategoryCode(codepoint)[0]);
-                var displayedCodepoint = displayCodepoint(codepoint);
+                const codepoint = codepoints[0];
+                const color = randomColorForKey(getCharacterCategoryCode(codepoint)[0]);
+                const displayedCodepoint = displayCodepoint(codepoint);
                 html += '<td style="cursor: pointer; background-color: ' + color + ';" onclick="showCodepageDetail(' + codepoint + ')">' +
                     i.toString(16).toUpperCase() +
                     j.toString(16).toUpperCase() +
@@ -99,7 +100,7 @@ function showCodepageDetail(codepoint) {
     $('#detail-category').text(getCharacterCategoryCode(codepoint) + ' (' + getCharacterCategoryName(codepoint) + ')');
     $('#detail-block').text(getBlockForCodepoint(codepoint).replace(/_/g, ' '));
     $('#detail-script').text(getScriptForCodepoint(codepoint).replace(/_/g, ' '));
-    var matchingAliases = [];
+    const matchingAliases = [];
     for (let i = 0; i < global_aliases.length; ++i) {
         if (global_aliases[i].codepoint == codepoint)
             matchingAliases.push(global_aliases[i].alias);
@@ -111,7 +112,7 @@ function showCodepageDetail(codepoint) {
         $('#detail-aliases').show();
         $('#detail-aliases-list').text(matchingAliases.join(', '));
     }
-    var meaning = global_han_meanings[codepoint];
+    const meaning = global_han_meanings[codepoint];
     if (meaning) {
         $('#detail-meaning').show();
         $('#detail-meaning-content').text(meaning);
@@ -119,7 +120,7 @@ function showCodepageDetail(codepoint) {
     else {
         $('#detail-meaning').hide();
     }
-    var mandarin = global_mandarin_readings[codepoint];
+    const mandarin = global_mandarin_readings[codepoint];
     if (mandarin) {
         $('#detail-mandarin').show();
         $('#detail-mandarin-content').text(mandarin);
@@ -127,7 +128,7 @@ function showCodepageDetail(codepoint) {
     else {
         $('#detail-mandarin').hide();
     }
-    var kun = global_kun_readings[codepoint];
+    const kun = global_kun_readings[codepoint];
     if (kun) {
         $('#detail-kun').show();
         $('#detail-kun-content').text(kun);
@@ -135,7 +136,7 @@ function showCodepageDetail(codepoint) {
     else {
         $('#detail-kun').hide();
     }
-    var on = global_on_readings[codepoint];
+    const on = global_on_readings[codepoint];
     if (on) {
         $('#detail-on').show();
         $('#detail-on-content').text(on);
@@ -143,13 +144,13 @@ function showCodepageDetail(codepoint) {
     else {
         $('#detail-on').hide();
     }
-    var variationSequences = variationSequencesForCodepoint(codepoint).concat(ideographicVariationSequencesForCodepoint(codepoint));
+    const variationSequences = variationSequencesForCodepoint(codepoint).concat(ideographicVariationSequencesForCodepoint(codepoint));
     if (variationSequences.length === 0) {
         $('#detail-variation-sequences').hide();
     }
     else {
         $('#detail-variation-sequences').show();
-        var variationsString = '';
+        let variationsString = '';
         for (let i = 0; i < variationSequences.length; ++i) {
             let vs = variationSequences[i];
             if (variationsString !== '')
@@ -168,10 +169,10 @@ function showCodepageDetail(codepoint) {
         }
         $('#detail-variation-sequences-content').html(variationsString);
     }
-    var encodingsString = '';
+    let encodingsString = '';
     $('#outputEncoding option').each(function (i, e) {
-        var encoding = $(e).text();
-        var html = encodeOutput($('#byteOrderMark option:selected').text(), encoding, $('#outputFormat option:selected').text(), $('#outputJoiner option:selected').text(), [codepoint]);
+        const encoding = $(e).text();
+        const html = encodeOutput($('#byteOrderMark option:selected').text(), encoding, $('#outputFormat option:selected').text(), $('#outputJoiner option:selected').text(), [codepoint]);
         if (html.startsWith('<span'))
             return;
         encodingsString += encoding + ': ' + html + '\n';
@@ -183,7 +184,7 @@ function showCodepageDetail(codepoint) {
 }
 function changeDetail(elem) {
     $(elem).blur(); // remove focus
-    var codepointToShow = parseInt($(elem).attr('data-cp'), 10);
+    const codepointToShow = parseInt($(elem).attr('data-cp'), 10);
     showCodepageDetail(codepointToShow);
 }
 function initLicenseInfo(completion) {
@@ -193,15 +194,15 @@ function initLicenseInfo(completion) {
     });
 }
 function updateMojibake() {
-    var codepoints = getStr();
-    var mojibakeOutputs = [];
+    const codepoints = getStr();
+    const mojibakeOutputs = [];
     $('#mojibakeEncodings option').each(function (i, e) {
         if (!e.selected)
             return;
-        var encoding1Name = $(e).text();
+        const encoding1Name = $(e).text();
         if (global_encodings[encoding1Name].type == 'text function')
             return;
-        var encodedString = encodeOutput('Don\'t use a byte order mark', encoding1Name, 'Decimal', 'Separated using commas and spaces', codepoints);
+        const encodedString = encodeOutput('Don\'t use a byte order mark', encoding1Name, 'Decimal', 'Separated using commas and spaces', codepoints);
         if (encodedString.startsWith('<'))
             return;
         $('#mojibakeEncodings option').each(function (j, f) {
@@ -209,10 +210,10 @@ function updateMojibake() {
                 return;
             if (!f.selected)
                 return;
-            var encoding2Name = $(f).text();
+            const encoding2Name = $(f).text();
             if (global_encodings[encoding2Name].type == 'text function')
                 return;
-            var decodedString = decodeOutput('Don\'t use a byte order mark', encoding2Name, 'Decimal', 'Separated using commas and spaces', encodedString);
+            const decodedString = decodeOutput('Don\'t use a byte order mark', encoding2Name, 'Decimal', 'Separated using commas and spaces', encodedString);
             if (!decodedString)
                 return;
             mojibakeOutputs.push({
@@ -222,10 +223,10 @@ function updateMojibake() {
             });
         });
     });
-    var mojibakeOutputStr = '';
-    var lastEncoding1 = '';
-    for (var i = 0; i < mojibakeOutputs.length; ++i) {
-        var o = mojibakeOutputs[i];
+    let mojibakeOutputStr = '';
+    let lastEncoding1 = '';
+    for (let i = 0; i < mojibakeOutputs.length; ++i) {
+        const o = mojibakeOutputs[i];
         if (o.encoding1Name != lastEncoding1) {
             lastEncoding1 = o.encoding1Name;
             mojibakeOutputStr += 'Assuming the input was erroneously interpreted as ' + o.encoding1Name + ':<br>';
@@ -235,11 +236,11 @@ function updateMojibake() {
     $('#mojibakeOutput').html(mojibakeOutputStr);
 }
 function updateEncodedLengths() {
-    var codepoints = getStr();
+    const codepoints = getStr();
     $('#extendedGraphemeClusters').text(countGraphemesForCodepoints(codepoints, true));
     $('#legacyGraphemeClusters').text(countGraphemesForCodepoints(codepoints, false));
     $('#numCodepoints').text(codepoints.length);
-    var encodingLengthsStr = '<thead><tr>' +
+    let encodingLengthsStr = '<thead><tr>' +
         '<th>Encoding</th>' +
         '<th>Number of code units</th>' +
         '<th>Number of bytes</th>' +
@@ -247,13 +248,13 @@ function updateEncodedLengths() {
         '<th>Number of bytes (incl. BOM)</th>' +
         '</tr></thead><tbody>';
     let bomCodepoints = [0xFEFF];
-    for (var i = 0; i < codepoints.length; ++i) {
+    for (let i = 0; i < codepoints.length; ++i) {
         bomCodepoints.push(codepoints[i]);
     }
-    for (var name in global_encodings) {
-        var encoding = global_encodings[name];
-        var codeUnits = encoding.encode(codepoints);
-        var cellEntries = ['', '', '', ''];
+    for (const name in global_encodings) {
+        const encoding = global_encodings[name];
+        const codeUnits = encoding.encode(codepoints);
+        const cellEntries = ['', '', '', ''];
         if (typeof codeUnits === 'number') {
             cellEntries[0] = '<span style="color:red">Unable to encode U+' + itos(codeUnits, 16, 4) + '</span>';
             cellEntries[3] = cellEntries[2] = cellEntries[1] = cellEntries[0];
@@ -278,7 +279,7 @@ function updateEncodedLengths() {
     $('#string').html(escapeHtml(ctos(getStr())).replace(/\n/g, '<br>'));
 }
 function updateCodepointList() {
-    var codepoints = getStr();
+    const codepoints = getStr();
     renderCodepointsInTable(codepoints, 'codepointlist', [{
             displayName: 'Delete',
             functionName: 'deleteAtIndex'
@@ -293,24 +294,24 @@ function updateCodepointList() {
         }]);
 }
 function updateEncodedAndDecodedStrings() {
-    var codepoints = getStr();
+    const codepoints = getStr();
     $('#encodedOutput').html(encodeOutput($('#byteOrderMark option:selected').text(), $('#outputEncoding option:selected').text(), $('#outputFormat option:selected').text(), $('#outputJoiner option:selected').text(), codepoints));
-    var decodedOutput = decodeOutput($('#byteOrderMark option:selected').text(), $('#outputEncoding option:selected').text(), $('#outputFormat option:selected').text(), $('#outputJoiner option:selected').text(), $('#encodedInput').val());
+    const decodedOutput = decodeOutput($('#byteOrderMark option:selected').text(), $('#outputEncoding option:selected').text(), $('#outputFormat option:selected').text(), $('#outputJoiner option:selected').text(), $('#encodedInput').val());
     if (decodedOutput)
         renderCodepointsInTable(decodedOutput, 'decodedCodepoints', [{ displayName: 'Insert', functionName: 'output' }]);
 }
 function updateLanguage() {
-    var lang = '';
-    var textboxCode = $('#languageCode').val();
-    var dropdownCode = '';
-    var langComponentStrings = [
+    let lang = '';
+    const textboxCode = $('#languageCode').val();
+    let dropdownCode = '';
+    const langComponentStrings = [
         $('#languageList option:selected').attr('data-code'),
         $('#scriptList option:selected').attr('data-code'),
         $('#regionList option:selected').attr('data-code'),
         $('#variantList option:selected').attr('data-code')
     ];
-    for (var i = 0; i < langComponentStrings.length; ++i) {
-        var component = langComponentStrings[i];
+    for (let i = 0; i < langComponentStrings.length; ++i) {
+        const component = langComponentStrings[i];
         if (!component)
             continue;
         if (dropdownCode != '')
