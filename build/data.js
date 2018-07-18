@@ -20,24 +20,24 @@ function getCharacterCategoryCode(codepoint) {
 }
 function getCharacterCategoryName(codepoint) {
     const categoryCode = getCharacterCategoryCode(codepoint);
-    return global_generalCategoryNames[categoryCode] || 'Unknown';
+    return global_generalCategoryNames[categoryCode] || `Unknown`;
 }
 function getCodepointDescription(codepoint, name) {
-    if (typeof codepoint == 'string') {
+    if (typeof codepoint == `string`) {
         codepoint = parseInt(codepoint);
     }
-    return name + ' ' + ctos([codepoint]);
+    return `${name} ${ctos([codepoint])}`;
 }
 function initAliasData(completion) {
-    requestAsync('data/Unicode/UCD/NameAliases.txt', undefined, function (line) {
-        const splitLine = line.split(';');
+    requestAsync(`data/Unicode/UCD/NameAliases.txt`, undefined, function (line) {
+        const splitLine = line.split(`;`);
         const codepoint = parseInt(splitLine[0], 16);
         global_aliases.push({ codepoint: codepoint, alias: splitLine[1], type: splitLine[2] });
     }, completion);
     global_aliases.sort(function (a, b) {
-        if (a.type == 'control' && b.type != 'control')
+        if (a.type == `control` && b.type != `control`)
             return 1;
-        if (a.type != 'control' && b.type == 'control')
+        if (a.type != `control` && b.type == `control`)
             return -1;
         if (a.alias < b.alias)
             return 1;
@@ -47,32 +47,32 @@ function initAliasData(completion) {
     });
 }
 function initGeneralCategoryNames(completion) {
-    requestAsync('data/Unicode/UCD/PropertyValueAliases.txt', undefined, function (line) {
-        let splitLine = line.split('#');
+    requestAsync(`data/Unicode/UCD/PropertyValueAliases.txt`, undefined, function (line) {
+        let splitLine = line.split(`#`);
         splitLine = splitLine[0];
-        splitLine = splitLine.split(';');
-        if (splitLine[0].trim() != 'gc')
+        splitLine = splitLine.split(`;`);
+        if (splitLine[0].trim() != `gc`)
             return;
         const gc = splitLine[1].trim();
         const gcAlias = splitLine[2].trim();
-        global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ' ');
+        global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
     }, completion);
 }
 function initUnicodeData(completion) {
     let startCodepoint = 0;
-    requestAsync('data/Unicode/UCD/UnicodeData.txt', undefined, function (line) {
-        const data_line = line.split(';');
-        if (data_line[1].endsWith(', First>')) {
+    requestAsync(`data/Unicode/UCD/UnicodeData.txt`, undefined, function (line) {
+        const data_line = line.split(`;`);
+        if (data_line[1].endsWith(`, First>`)) {
             startCodepoint = parseInt(data_line[0], 16);
         }
-        else if (data_line[1].endsWith(', Last>')) {
+        else if (data_line[1].endsWith(`, Last>`)) {
             const endCodepoint = parseInt(data_line[0], 16);
             global_ranges.push({
                 startCodepoint: startCodepoint,
                 endCodepoint: endCodepoint,
                 rangeName: data_line[1].substring(1, data_line[1].length - 7)
             });
-            if (data_line[1].startsWith('<CJK Ideograph') || data_line[1].startsWith('<Hangul Syllable')) {
+            if (data_line[1].startsWith(`<CJK Ideograph`) || data_line[1].startsWith(`<Hangul Syllable`)) {
                 global_all_assigned_ranges.push({
                     startCodepoint: startCodepoint,
                     endCodepoint: endCodepoint
@@ -99,7 +99,7 @@ function initUnicodeData(completion) {
 }
 function decompomposeHangulSyllable(codepoint) {
     const syllableType = getSyllableTypeForCodepoint(codepoint);
-    if (syllableType == 'Not_Applicable')
+    if (syllableType == `Not_Applicable`)
         return [codepoint];
     // see Unicode Standard, section 3.12 "Conjoining Jamo Behavior", "Hangul Syllable Decomposition"
     const SBase = 0xAC00;
@@ -127,54 +127,54 @@ function decompomposeHangulSyllable(codepoint) {
 function getName(codepoint, search = false) {
     let d = global_data[codepoint];
     if (d) {
-        if (d[0] != '<')
+        if (d[0] != `<`)
             return d;
         else
-            return '';
+            return ``;
     }
     if (0xAC00 <= codepoint && codepoint <= 0xD7AF) {
         const decomposedSyllables = decompomposeHangulSyllable(codepoint);
         const shortJamoNames = [];
         for (let i = 0; i < decomposedSyllables.length; ++i)
             shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
-        return 'HANGUL SYLLABLE ' + shortJamoNames.join('');
+        return `HANGUL SYLLABLE ${shortJamoNames.join(``)}`;
     }
     if ((0x3400 <= codepoint && codepoint <= 0x4DBF) ||
         (0x4E00 <= codepoint && codepoint <= 0x9FFF)) {
         if (search)
-            return 'CJK UNIFIED IDEOGRAPH';
-        return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
+            return `CJK UNIFIED IDEOGRAPH`;
+        return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
     }
     for (let i = 0; i < global_ranges.length; ++i) {
         const range = global_ranges[i];
         if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
-            if (range.rangeName.startsWith('CJK Ideograph')) {
+            if (range.rangeName.startsWith(`CJK Ideograph`)) {
                 if (search)
-                    return 'CJK UNIFIED IDEOGRAPH';
-                return 'CJK UNIFIED IDEOGRAPH-' + itos(codepoint, 16, 4);
+                    return `CJK UNIFIED IDEOGRAPH`;
+                return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
             }
         }
     }
-    return '';
+    return ``;
 }
 function getHtmlNameDescription(codepoint) {
-    if (getName(codepoint) !== '')
+    if (getName(codepoint) !== ``)
         return getName(codepoint);
-    if (global_data[codepoint] == '<control>') {
+    if (global_data[codepoint] == `<control>`) {
         const name = [];
         for (let i = 0; i < global_aliases.length; ++i) {
             if (global_aliases[i].codepoint == codepoint) {
-                if (global_aliases[i].type != 'control' && name.length > 0)
+                if (global_aliases[i].type != `control` && name.length > 0)
                     break;
                 name.push(global_aliases[i].alias);
-                if (global_aliases[i].type != 'control')
+                if (global_aliases[i].type != `control`)
                     break;
             }
         }
         if (name.length > 0)
-            return '<i>' + name.join(' / ') + '</i>';
+            return `<i>${name.join(` / `)}</i>`;
     }
-    return '<i>Unknown-' + itos(codepoint, 16, 4) + '</i>';
+    return `<i>Unknown-${itos(codepoint, 16, 4)}</i>`;
 }
 function getUnicodeDataTxtNameField(codepoint) {
     if (global_data[codepoint])
@@ -184,5 +184,5 @@ function getUnicodeDataTxtNameField(codepoint) {
         if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint)
             return range.rangeName;
     }
-    return 'Unknown';
+    return `Unknown`;
 }

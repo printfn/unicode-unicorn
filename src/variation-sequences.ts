@@ -15,12 +15,12 @@ let global_ideographicVariationSequences: VariationSequence[] = [];
 let global_ideographicVariationCollections: VariationCollection[] = [];
 
 function initVariationSequences(completion: () => void) {
-	requestAsync('data/Unicode/UCD/StandardizedVariants.txt', undefined, function(line) {
-		const fields = line.split(';');
-		const codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
+	requestAsync(`data/Unicode/UCD/StandardizedVariants.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
+		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
 		const description = fields[1].trim();
-		let shapingEnvironments = fields[2].trim().split(' ');
-		if (shapingEnvironments.length == 1 && shapingEnvironments[0] === '')
+		let shapingEnvironments = fields[2].trim().split(` `);
+		if (shapingEnvironments.length == 1 && shapingEnvironments[0] === ``)
 			shapingEnvironments = [];
 		global_variationSequences.push({
 			baseCodepoint: codepoints[0],
@@ -41,15 +41,15 @@ function variationSequencesForCodepoint(codepoint: number) {
 }
 
 function initIdeographicVariationSequences(completion: () => void) {
-	requestAsync('data/Unicode/IVD/IVD_Sequences.txt', undefined, function(line) {
-		const fields = line.split(';');
-		const codepoints = fields[0].split(' ').map((str) => parseInt(str, 16));
+	requestAsync(`data/Unicode/IVD/IVD_Sequences.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
+		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
 		const collection = fields[1].trim();
 		const item = fields[2].trim();
 		global_ideographicVariationSequences.push({
 			baseCodepoint: codepoints[0],
 			variationSelector: codepoints[1],
-			description: 'ideographic (entry ' + item + ' in collection <a target="_blank" href="' + urlForIdeographicCollection(collection) + '">' + collection + '</a>)'
+			description: `ideographic (entry ${item} in collection <a target="_blank" href="${urlForIdeographicCollection(collection)}">${collection}</a>)`
 		});
 	}, completion);
 }
@@ -64,8 +64,8 @@ function urlForIdeographicCollection(name: string) {
 }
 
 function initIdeographicVariationCollections(completion: () => void) {
-	requestAsync('data/Unicode/IVD/IVD_Collections.txt', undefined, function(line) {
-		const fields = line.split(';');
+	requestAsync(`data/Unicode/IVD/IVD_Collections.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
 		global_ideographicVariationCollections.push({
 			name: fields[0],
 			url: fields[2] // fields[1] is a regex describing item identifiers

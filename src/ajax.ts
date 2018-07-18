@@ -1,6 +1,6 @@
 function requestAsync(url: string, before?: (lines: string[]) => void, each?: (line: string) => void, after?: () => void) {
 	const req = new XMLHttpRequest();
-	req.open('GET', url, true);
+	req.open(`GET`, url, true);
 
 	req.onload = function () {
 		const str = req.response as string;
@@ -10,11 +10,11 @@ function requestAsync(url: string, before?: (lines: string[]) => void, each?: (l
 		if (each) {
 			for (let i = 0; i < lines.length; ++i) {
 				let line = lines[i];
-				if (line.length === 0 || line[0] == '#') {
+				if (line.length === 0 || line[0] == `#`) {
 					continue;
 				}
-				if (line.indexOf('#') != -1) {
-					line = line.substring(0, line.indexOf('#'));
+				if (line.indexOf(`#`) != -1) {
+					line = line.substring(0, line.indexOf(`#`));
 				}
 				each(line);
 			}

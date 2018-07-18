@@ -1,25 +1,25 @@
 let global_search_strings: { [codepoint: number]: string; } = [];
 
 function getSearchString(codepoint: number) {
-	let res = ctos([codepoint]) +
-		'|U+' + itos(codepoint, 16, 4) +
-		'|cp:' + codepoint +
-		'|name:' + getName(codepoint, true) +
-		'|script:' + getScriptForCodepoint(codepoint).replace(/_/g, ' ') +
-		'|category:' + getCharacterCategoryName(codepoint);
+	let res = `${ctos([codepoint])
+	}|U+${itos(codepoint, 16, 4)
+	}|cp:${codepoint
+	}|name:${getName(codepoint, true)
+	}|script:${getScriptForCodepoint(codepoint).replace(/_/g, ` `)
+	}|category:${getCharacterCategoryName(codepoint)}`;
 	for (let i = 0; i < global_aliases.length; ++i) {
 		if (global_aliases[i].codepoint == codepoint) {
-			res += '|name:' + global_aliases[i].alias;
+			res += `|name:${global_aliases[i].alias}`;
 		}
 	}
 	if (global_han_meanings[codepoint])
 		res += global_han_meanings[codepoint];
 	if (global_kun_readings[codepoint])
-		res += '|kun:' + global_kun_readings[codepoint].split(', ').join('|kun:');
+		res += `|kun:${global_kun_readings[codepoint].split(`, `).join(`|kun:`)}`;
 	if (global_on_readings[codepoint])
-		res += '|on:' + global_on_readings[codepoint].split(', ').join('|on:');
+		res += `|on:${global_on_readings[codepoint].split(`, `).join(`|on:`)}`;
 	if (global_mandarin_readings[codepoint])
-		res += '|mandarin:' + global_mandarin_readings[codepoint].split(', ').join('|mandarin:');
+		res += `|mandarin:${global_mandarin_readings[codepoint].split(`, `).join(`|mandarin:`)}`;
 	return res.toUpperCase();
 }
 
@@ -47,14 +47,14 @@ function searchCodepoints(str: string) {
 	const results: number[] = [];
 
 	str = str.toUpperCase();
-	const words = str.split(',');
+	const words = str.split(`,`);
 	for (let i = 0; i < words.length; ++i) {
 		words[i] = words[i].trim();
 	}
-	const selectedElements = $('#searchBlock option:selected');
+	const selectedElements = $(`#searchBlock option:selected`);
 	const blocks: string[] = [];
 	for (let i = 0; i < selectedElements.length; ++i) {
-		const block = selectedElements[i].getAttribute('data-block');
+		const block = selectedElements[i].getAttribute(`data-block`);
 		if (block) {
 			blocks.push(block);
 		}

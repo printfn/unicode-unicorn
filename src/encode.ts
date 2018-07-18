@@ -16,14 +16,14 @@ function escapeHtml(string: string): string {
 }
 
 function displayCodepoint(codepoint?: number): string {
-	if (typeof codepoint == 'undefined')
-		return '';
+	if (typeof codepoint == `undefined`)
+		return ``;
 	if (codepoint < 0x20)
 		codepoint += 0x2400;
 	if (codepoint == 0x7F)
 		codepoint = 0x2421;
 	let codepoints = [codepoint];
-	if (graphemeBreakValueForCodepoint(codepoint) == 'Extend')
+	if (graphemeBreakValueForCodepoint(codepoint) == `Extend`)
 		codepoints = [0x25CC, codepoint];
 	return escapeHtml(ctos(codepoints));
 }
@@ -45,7 +45,7 @@ function ctou8(codepoints: number[]): number[] {
 }
 
 function u8toc(bytes: number[]): number[] {
-	let u8str = '';
+	let u8str = ``;
 	for (let i = 0; i < bytes.length; ++i)
 		u8str += String.fromCharCode(bytes[i]);
 	return stoc(utf8.decode(u8str));
@@ -54,7 +54,7 @@ function u8toc(bytes: number[]): number[] {
 function itos(int: number, base: number, padding: number = 0) {
 	let res = int.toString(base).toUpperCase();
 	while (res.length < padding) {
-		res = '0' + res;
+		res = `0` + res;
 	}
 	return res;
 }
@@ -62,11 +62,11 @@ function itos(int: number, base: number, padding: number = 0) {
 let totalCount = 0;
 let count = 0;
 function initializeMappings(completion: () => void) {
-	requestAsync('data/encodings.txt', function() {
+	requestAsync(`data/encodings.txt`, function() {
 		totalCount = 0;
 		count = 0;
 	}, function(line) {
-		const parts = line.split('\t');
+		const parts = line.split(`\t`);
 		++totalCount;
 		const type = parts[0];
 		const name = parts[1];
@@ -76,28 +76,22 @@ function initializeMappings(completion: () => void) {
 			loadEncodingFromURL(type, name, url, function() {
 				++count;
 				if (count == totalCount) {
-					let codepageOptionStrings = '';
-					let outputEncodingOptionStrings = '';
-					let mojibakeOptionStrings = '';
+					let codepageOptionStrings = ``;
+					let outputEncodingOptionStrings = ``;
+					let mojibakeOptionStrings = ``;
 					$.each(global_encodingNames, function(i, encodingName) {
-						if (global_encodings[encodingName].type == '7-bit mapping' ||
-							global_encodings[encodingName].type == '8-bit mapping') {
-							codepageOptionStrings += '<option' +
-								(encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : '') +
-								'>' +
-								encodingName +
-								'</option>';
+						if (global_encodings[encodingName].type == `7-bit mapping` ||
+							global_encodings[encodingName].type == `8-bit mapping`) {
+							codepageOptionStrings += `<option${
+								encodingName == `ISO-8859-1 (Latin-1 Western European)` ? ` selected` : ``
+							}>${encodingName}</option>`;
 						}
-						outputEncodingOptionStrings += '<option>' + encodingName + '</option>';
-						mojibakeOptionStrings += '<option' +
-								//(encodingName == 'Unicode UTF-8' || encodingName.startsWith('Code page 1252') ? ' selected' : '') +
-								'>' + 
-								encodingName +
-								'</option>';
+						outputEncodingOptionStrings += `<option>${encodingName}</option>`;
+						mojibakeOptionStrings += `<option>${encodingName}</option>`;
 					});
-					updateSelectOptions('#codepageEncoding', codepageOptionStrings);
-					updateSelectOptions('#outputEncoding', outputEncodingOptionStrings);
-					updateSelectOptions('#mojibakeEncodings', mojibakeOptionStrings);
+					updateSelectOptions(`#codepageEncoding`, codepageOptionStrings);
+					updateSelectOptions(`#outputEncoding`, outputEncodingOptionStrings);
+					updateSelectOptions(`#mojibakeEncodings`, mojibakeOptionStrings);
 					completion();
 				}
 			});
@@ -112,19 +106,19 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 		decode: undefined
 	};
 	requestAsync(url, function(lines) {
-		if (type.includes('function')) {
-			encoding = eval(lines.join('\n'));
+		if (type.includes(`function`)) {
+			encoding = eval(lines.join(`\n`));
 			encoding.type = type;
 		} else {
 			encoding.encode = function(codepoints) {
 				let bytes: number[] = [];
 				for (let i = 0; i < codepoints.length; ++i) {
 					let codepoint = codepoints[i];
-					if (typeof codepoint == 'string') {
+					if (typeof codepoint == `string`) {
 						codepoint = parseInt(codepoint);
 					}
 					const number = encoding.table![codepoint];
-					if (typeof number == 'undefined') {
+					if (typeof number == `undefined`) {
 						// if (codepoint <= 0xFF)
 						// 	bytes.push(codepoint);
 						// else
@@ -142,7 +136,7 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 			encoding.decode = function(bytes) {
 				const table = encoding.table;
 				const codepointForByteUsingMapping = function(byte: number | string) {
-					if (typeof byte == 'string') {
+					if (typeof byte == `string`) {
 						byte = parseInt(byte);
 					}
 					for (let codepoint in table!) {
@@ -153,12 +147,12 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 				const codepoints: number[] = [];
 				for (let i = 0; i < bytes.length; ++i) {
 					let cp = codepointForByteUsingMapping(bytes[i]);
-					if (typeof cp != 'undefined') {
+					if (typeof cp != `undefined`) {
 						codepoints.push(cp);
 						continue;
 					}
 					cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i+1]);
-					if (typeof cp == 'undefined') {
+					if (typeof cp == `undefined`) {
 						return [];
 					}
 					codepoints.push(cp);
@@ -168,14 +162,14 @@ function loadEncodingFromURL(type: string, name: string, url: string, completion
 			};
 		}
 	}, function(line) {
-		if (type.includes('mapping')) {
+		if (type.includes(`mapping`)) {
 			if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
 				return;
-			const components = line.split('\t');
-			if (components[1].trim() === '')
+			const components = line.split(`\t`);
+			if (components[1].trim() === ``)
 				return;
 			if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-				throw new Error('Invalid line detected in ' + url);
+				throw new Error(`Invalid line detected in ${url}`);
 			if (!encoding.table)
 				encoding.table = [];
 			encoding.table[parseInt(components[1])] = parseInt(components[0]);
@@ -198,26 +192,26 @@ function bytesToText(format: string, bytes: number[], hexadecimalPadding: number
 	const chars: string[] = [];
 	for (let i = 0; i < bytes.length; ++i) {
 		const b = bytes[i];
-		let str = '';
-		if (format.includes('Binary')) {
+		let str = ``;
+		if (format.includes(`Binary`)) {
 			str = b.toString(2);
-			if (format.includes('Padded')) {
-				str = (Array(hexadecimalPadding * 4 + 1).join('0') + str).substring(str.length);
+			if (format.includes(`Padded`)) {
+				str = (Array(hexadecimalPadding * 4 + 1).join(`0`) + str).substring(str.length);
 			}
-		} else if (format.includes('Octal')) {
+		} else if (format.includes(`Octal`)) {
 			str = b.toString(8);
-		} else if (format.includes('Decimal')) {
+		} else if (format.includes(`Decimal`)) {
 			str = b.toString(10);
-		} else if (format.includes('Hexadecimal')) {
+		} else if (format.includes(`Hexadecimal`)) {
 			str = b.toString(16).toUpperCase();
-			if (format.includes('Padded')) {
-				str = (Array(hexadecimalPadding + 1).join('0') + str).substring(str.length);
+			if (format.includes(`Padded`)) {
+				str = (Array(hexadecimalPadding + 1).join(`0`) + str).substring(str.length);
 			}
 		}
 		chars.push(str);
 	}
-	if (format.includes('Prefixed with ')) {
-		const prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
+	if (format.includes(`Prefixed with `)) {
+		const prefix = format.substring(format.indexOf(`'`) + 1, format.lastIndexOf(`'`));
 		for (let i = 0; i < chars.length; ++i) {
 			chars[i] = prefix + chars[i];
 		}
@@ -226,8 +220,8 @@ function bytesToText(format: string, bytes: number[], hexadecimalPadding: number
 }
 
 function textToBytes(format: string, strings: string[]) {
-	if (format.includes('Prefixed with ')) {
-		const prefix = format.substring(format.indexOf('\'') + 1, format.lastIndexOf('\''));
+	if (format.includes(`Prefixed with `)) {
+		const prefix = format.substring(format.indexOf(`'`) + 1, format.lastIndexOf(`'`));
 		for (let i = 0; i < strings.length; ++i) {
 			strings[i] = strings[i].substring(prefix.length);
 		}
@@ -235,13 +229,13 @@ function textToBytes(format: string, strings: string[]) {
 	const bytes: number[] = [];
 	for (let i = 0; i < strings.length; ++i) {
 		const str = strings[i];
-		if (format.includes('Binary')) {
+		if (format.includes(`Binary`)) {
 			bytes.push(parseInt(str, 2));
-		} else if (format.includes('Octal')) {
+		} else if (format.includes(`Octal`)) {
 			bytes.push(parseInt(str, 8));
-		} else if (format.includes('Decimal')) {
+		} else if (format.includes(`Decimal`)) {
 			bytes.push(parseInt(str, 10));
-		} else if (format.includes('Hexadecimal')) {
+		} else if (format.includes(`Hexadecimal`)) {
 			bytes.push(parseInt(str, 16));
 		}
 	}
@@ -250,24 +244,24 @@ function textToBytes(format: string, strings: string[]) {
 
 function stringForJoiner(joiner: string) {
 	switch (joiner) {
-		case 'Unseparated':
-			return '';
-		case 'Separated using spaces':
-			return ' ';
-		case 'Separated using commas':
-			return ',';
-		case 'Separated using commas and spaces':
-			return ', ';
-		case 'Separated using semicolons':
-			return ';';
-		case 'Separated using semicolons and spaces':
-			return '; ';
-		case 'Separated using linebreaks':
-			return '\n';
-		case 'Separated using commas and linebreaks':
-			return ',\n';
+		case `Unseparated`:
+			return ``;
+		case `Separated using spaces`:
+			return ` `;
+		case `Separated using commas`:
+			return `,`;
+		case `Separated using commas and spaces`:
+			return `, `;
+		case `Separated using semicolons`:
+			return `;`;
+		case `Separated using semicolons and spaces`:
+			return `; `;
+		case `Separated using linebreaks`:
+			return `\n`;
+		case `Separated using commas and linebreaks`:
+			return `,\n`;
 		default:
-			return ' ';
+			return ` `;
 	}
 }
 
@@ -280,28 +274,28 @@ function splitBytes(joiner: string, str: string) {
 }
 
 function hexadecimalPaddingFromEncoding(encoding: string) {
-	if (encoding.includes('16-bit code units'))
+	if (encoding.includes(`16-bit code units`))
 		return 4;
-	if (encoding.includes('32-bit code units'))
+	if (encoding.includes(`32-bit code units`))
 		return 8;
 	return 2;
 }
 
 function encodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, codepoints: number[]) {
-	const useBOM = byteOrderMark.startsWith('Use');
+	const useBOM = byteOrderMark.startsWith(`Use`);
 	if (useBOM) {
 		codepoints.unshift(0xFEFF);
 	}
 	const bytes = codepointsToEncoding(encoding, codepoints);
-	if (typeof bytes == 'number') {
+	if (typeof bytes == `number`) {
 		// input contains codepoints incompatible with the selected encoding
 		const invalidCodepoint = bytes;
-		return '<span style="color: red">Text cannot be encoded in ' + encoding +
-			' because it contains incompatible characters.\nThe first such incompatible character is U+' +
-			itos(invalidCodepoint, 16, 4) +
-			' - ' + getHtmlNameDescription(invalidCodepoint) +
-			' (' + displayCodepoint(invalidCodepoint) + ').</span>';
-	} else if (typeof bytes == 'string') {
+		return `<span style="color: red">Text cannot be encoded in ${encoding
+		} because it contains incompatible characters.\nThe first such incompatible character is U+${
+			itos(invalidCodepoint, 16, 4)
+		} - ${getHtmlNameDescription(invalidCodepoint)} (${
+			displayCodepoint(invalidCodepoint)}).</span>`;
+	} else if (typeof bytes == `string`) {
 		const outputString = bytes;
 		return escapeHtml(outputString);
 	}
@@ -310,12 +304,12 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, j
 }
 
 function decodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, str: string) {
-	if (str === '')
+	if (str === ``)
 		return;
-	if (encoding.includes('Punycode') && encoding.includes('Text')) {
+	if (encoding.includes(`Punycode`) && encoding.includes(`Text`)) {
 		return stoc(punycode.decode(str));
 	}
-	if (encoding.includes('HTML Entities')) {
+	if (encoding.includes(`HTML Entities`)) {
 		return stoc(he.decode(ctos(str)));
 	}
 	const strings = splitBytes(joiner, str);
@@ -325,7 +319,7 @@ function decodeOutput(byteOrderMark: string, encoding: string, format: string, j
 			return;
 	const codepoints = codeUnitsToCodepoints(encoding, codeUnits);
 	if (!codepoints) return;
-	const useBOM = byteOrderMark.startsWith('Use');
+	const useBOM = byteOrderMark.startsWith(`Use`);
 	if (useBOM) {
 		codepoints.unshift(1);
 	}
