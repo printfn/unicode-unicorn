@@ -1,7 +1,54 @@
+#!/usr/local/bin/node
 // This script parses data from various files in the 'data' directory,
 //  and builds a single TS file in src/compiled-data.ts
 
 var fs = require('fs');
+
+function iterateOverFile(path, before, each, after) {
+	const lines = fs.readFileSync(path, `utf8`).split('\n');
+	if (before)
+		before(lines);
+	if (each) {
+		for (let i = 0; i < lines.length; ++i) {
+			let line = lines[i];
+			if (line.length === 0 || line[0] == `#`) {
+				continue;
+			}
+			if (line.indexOf(`#`) != -1) {
+				line = line.substring(0, line.indexOf(`#`));
+			}
+			each(line);
+		}
+	}
+	if (after) {
+		after();
+	}
+}
+
+function compileHan() {
+	let global_han_meanings = {};
+	let global_mandarin_readings = {};
+	let global_kun_readings = {};
+	let global_on_readings = {};
+	iterateOverFile(`data/Unicode/Unihan/Unihan_Readings.txt`, undefined, function(line) {
+		const fields = line.split(`\t`);
+		const codepoint = parseInt(fields[0].substring(2), 16);
+		if (fields[1] == `kDefinition`) {
+			global_han_meanings[codepoint] = fields[2];
+		} else if (fields[1] == `kMandarin`) {
+			global_mandarin_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, `, `);
+		} else if (fields[1] == `kJapaneseKun`) {
+			global_kun_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, `, `);
+		} else if (fields[1] == `kJapaneseOn`) {
+			global_on_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, `, `);
+		}
+	});
+	return `
+let global_han_meanings: { [codepoint: number]: string; } = ${JSON.stringify(global_han_meanings)};
+let global_mandarin_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_mandarin_readings)};
+let global_kun_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_kun_readings)};
+let global_on_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_on_readings)};`
+}
 
 let compileLanguagesSubtagRegistry = function() {
 	const subtagRegistryFileContents = fs.readFileSync('data/language-subtag-registry', 'utf8');
@@ -58,12 +105,11 @@ let compileLanguagesSubtagRegistry = function() {
 		return htmls;
 	}
 	return `
-	const global_allLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(allLanguageTags))};
-	const global_commonLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(commonLanguageTags))};
-	`;
+const global_allLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(allLanguageTags))};
+const global_commonLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(commonLanguageTags))};`;
 }
 
-const functions = [compileLanguagesSubtagRegistry];
+const functions = [compileLanguagesSubtagRegistry, compileHan];
 let finalOutput = ``;
 for (let i in functions) {
 	finalOutput += functions[i]();

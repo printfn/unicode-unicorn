@@ -133,7 +133,6 @@ function moveDown(codepoint: number, index: number) {
 function initData(completion: () => void) {
 	callMultipleAsync([
 		initializeMappings,
-		initHanData,
 		initGraphemeData,
 		initEmojiData,
 		initUnicodeData,

@@ -105,7 +105,6 @@ function moveDown(codepoint, index) {
 function initData(completion) {
     callMultipleAsync([
         initializeMappings,
-        initHanData,
         initGraphemeData,
         initEmojiData,
         initUnicodeData,
