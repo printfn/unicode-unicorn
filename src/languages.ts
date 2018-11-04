@@ -1,5 +1,3 @@
-let global_languageData: string[] = [];
-
 function initLanguageData(completion: () => void) {
 	const showAllLanguages = $(`#showRareLanguages`)[0].hasAttribute(`disabled`);
 	const htmls = showAllLanguages ? global_allLanguageTagsHTML : global_commonLanguageTagsHTML;
