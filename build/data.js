@@ -1,8 +1,3 @@
-let global_data = [];
-let global_ranges = [];
-let global_all_assigned_ranges = [{ startCodepoint: 0, endCodepoint: 0 }]; // this element is modified as data is loaded, so don't change it
-let global_category = [];
-let global_categoryRanges = [];
 let global_aliases = [];
 let global_generalCategoryNames = {};
 function getCharacterCategoryCode(codepoint) {
@@ -56,45 +51,6 @@ function initGeneralCategoryNames(completion) {
         const gc = splitLine[1].trim();
         const gcAlias = splitLine[2].trim();
         global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
-    }, completion);
-}
-function initUnicodeData(completion) {
-    let startCodepoint = 0;
-    requestAsync(`data/Unicode/UCD/UnicodeData.txt`, undefined, function (line) {
-        const data_line = line.split(`;`);
-        if (data_line[1].endsWith(`, First>`)) {
-            startCodepoint = parseInt(data_line[0], 16);
-        }
-        else if (data_line[1].endsWith(`, Last>`)) {
-            const endCodepoint = parseInt(data_line[0], 16);
-            global_ranges.push({
-                startCodepoint: startCodepoint,
-                endCodepoint: endCodepoint,
-                rangeName: data_line[1].substring(1, data_line[1].length - 7)
-            });
-            if (data_line[1].startsWith(`<CJK Ideograph`) || data_line[1].startsWith(`<Hangul Syllable`)) {
-                global_all_assigned_ranges.push({
-                    startCodepoint: startCodepoint,
-                    endCodepoint: endCodepoint
-                });
-            }
-            global_categoryRanges.push({
-                startCodepoint: startCodepoint,
-                endCodepoint: endCodepoint,
-                categoryCode: data_line[2]
-            });
-        }
-        else {
-            const codepoint = parseInt(data_line[0], 16);
-            global_data[codepoint] = data_line[1];
-            global_category[codepoint] = data_line[2];
-            if (global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint >= codepoint - 1) {
-                ++global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint;
-            }
-            else {
-                global_all_assigned_ranges.push({ startCodepoint: codepoint, endCodepoint: codepoint });
-            }
-        }
     }, completion);
 }
 function decompomposeHangulSyllable(codepoint) {

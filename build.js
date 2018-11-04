@@ -6,7 +6,12 @@ var fs = require('fs');
 
 let finalOutput = ``;
 function out(varname, typestr, variable) {
-	finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};`;
+	if (typeof(variable) == 'undefined') {
+		variable = typestr;
+		finalOutput += `const ${varname} = ${JSON.stringify(variable)};\n`;
+	} else {
+		finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};\n`;
+	}
 }
 
 function iterateOverFile(path, before, each, after) {
@@ -53,6 +58,60 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_mandarin_readings`, `{ [codepoint: number]: string; }`, global_mandarin_readings);
 	out(`global_kun_readings`, `{ [codepoint: number]: string; }`, global_kun_readings);
 	out(`global_on_readings`, `{ [codepoint: number]: string; }`, global_on_readings);
+})();
+
+// Unicode data
+(function() {
+
+	let global_data = {};
+	let global_ranges = [];
+
+	// this element is modified as data is loaded, so don't change it
+	let global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
+	let global_category = {};
+	let global_categoryRanges = [];
+
+	let startCodepoint = 0;
+
+	iterateOverFile(`data/Unicode/UCD/UnicodeData.txt`, undefined, function(line) {
+		const data_line = line.split(`;`);
+		if (data_line[1].endsWith(`, First>`)) {
+			startCodepoint = parseInt(data_line[0], 16);
+		} else if (data_line[1].endsWith(`, Last>`)) {
+			const endCodepoint = parseInt(data_line[0], 16);
+			global_ranges.push({
+				startCodepoint: startCodepoint,
+				endCodepoint: endCodepoint,
+				rangeName: data_line[1].substring(1, data_line[1].length - 7)
+			});
+			if (data_line[1].startsWith(`<CJK Ideograph`) || data_line[1].startsWith(`<Hangul Syllable`)) {
+				global_all_assigned_ranges.push({
+					startCodepoint: startCodepoint,
+					endCodepoint: endCodepoint
+				});
+			}
+			global_categoryRanges.push({
+				startCodepoint: startCodepoint,
+				endCodepoint: endCodepoint,
+				categoryCode: data_line[2]
+			});
+		} else {
+			const codepoint = parseInt(data_line[0], 16);
+			global_data[codepoint] = data_line[1];
+			global_category[codepoint] = data_line[2];
+			if (global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint >= codepoint - 1) {
+				++global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint;
+			} else {
+				global_all_assigned_ranges.push({startCodepoint: codepoint, endCodepoint: codepoint});
+			}
+		}
+	});
+
+	out(`global_data`, `{ [codepoint: number]: string; }`, global_data);
+	out(`global_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_ranges);
+	out(`global_all_assigned_ranges`, global_all_assigned_ranges);
+	out(`global_category`, `{ [codepoint: number]: string; }`, global_category);
+	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
 })();
 
 // Language subtag registry
