@@ -1,5 +1,3 @@
-let global_aliases = [];
-let global_generalCategoryNames = {};
 function getCharacterCategoryCode(codepoint) {
     let categoryCode = global_category[codepoint];
     if (!categoryCode) {
@@ -22,36 +20,6 @@ function getCodepointDescription(codepoint, name) {
         codepoint = parseInt(codepoint);
     }
     return `${name} ${ctos([codepoint])}`;
-}
-function initAliasData(completion) {
-    requestAsync(`data/Unicode/UCD/NameAliases.txt`, undefined, function (line) {
-        const splitLine = line.split(`;`);
-        const codepoint = parseInt(splitLine[0], 16);
-        global_aliases.push({ codepoint: codepoint, alias: splitLine[1], type: splitLine[2] });
-    }, completion);
-    global_aliases.sort(function (a, b) {
-        if (a.type == `control` && b.type != `control`)
-            return 1;
-        if (a.type != `control` && b.type == `control`)
-            return -1;
-        if (a.alias < b.alias)
-            return 1;
-        if (a.alias > b.alias)
-            return -1;
-        return 0;
-    });
-}
-function initGeneralCategoryNames(completion) {
-    requestAsync(`data/Unicode/UCD/PropertyValueAliases.txt`, undefined, function (line) {
-        let splitLine = line.split(`#`);
-        splitLine = splitLine[0];
-        splitLine = splitLine.split(`;`);
-        if (splitLine[0].trim() != `gc`)
-            return;
-        const gc = splitLine[1].trim();
-        const gcAlias = splitLine[2].trim();
-        global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
-    }, completion);
 }
 function decompomposeHangulSyllable(codepoint) {
     const syllableType = getSyllableTypeForCodepoint(codepoint);

@@ -135,8 +135,6 @@ function initData(completion: () => void) {
 		initializeMappings,
 		initGraphemeData,
 		initEmojiData,
-		initGeneralCategoryNames,
-		initAliasData,
 		initBlockData,
 		initHangulSyllableTypes,
 		initShortJamoNames,

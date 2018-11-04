@@ -70,6 +70,8 @@ function iterateOverFile(path, before, each, after) {
 	let global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
 	let global_category = {};
 	let global_categoryRanges = [];
+	let global_generalCategoryNames = {};
+	let global_aliases = [];
 
 	let startCodepoint = 0;
 
@@ -107,11 +109,41 @@ function iterateOverFile(path, before, each, after) {
 		}
 	});
 
+	iterateOverFile(`data/Unicode/UCD/PropertyValueAliases.txt`, undefined, function(line) {
+		let splitLine = line.split(`#`);
+		splitLine = splitLine[0];
+		splitLine = splitLine.split(`;`);
+		if (splitLine[0].trim() != `gc`)
+			return;
+		const gc = splitLine[1].trim();
+		const gcAlias = splitLine[2].trim();
+		global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
+	});
+
+	iterateOverFile(`data/Unicode/UCD/NameAliases.txt`, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		const codepoint = parseInt(splitLine[0], 16);
+		global_aliases.push({codepoint: codepoint, alias: splitLine[1], type: splitLine[2]});
+	});
+	global_aliases.sort(function(a, b) {
+		if (a.type == `control` && b.type != `control`)
+			return 1;
+		if (a.type != `control` && b.type == `control`)
+			return -1;
+		if (a.alias < b.alias)
+			return 1;
+		if (a.alias > b.alias)
+			return -1;
+		return 0;
+	});
+
 	out(`global_data`, `{ [codepoint: number]: string; }`, global_data);
 	out(`global_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_ranges);
 	out(`global_all_assigned_ranges`, global_all_assigned_ranges);
 	out(`global_category`, `{ [codepoint: number]: string; }`, global_category);
 	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
+	out(`global_generalCategoryNames`, `{ [categoryCode: string]: string; }`, global_generalCategoryNames);
+	out(`global_aliases`, `{ codepoint: number; alias: string; type: string; }[]`, global_aliases);
 })();
 
 // Language subtag registry
