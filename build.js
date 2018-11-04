@@ -4,6 +4,11 @@
 
 var fs = require('fs');
 
+let finalOutput = ``;
+function out(varname, typestr, variable) {
+	finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};`;
+}
+
 function iterateOverFile(path, before, each, after) {
 	const lines = fs.readFileSync(path, `utf8`).split('\n');
 	if (before)
@@ -25,7 +30,8 @@ function iterateOverFile(path, before, each, after) {
 	}
 }
 
-function compileHan() {
+// Han
+(function() {
 	let global_han_meanings = {};
 	let global_mandarin_readings = {};
 	let global_kun_readings = {};
@@ -43,14 +49,14 @@ function compileHan() {
 			global_on_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, `, `);
 		}
 	});
-	return `
-let global_han_meanings: { [codepoint: number]: string; } = ${JSON.stringify(global_han_meanings)};
-let global_mandarin_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_mandarin_readings)};
-let global_kun_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_kun_readings)};
-let global_on_readings: { [codepoint: number]: string; } = ${JSON.stringify(global_on_readings)};`
-}
+	out(`global_han_meanings`, `{ [codepoint: number]: string; }`, global_han_meanings);
+	out(`global_mandarin_readings`, `{ [codepoint: number]: string; }`, global_mandarin_readings);
+	out(`global_kun_readings`, `{ [codepoint: number]: string; }`, global_kun_readings);
+	out(`global_on_readings`, `{ [codepoint: number]: string; }`, global_on_readings);
+})();
 
-let compileLanguagesSubtagRegistry = function() {
+// Language subtag registry
+(function() {
 	const subtagRegistryFileContents = fs.readFileSync('data/language-subtag-registry', 'utf8');
 	const allLanguageTags = [];
 	const commonLanguageTags = [];
@@ -104,14 +110,8 @@ let compileLanguagesSubtagRegistry = function() {
 		}
 		return htmls;
 	}
-	return `
-const global_allLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(allLanguageTags))};
-const global_commonLanguageTagsHTML: { [key: string]: string; } = ${JSON.stringify(tagsToHTMLStrings(commonLanguageTags))};`;
-}
+	out(`global_allLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(allLanguageTags));
+	out(`global_commonLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(commonLanguageTags));
+})();
 
-const functions = [compileLanguagesSubtagRegistry, compileHan];
-let finalOutput = ``;
-for (let i in functions) {
-	finalOutput += functions[i]();
-}
 fs.writeFileSync('src/compiled-data.ts', finalOutput);
