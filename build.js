@@ -6,6 +6,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 
 let finalOutput = ``;
+let lengths = [];
 function out(varname, typestr, variable) {
 	if (typeof(variable) == 'undefined') {
 		variable = typestr;
@@ -13,7 +14,10 @@ function out(varname, typestr, variable) {
 	} else {
 		finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};\n`;
 	}
-	console.log(`Generated ${varname}, length ${JSON.stringify(variable).length}`);
+	lengths.push({
+		name: varname,
+		length: JSON.stringify(variable).length
+	})
 }
 
 function iterateOverFile(path, before, each, after) {
@@ -210,29 +214,21 @@ function iterateOverFile(path, before, each, after) {
 		});
 	});
 
-	const urlForIdeographicCollection = function(name) {
-		for (let i = 0; i < global_ideographicVariationCollections.length; ++i) {
-			const collection = global_ideographicVariationCollections[i];
-			if (collection.name != name)
-				continue;
-			return collection.url;
-		}
-	}
-
 	iterateOverFile(`data/Unicode/IVD/IVD_Sequences.txt`, undefined, function(line) {
 		const fields = line.split(`;`);
 		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
 		const collection = fields[1].trim();
 		const item = fields[2].trim();
 		global_ideographicVariationSequences.push({
-			baseCodepoint: codepoints[0],
-			variationSelector: codepoints[1],
-			description: `ideographic (entry ${item} in collection <a target="_blank" href="${urlForIdeographicCollection(collection)}">${collection}</a>)`
+			b: codepoints[0], // base codepoint
+			v: codepoints[1], // variation selector
+			c: collection, // collection
+			i: item // item, i.e. index into collection
 		});
 	});
 
 	out(`global_variationSequences`, `VariationSequence[]`, global_variationSequences);
-	out(`global_ideographicVariationSequences`, `VariationSequence[]`, global_ideographicVariationSequences);
+	out(`global_ideographicVariationSequences`, `IdeographicVariationSequence[]`, global_ideographicVariationSequences);
 	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
 })();
 
@@ -458,5 +454,14 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_allLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(allLanguageTags));
 	out(`global_commonLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(commonLanguageTags));
 })();
+
+lengths.sort(function(a, b) {
+	return a.length < b.length ? 1 : a.length == b.length ? 0 : -1;
+});
+console.log(`Total length: ${finalOutput.length}`);
+for (let i in lengths) {
+	const x = lengths[i];
+	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutput.length * 100}%)`);
+}
 
 fs.writeFileSync('src/compiled-data.ts', finalOutput);
