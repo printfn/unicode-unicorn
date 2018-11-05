@@ -200,6 +200,83 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
 })();
 
+// Graphemes & Emoji
+(function() {
+	let global_graphemeBreakData = {};
+	let global_extendedPictograph = [];
+
+	iterateOverFile(`data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt`, function() {}, function(line) {
+		let state = 1;
+		let startCodepoint = ``;
+		let endCodepoint = ``;
+		let value = ``;
+		for (let j = 0; j < line.length; ++j) {
+			const c = line[j];
+			if (c == `#`)
+				break;
+			if (state == 1) {
+				if (c != `.` && c != ` `) {
+					startCodepoint += c;
+					continue;
+				} else {
+					state = 2;
+				}
+			}
+			if (state == 2) {
+				if (c == ` `) {
+					state = 3;
+				} else if (c == `.`) {
+					continue;
+				} else {
+					endCodepoint += c;
+					continue;
+				}
+			}
+			if (state == 3) {
+				if (c == ` `)
+					continue;
+				else if (c == `;`) {
+					state = 4;
+					continue;
+				}
+			}
+			if (state == 4) {
+				if (c == ` `) {
+					continue;
+				} else if ((c >= `a` && c <= `z`) || (c >= `A` && c <= `Z`) || c == `_`) {
+					value += c;
+					continue;
+				} else
+					break;
+			}
+		}
+		startCodepoint = parseInt(startCodepoint, 16);
+		endCodepoint = endCodepoint === `` ? startCodepoint : parseInt(endCodepoint, 16);
+		for (let x = startCodepoint; x <= endCodepoint; ++x) {
+			global_graphemeBreakData[x] = value;
+		}
+	});
+
+	iterateOverFile(`data/Unicode/emoji-data.txt`, undefined, function(line) {
+		const components = line.split(`;`);
+		if (components.length != 2) return;
+		if (components[1].trim() != `Extended_Pictographic`) return;
+		if (components[0].includes(`..`)) {
+			const arr = components[0].trim().split(`..`);
+			const start = parseInt(arr[0], 16);
+			const end = parseInt(arr[1], 16);
+			for (let i = start; i <= end; ++i) {
+				global_extendedPictograph.push(i);
+			}
+		} else {
+			global_extendedPictograph.push(parseInt(components[0].trim(), 16));
+		}
+	});
+
+	out(`global_graphemeBreakData`, `{ [codepoint: number]: string; }`, global_graphemeBreakData);
+	out(`global_extendedPictograph`, `number[]`, global_extendedPictograph);
+})();
+
 // Blocks
 (function() {
 	let global_blockRanges = [];
