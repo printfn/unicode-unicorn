@@ -81,7 +81,7 @@ function updateRenderedCodepage() {
         for (let j = 0; j < 16; ++j) {
             const byte = (i << 4) + j;
             const codepoints = encoding.decode([byte]);
-            if (codepoints) {
+            if (codepoints && codepoints.length > 0) {
                 const codepoint = codepoints[0];
                 const color = randomColorForKey(getCharacterCategoryCode(codepoint)[0]);
                 const displayedCodepoint = displayCodepoint(codepoint);
