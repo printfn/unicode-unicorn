@@ -34,12 +34,28 @@ function iterateOverFile(path, before, each, after) {
 	}
 }
 
-// Han
+// Unicode data, han & search
 (function() {
+
+	let global_data = {};
+	let global_ranges = [];
+
+	// this element is modified as data is loaded, so don't change it
+	let global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
+	let global_category = {};
+	let global_categoryRanges = [];
+	let global_generalCategoryNames = {};
+	let global_aliases = [];
+
 	let global_han_meanings = {};
 	let global_mandarin_readings = {};
 	let global_kun_readings = {};
 	let global_on_readings = {};
+
+	//let global_search_strings = {};
+
+	let startCodepoint = 0;
+
 	iterateOverFile(`data/Unicode/Unihan/Unihan_Readings.txt`, undefined, function(line) {
 		const fields = line.split(`\t`);
 		const codepoint = parseInt(fields[0].substring(2), 16);
@@ -53,26 +69,6 @@ function iterateOverFile(path, before, each, after) {
 			global_on_readings[codepoint] = fields[2].toLowerCase().replace(/ /g, `, `);
 		}
 	});
-	out(`global_han_meanings`, `{ [codepoint: number]: string; }`, global_han_meanings);
-	out(`global_mandarin_readings`, `{ [codepoint: number]: string; }`, global_mandarin_readings);
-	out(`global_kun_readings`, `{ [codepoint: number]: string; }`, global_kun_readings);
-	out(`global_on_readings`, `{ [codepoint: number]: string; }`, global_on_readings);
-})();
-
-// Unicode data
-(function() {
-
-	let global_data = {};
-	let global_ranges = [];
-
-	// this element is modified as data is loaded, so don't change it
-	let global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
-	let global_category = {};
-	let global_categoryRanges = [];
-	let global_generalCategoryNames = {};
-	let global_aliases = [];
-
-	let startCodepoint = 0;
 
 	iterateOverFile(`data/Unicode/UCD/UnicodeData.txt`, undefined, function(line) {
 		const data_line = line.split(`;`);
@@ -124,6 +120,7 @@ function iterateOverFile(path, before, each, after) {
 		const codepoint = parseInt(splitLine[0], 16);
 		global_aliases.push({codepoint: codepoint, alias: splitLine[1], type: splitLine[2]});
 	});
+
 	global_aliases.sort(function(a, b) {
 		if (a.type == `control` && b.type != `control`)
 			return 1;
@@ -136,13 +133,52 @@ function iterateOverFile(path, before, each, after) {
 		return 0;
 	});
 
+	/*const getSearchString = function(codepoint) {
+		let res = `${ctos([codepoint])
+		}|U+${itos(codepoint, 16, 4)
+		}|cp:${codepoint
+		}|name:${getName(codepoint, true)
+		}|script:${getScriptForCodepoint(codepoint).replace(/_/g, ` `)
+		}|category:${getCharacterCategoryName(codepoint)}`;
+		for (let i = 0; i < global_aliases.length; ++i) {
+			if (global_aliases[i].codepoint == codepoint) {
+				res += `|name:${global_aliases[i].alias}`;
+			}
+		}
+		if (global_han_meanings[codepoint])
+			res += global_han_meanings[codepoint];
+		if (global_kun_readings[codepoint])
+			res += `|kun:${global_kun_readings[codepoint].split(`, `).join(`|kun:`)}`;
+		if (global_on_readings[codepoint])
+			res += `|on:${global_on_readings[codepoint].split(`, `).join(`|on:`)}`;
+		if (global_mandarin_readings[codepoint])
+			res += `|mandarin:${global_mandarin_readings[codepoint].split(`, `).join(`|mandarin:`)}`;
+		return res.toUpperCase();
+	}
+
+	for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
+		const range = global_all_assigned_ranges[i];
+		const end = range.endCodepoint;
+		for (let c = range.startCodepoint; c <= end; ++c) {
+			global_search_strings[c] = getSearchString(c);
+		}
+	}*/
+
 	out(`global_data`, `{ [codepoint: number]: string; }`, global_data);
 	out(`global_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_ranges);
 	out(`global_all_assigned_ranges`, global_all_assigned_ranges);
 	out(`global_category`, `{ [codepoint: number]: string; }`, global_category);
 	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
+
 	out(`global_generalCategoryNames`, `{ [categoryCode: string]: string; }`, global_generalCategoryNames);
 	out(`global_aliases`, `{ codepoint: number; alias: string; type: string; }[]`, global_aliases);
+
+	out(`global_han_meanings`, `{ [codepoint: number]: string; }`, global_han_meanings);
+	out(`global_mandarin_readings`, `{ [codepoint: number]: string; }`, global_mandarin_readings);
+	out(`global_kun_readings`, `{ [codepoint: number]: string; }`, global_kun_readings);
+	out(`global_on_readings`, `{ [codepoint: number]: string; }`, global_on_readings);
+
+	//out(`global_search_strings`, `{ [codepoint: number]: string; }`, global_search_strings);
 })();
 
 // Variation sequences
@@ -198,6 +234,28 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_variationSequences`, `VariationSequence[]`, global_variationSequences);
 	out(`global_ideographicVariationSequences`, `VariationSequence[]`, global_ideographicVariationSequences);
 	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
+})();
+
+// Encodings
+(function() {
+	let global_encodingNames = [];
+	let global_encodingData = [];
+
+	iterateOverFile(`data/encodings.txt`, undefined, function(line) {
+		const parts = line.split(`\t`);
+		const type = parts[0];
+		const name = parts[1];
+		const url = parts[2];
+		global_encodingNames.push(name);
+		global_encodingData.push({
+			name: name,
+			type: type,
+			data: fs.readFileSync(url, 'utf8')
+		});
+	});
+
+	out(`global_encodingNames`, `string[]`, global_encodingNames);
+	out(`global_encodingData`, `{ name: string, type: string, data: string }[]`, global_encodingData);
 })();
 
 // Graphemes & Emoji

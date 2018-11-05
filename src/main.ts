@@ -149,7 +149,7 @@ function updateSpacerHeights() {
 }
 
 let loaded = false;
-jQueryModal(`#loadingModal`, `show`);
+//jQueryModal(`#loadingModal`, `show`);
 $(document).ready(function() {
 	if (loaded)
 		return;
@@ -207,7 +207,7 @@ $(document).ready(function() {
 			updateSpacerHeights();
 			callEventListenersForElemId(`output`);
 		});
-		jQueryModal(`#loadingModal`, `hide`);
+		//jQueryModal(`#loadingModal`, `hide`);
 		console.log(`Loaded in ${loadDuration}ms`);
 	});
 });

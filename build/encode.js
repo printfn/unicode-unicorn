@@ -1,4 +1,3 @@
-let global_encodingNames = [];
 let global_encodings = {};
 function escapeHtml(string) {
     return he.encode(string);
@@ -41,124 +40,113 @@ function itos(int, base, padding = 0) {
     }
     return res;
 }
-let totalCount = 0;
-let count = 0;
 function initializeMappings(completion) {
-    requestAsync(`data/encodings.txt`, function () {
-        totalCount = 0;
-        count = 0;
-    }, function (line) {
-        const parts = line.split(`\t`);
-        ++totalCount;
-        const type = parts[0];
-        const name = parts[1];
-        const url = parts[2];
-        global_encodingNames.push(name);
-        window.setTimeout(function () {
-            loadEncodingFromURL(type, name, url, function () {
-                ++count;
-                if (count == totalCount) {
-                    let codepageOptionStrings = ``;
-                    let outputEncodingOptionStrings = ``;
-                    let mojibakeOptionStrings = ``;
-                    $.each(global_encodingNames, function (i, encodingName) {
-                        if (global_encodings[encodingName].type == `7-bit mapping` ||
-                            global_encodings[encodingName].type == `8-bit mapping`) {
-                            codepageOptionStrings += `<option${encodingName == `ISO-8859-1 (Latin-1 Western European)` ? ` selected` : ``}>${encodingName}</option>`;
-                        }
-                        outputEncodingOptionStrings += `<option>${encodingName}</option>`;
-                        mojibakeOptionStrings += `<option>${encodingName}</option>`;
-                    });
-                    updateSelectOptions(`#codepageEncoding`, codepageOptionStrings);
-                    updateSelectOptions(`#outputEncoding`, outputEncodingOptionStrings);
-                    updateSelectOptions(`#mojibakeEncodings`, mojibakeOptionStrings);
-                    completion();
-                }
-            });
-        }, 0);
+    for (let i in global_encodingData) {
+        let encodingData = global_encodingData[i];
+        loadEncodingFromData(encodingData.type, encodingData.name, encodingData.data);
+    }
+    let codepageOptionStrings = ``;
+    let outputEncodingOptionStrings = ``;
+    let mojibakeOptionStrings = ``;
+    $.each(global_encodingNames, function (i, encodingName) {
+        if (global_encodings[encodingName].type == `7-bit mapping` ||
+            global_encodings[encodingName].type == `8-bit mapping`) {
+            codepageOptionStrings += `<option${encodingName == `ISO-8859-1 (Latin-1 Western European)` ? ` selected` : ``}>${encodingName}</option>`;
+        }
+        outputEncodingOptionStrings += `<option>${encodingName}</option>`;
+        mojibakeOptionStrings += `<option>${encodingName}</option>`;
     });
+    updateSelectOptions(`#codepageEncoding`, codepageOptionStrings);
+    updateSelectOptions(`#outputEncoding`, outputEncodingOptionStrings);
+    updateSelectOptions(`#mojibakeEncodings`, mojibakeOptionStrings);
+    completion();
 }
-function loadEncodingFromURL(type, name, url, completion) {
+function loadEncodingFromData(type, name, data) {
     let encoding = {
         type: type,
         encode: undefined,
         decode: undefined
     };
-    requestAsync(url, function (lines) {
-        if (type.includes(`function`)) {
-            encoding = eval(lines.join(`\n`));
-            encoding.type = type;
-        }
-        else {
-            encoding.encode = function (codepoints) {
-                let bytes = [];
-                for (let i = 0; i < codepoints.length; ++i) {
-                    let codepoint = codepoints[i];
-                    if (typeof codepoint == `string`) {
-                        codepoint = parseInt(codepoint);
-                    }
-                    const number = encoding.table[codepoint];
-                    if (typeof number == `undefined`) {
-                        // if (codepoint <= 0xFF)
-                        // 	bytes.push(codepoint);
-                        // else
-                        return codepoint;
-                    }
-                    if (number <= 0xFF) {
-                        bytes.push(number);
-                    }
-                    else {
-                        bytes.push(number >> 8);
-                        bytes.push(number & 0xFF);
-                    }
+    let lines = data.split('\n');
+    if (type.includes(`function`)) {
+        encoding = eval(lines.join(`\n`));
+        encoding.type = type;
+    }
+    else {
+        encoding.encode = function (codepoints) {
+            let bytes = [];
+            for (let i = 0; i < codepoints.length; ++i) {
+                let codepoint = codepoints[i];
+                if (typeof codepoint == `string`) {
+                    codepoint = parseInt(codepoint);
                 }
-                return bytes;
+                const number = encoding.table[codepoint];
+                if (typeof number == `undefined`) {
+                    // if (codepoint <= 0xFF)
+                    // 	bytes.push(codepoint);
+                    // else
+                    return codepoint;
+                }
+                if (number <= 0xFF) {
+                    bytes.push(number);
+                }
+                else {
+                    bytes.push(number >> 8);
+                    bytes.push(number & 0xFF);
+                }
+            }
+            return bytes;
+        };
+        encoding.decode = function (bytes) {
+            const table = encoding.table;
+            const codepointForByteUsingMapping = function (byte) {
+                if (typeof byte == `string`) {
+                    byte = parseInt(byte);
+                }
+                for (let codepoint in table) {
+                    if (byte == table[codepoint])
+                        return parseInt(codepoint);
+                }
             };
-            encoding.decode = function (bytes) {
-                const table = encoding.table;
-                const codepointForByteUsingMapping = function (byte) {
-                    if (typeof byte == `string`) {
-                        byte = parseInt(byte);
-                    }
-                    for (let codepoint in table) {
-                        if (byte == table[codepoint])
-                            return parseInt(codepoint);
-                    }
-                };
-                const codepoints = [];
-                for (let i = 0; i < bytes.length; ++i) {
-                    let cp = codepointForByteUsingMapping(bytes[i]);
-                    if (typeof cp != `undefined`) {
-                        codepoints.push(cp);
-                        continue;
-                    }
-                    cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i + 1]);
-                    if (typeof cp == `undefined`) {
-                        return [];
-                    }
+            const codepoints = [];
+            for (let i = 0; i < bytes.length; ++i) {
+                let cp = codepointForByteUsingMapping(bytes[i]);
+                if (typeof cp != `undefined`) {
                     codepoints.push(cp);
-                    ++i;
+                    continue;
                 }
-                return codepoints;
-            };
-        }
-    }, function (line) {
-        if (type.includes(`mapping`)) {
+                cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i + 1]);
+                if (typeof cp == `undefined`) {
+                    return [];
+                }
+                codepoints.push(cp);
+                ++i;
+            }
+            return codepoints;
+        };
+    }
+    if (type.includes(`mapping`)) {
+        for (let i = 0; i < lines.length; ++i) {
+            let line = lines[i];
+            if (line.length === 0 || line[0] == `#`) {
+                continue;
+            }
+            if (line.indexOf(`#`) != -1) {
+                line = line.substring(0, line.indexOf(`#`));
+            }
             if (line.length == 1 && line.charCodeAt(0) == 26) // weird format found in CP857 (and others)
-                return;
+                continue;
             const components = line.split(`\t`);
             if (components[1].trim() === ``)
-                return;
+                continue;
             if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-                throw new Error(`Invalid line detected in ${url}`);
+                throw new Error(`Invalid line detected in encoding ${name}`);
             if (!encoding.table)
                 encoding.table = [];
             encoding.table[parseInt(components[1])] = parseInt(components[0]);
         }
-    }, function () {
-        global_encodings[name] = encoding;
-        completion();
-    });
+    }
+    global_encodings[name] = encoding;
 }
 function codepointsToEncoding(encoding, codepoints) {
     return global_encodings[encoding].encode(codepoints);
