@@ -136,9 +136,6 @@ function initData(completion: () => void) {
 		initGraphemeData,
 		initEmojiData,
 		initBlockData,
-		initHangulSyllableTypes,
-		initShortJamoNames,
-		initScriptData,
 		initLanguageData], completion);
 }
 

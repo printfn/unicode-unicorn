@@ -108,9 +108,6 @@ function initData(completion) {
         initGraphemeData,
         initEmojiData,
         initBlockData,
-        initHangulSyllableTypes,
-        initShortJamoNames,
-        initScriptData,
         initLanguageData
     ], completion);
 }

@@ -32,9 +32,6 @@ function iterateOverFile(path, before, each, after) {
 			each(line);
 		}
 	}
-	if (after) {
-		after();
-	}
 }
 
 // Han
@@ -201,6 +198,71 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_variationSequences`, `VariationSequence[]`, global_variationSequences);
 	out(`global_ideographicVariationSequences`, `VariationSequence[]`, global_ideographicVariationSequences);
 	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
+})();
+
+// Blocks
+(function() {
+	let global_blockRanges = [];
+	let global_syllableRanges = [];
+	let global_shortJamoNames = {};
+	let global_scriptRanges = [];
+
+	iterateOverFile(`data/Unicode/UCD/Blocks.txt`, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		const startCodepoint = parseInt(splitLine[0].split(`..`)[0], 16);
+		const endCodepoint = parseInt(splitLine[0].split(`..`)[1], 16);
+		const blockName = splitLine[1].trim();
+		global_blockRanges.push({
+			startCodepoint: startCodepoint,
+			endCodepoint: endCodepoint,
+			blockName: blockName
+		});
+	});
+
+	iterateOverFile(`data/Unicode/UCD/HangulSyllableType.txt`, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		let startCodepoint = 0, endCodepoint = 0;
+		if (splitLine[0].trim().split(`..`).length == 2) {
+			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
+			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
+		} else {
+			startCodepoint = parseInt(splitLine[0].trim(), 16);
+			endCodepoint = startCodepoint;
+		}
+		const syllableType = splitLine[1].trim();
+		global_syllableRanges.push({
+			startCodepoint: startCodepoint,
+			endCodepoint: endCodepoint,
+			syllableType: syllableType
+		});
+	});
+
+	iterateOverFile(`data/Unicode/UCD/Jamo.txt`, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		const codepoint = parseInt(splitLine[0].trim(), 16);
+		const shortJamoName = splitLine[1].trim();
+		global_shortJamoNames[codepoint] = shortJamoName;
+	});
+
+	iterateOverFile(`data/Unicode/UCD/Scripts.txt`, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		let startCodepoint = 0, endCodepoint = 0;
+		if (splitLine[0].trim().split(`..`).length == 2) {
+			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
+			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
+		} else {
+			startCodepoint = parseInt(splitLine[0].trim(), 16);
+			endCodepoint = startCodepoint;
+		}
+		const scriptName = splitLine[1].trim();
+		global_scriptRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, scriptName: scriptName});
+	});
+
+	out(`global_blockRanges`, `{ startCodepoint: number; endCodepoint: number; blockName: string; }[]`, global_blockRanges);
+	out(`global_syllableRanges`, `{ startCodepoint: number; endCodepoint: number; syllableType: string; }[]`, global_syllableRanges);
+	out(`global_shortJamoNames`, `{ [codepoint: number]: string; }`, global_shortJamoNames);
+	out(`global_scriptRanges`, `{ startCodepoint: number; endCodepoint: number; scriptName: string; }[]`, global_scriptRanges);
+
 })();
 
 // Language subtag registry
