@@ -111,11 +111,7 @@ function initData(completion) {
         initHangulSyllableTypes,
         initShortJamoNames,
         initScriptData,
-        initLicenseInfo,
-        initLanguageData,
-        initVariationSequences,
-        initIdeographicVariationSequences,
-        initIdeographicVariationCollections
+        initLanguageData
     ], completion);
 }
 function updateSpacerHeights() {

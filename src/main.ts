@@ -139,11 +139,7 @@ function initData(completion: () => void) {
 		initHangulSyllableTypes,
 		initShortJamoNames,
 		initScriptData,
-		initLicenseInfo,
-		initLanguageData,
-		initVariationSequences,
-		initIdeographicVariationSequences,
-		initIdeographicVariationCollections], completion);
+		initLanguageData], completion);
 }
 
 function updateSpacerHeights() {

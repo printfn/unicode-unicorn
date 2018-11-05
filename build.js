@@ -2,7 +2,8 @@
 // This script parses data from various files in the 'data' directory,
 //  and builds a single TS file in src/compiled-data.ts
 
-var fs = require('fs');
+const fs = require('fs');
+const { exec } = require('child_process');
 
 let finalOutput = ``;
 function out(varname, typestr, variable) {
@@ -12,6 +13,7 @@ function out(varname, typestr, variable) {
 	} else {
 		finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};\n`;
 	}
+	console.log(`Generated ${varname}, length ${JSON.stringify(variable).length}`);
 }
 
 function iterateOverFile(path, before, each, after) {
@@ -144,6 +146,61 @@ function iterateOverFile(path, before, each, after) {
 	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
 	out(`global_generalCategoryNames`, `{ [categoryCode: string]: string; }`, global_generalCategoryNames);
 	out(`global_aliases`, `{ codepoint: number; alias: string; type: string; }[]`, global_aliases);
+})();
+
+// Variation sequences
+(function() {
+	let global_variationSequences = [];
+	let global_ideographicVariationSequences = [];
+	let global_ideographicVariationCollections = [];
+
+	iterateOverFile(`data/Unicode/UCD/StandardizedVariants.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
+		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
+		const description = fields[1].trim();
+		let shapingEnvironments = fields[2].trim().split(` `);
+		if (shapingEnvironments.length == 1 && shapingEnvironments[0] === ``)
+			shapingEnvironments = [];
+		global_variationSequences.push({
+			baseCodepoint: codepoints[0],
+			variationSelector: codepoints[1],
+			description: description,
+			shapingEnvironments: shapingEnvironments
+		});
+	});
+
+	iterateOverFile(`data/Unicode/IVD/IVD_Collections.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
+		global_ideographicVariationCollections.push({
+			name: fields[0],
+			url: fields[2] // fields[1] is a regex describing item identifiers
+		});
+	});
+
+	const urlForIdeographicCollection = function(name) {
+		for (let i = 0; i < global_ideographicVariationCollections.length; ++i) {
+			const collection = global_ideographicVariationCollections[i];
+			if (collection.name != name)
+				continue;
+			return collection.url;
+		}
+	}
+
+	iterateOverFile(`data/Unicode/IVD/IVD_Sequences.txt`, undefined, function(line) {
+		const fields = line.split(`;`);
+		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
+		const collection = fields[1].trim();
+		const item = fields[2].trim();
+		global_ideographicVariationSequences.push({
+			baseCodepoint: codepoints[0],
+			variationSelector: codepoints[1],
+			description: `ideographic (entry ${item} in collection <a target="_blank" href="${urlForIdeographicCollection(collection)}">${collection}</a>)`
+		});
+	});
+
+	out(`global_variationSequences`, `VariationSequence[]`, global_variationSequences);
+	out(`global_ideographicVariationSequences`, `VariationSequence[]`, global_ideographicVariationSequences);
+	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
 })();
 
 // Language subtag registry
