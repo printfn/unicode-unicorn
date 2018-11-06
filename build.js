@@ -127,13 +127,13 @@ function iterateOverFile(path, before, each, after) {
 
 	global_aliases.sort(function(a, b) {
 		if (a.type == `control` && b.type != `control`)
-			return 1;
+			return -2;
 		if (a.type != `control` && b.type == `control`)
-			return -1;
+			return 2;
 		if (a.alias < b.alias)
-			return 1;
-		if (a.alias > b.alias)
 			return -1;
+		if (a.alias > b.alias)
+			return 1;
 		return 0;
 	});
 
