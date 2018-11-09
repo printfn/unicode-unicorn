@@ -180,6 +180,9 @@ $(document).ready(function () {
             updateSpacerHeights();
             callEventListenersForElemId(`output`);
         });
+        $(`#useInternalString`).on(`input`, function () {
+            updateUseInternalString();
+        });
         //jQueryModal(`#loadingModal`, `hide`);
         console.log(`Loaded in ${loadDuration}ms`);
     });
