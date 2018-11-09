@@ -206,7 +206,10 @@ $(document).ready(function() {
 			updateSpacerHeights();
 			callEventListenersForElemId(`output`);
 		});
-		$(`#useInternalString`).on(`input`, function() {
+		// This should be on `input` instead, but this doesn't fire on
+		//  Safari. See https://caniuse.com/#feat=input-event (#4)
+		//  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
+		$(`#useInternalString`).on(`change`, function() {
 			updateUseInternalString();
 		});
 		$(`#languageCode`).on(`input`, function() {
