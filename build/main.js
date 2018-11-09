@@ -183,6 +183,9 @@ $(document).ready(function () {
         $(`#useInternalString`).on(`input`, function () {
             updateUseInternalString();
         });
+        $(`#languageCode`).on(`input`, function () {
+            updateLanguage();
+        });
         //jQueryModal(`#loadingModal`, `hide`);
         console.log(`Loaded in ${loadDuration}ms`);
     });
