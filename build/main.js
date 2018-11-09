@@ -120,7 +120,6 @@ function updateSpacerHeights() {
     });
 }
 let loaded = false;
-//jQueryModal(`#loadingModal`, `show`);
 $(document).ready(function () {
     if (loaded)
         return;
@@ -186,7 +185,6 @@ $(document).ready(function () {
         $(`#languageCode`).on(`input`, function () {
             updateLanguage();
         });
-        //jQueryModal(`#loadingModal`, `hide`);
         console.log(`Loaded in ${loadDuration}ms`);
     });
 });
