@@ -22,7 +22,7 @@ function ideographicVariationSequencesForCodepoint(codepoint) {
             results.push({
                 baseCodepoint: ivs.b,
                 variationSelector: ivs.v,
-                description: `ideographic (entry ${ivs.i} in collection <a target="_blank" href="${urlForIdeographicCollection(ivs.c)}">${ivs.c}</a>)`
+                description: `ideographic (entry ${ivs.i} in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(ivs.c)}">${ivs.c}</a>)`
             });
         }
     }
