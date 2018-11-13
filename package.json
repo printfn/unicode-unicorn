@@ -21,7 +21,8 @@
   },
   "scripts": {
     "clean": "rm -rf docs build",
-    "build": "./src/build.sh"
+    "build": "./src/build.sh",
+    "server": "cd docs&&python3 -m http.server"
   },
   "repository": {
     "type": "git",
