@@ -2,6 +2,27 @@
 
 Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 
+## Building
+
+The `src` folder contains the main source code for this project.
+
+`data` contains various data files that are used during compilation. See below for sources and how to update them.
+
+`build` contains intermediate files used during compilation.
+
+`docs` is the final static page output.
+
+Execute `$ npm run build` to automatically perform the following tasks:
+
+1. Delete any preexisting directories `build` and `docs`.
+2. Run `src/compile-unicode-data.js`, which generates `build/compiled-data.ts` from all files inside `data`.
+3. Run `tsc`, which compiles all `.ts` files in `src`, creating equivalent `.js` files in `build`.
+4. Copy important library `.js` files from `node_modules` into `build`.
+5. Merge `*.js` files in `build`, except `compile-unicode-data.js`, into `combined.js`.
+6. Copy HTML, CSS and JS to `docs`, which then contains the complete static website.
+
+Execute `$ npm run server` to start a Python webserver from `docs/`.
+
 ## Sources
 
 This tool uses the Unicode Character Database. It can be downloaded from `http://www.unicode.org/Public/UCD/latest/ucd/`. Move all text files into `UCD/`, extract `Unihan.zip` and move the `Unihan` folder contents into `Unihan/`.

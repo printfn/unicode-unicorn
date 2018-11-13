@@ -1,7 +1,5 @@
-
-# while we're not using webpack
-index.js
-webpack*
+build/
+node_modules/
 
 #---------- OS X gitignore ----------
 

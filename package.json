@@ -20,7 +20,8 @@
     "webpack": "^3.12.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf docs build",
+    "build": "./src/build.sh"
   },
   "repository": {
     "type": "git",
