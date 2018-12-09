@@ -1,4 +1,3 @@
-ts/build/
 node_modules/
 
 #---------- OS X gitignore ----------

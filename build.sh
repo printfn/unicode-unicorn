@@ -3,7 +3,7 @@
 # This is the main build script.
 # Make sure to only run this from the project root!
 
-mkdir -p ts/build docs/build
+mkdir -p docs/build
 
 node compile-unicode-data.js
 

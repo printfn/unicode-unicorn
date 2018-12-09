@@ -1,6 +1,6 @@
 // This script parses data from various files in the 'data' directory,
 //  and builds a single JS file in docs/build/compiled-data.js, and
-//  a TS file in ts/build/compiled-data-declarations.ts.
+//  a TS file in docs/build/compiled-data-declarations.ts.
 
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -467,4 +467,4 @@ for (let i in lengths) {
 }
 
 fs.writeFileSync('docs/build/compiled-data.js', finalOutputJS);
-fs.writeFileSync('ts/build/compiled-data-declarations.ts', finalOutputTS);
+fs.writeFileSync('docs/build/compiled-data-declarations.ts', finalOutputTS);

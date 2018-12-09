@@ -1,8 +1,6 @@
 {
     "compilerOptions": {
-        //"outDir": "./build",
     	"outFile":"./docs/build/main.js",
-    	//"module":"amd",
     	"noImplicitAny": true,
         "allowJs": false,
         "target": "es6",
@@ -11,6 +9,7 @@
         "lib": ["dom", "es6", "es2015"]
     },
     "include": [
-        "./ts/**/*.ts"
+        "./docs/ts/*.ts",
+        "./docs/build/compiled-data-declarations.ts"
     ]
 }

@@ -6,18 +6,19 @@ Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 
 `data` contains various data files that are used during compilation. See below for sources and how to update them.
 
-The `ts` folder contains the main TS source code for this project.
+`docs` contains the code, and is used as the webserver's root directory.
 
-`docs` contains important HTML and CSS files
+`docs/build` contains compiled JavaScript and CSS files. It can be regenerated
+with `$ npm run build`, which performs the following tasks:
 
-Execute `$ npm run build` to automatically perform the following tasks:
-
-1. Generate `ts/build/compiled-data-declarations.ts` and `docs/build/compiled-data.js` from various data files in `data`.
-2. Run `tsc`, which compiles all `.ts` files in `ts` (incl. subdirectories) into `docs/build/main.js`
+1. Generate `docs/build/compiled-data-declarations.ts` and `docs/build/compiled-data.js` from various data files in `data`.
+2. Run `tsc`, which compiles all `.ts` files in `docs/ts` and `docs/build/compiled-data-declarations.ts` into `docs/build/main.js`
 3. Merge important library `.js` files from `node_modules` into `docs/build/libs.js`.
 4. Copy library CSS and PNG files from `node_modules` to `docs/build/`
 
 Execute `$ npm run server` to start a Python webserver from `docs/`.
+
+`$ npm run clean` deletes the `build` directory.
 
 ## Sources
 
