@@ -45,3 +45,7 @@ pre {
 #advanced-search-div td {
 	padding: 2px;
 }
+/* Fix bug in Bootstrap, see https://stackoverflow.com/a/47924156 */
+body:not(.modal-open){
+  padding-right: 0px !important;
+}
