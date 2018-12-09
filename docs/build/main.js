@@ -1284,3 +1284,4 @@ function ideographicVariationSequencesForCodepoint(codepoint) {
     }
     return results;
 }
+//# sourceMappingURL=main.js.map
