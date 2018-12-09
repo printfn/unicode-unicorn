@@ -1,17 +1,20 @@
 // This script parses data from various files in the 'data' directory,
-//  and builds a single TS file in src/compiled-data.ts
+//  and builds a single JS file in docs/build/compiled-data.js, and
+//  a TS file in ts/build/compiled-data-declarations.ts.
 
 const fs = require('fs');
 const { exec } = require('child_process');
 
-let finalOutput = ``;
+let finalOutputJS = ``;
+let finalOutputTS = ``;
 let lengths = [];
 function out(varname, typestr, variable) {
 	if (typeof(variable) == 'undefined') {
 		variable = typestr;
-		finalOutput += `const ${varname} = ${JSON.stringify(variable)};\n`;
+		finalOutputJS += `const ${varname} = ${JSON.stringify(variable)};\n`;
 	} else {
-		finalOutput += `const ${varname}: ${typestr} = ${JSON.stringify(variable)};\n`;
+		finalOutputJS += `const ${varname} = ${JSON.stringify(variable)};\n`;
+		finalOutputTS += `declare var ${varname}: ${typestr}\n`;
 	}
 	lengths.push({
 		name: varname,
@@ -169,7 +172,7 @@ function iterateOverFile(path, before, each, after) {
 
 	out(`global_data`, `{ [codepoint: number]: string; }`, global_data);
 	out(`global_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_ranges);
-	out(`global_all_assigned_ranges`, global_all_assigned_ranges);
+	out(`global_all_assigned_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_all_assigned_ranges);
 	out(`global_category`, `{ [codepoint: number]: string; }`, global_category);
 	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
 
@@ -457,10 +460,11 @@ function iterateOverFile(path, before, each, after) {
 lengths.sort(function(a, b) {
 	return a.length < b.length ? 1 : a.length == b.length ? 0 : -1;
 });
-console.log(`Total length: ${finalOutput.length}`);
+console.log(`Total length: ${finalOutputJS.length}`);
 for (let i in lengths) {
 	const x = lengths[i];
-	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutput.length * 100}%)`);
+	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutputJS.length * 100}%)`);
 }
 
-fs.writeFileSync('src/compiled-data.ts', finalOutput);
+fs.writeFileSync('docs/build/compiled-data.js', finalOutputJS);
+fs.writeFileSync('ts/build/compiled-data-declarations.ts', finalOutputTS);

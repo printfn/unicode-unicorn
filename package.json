@@ -20,8 +20,8 @@
     "webpack": "^3.12.0"
   },
   "scripts": {
-    "clean": "rm -rf docs build",
-    "build": "./src/build.sh",
+    "clean": "rm -rf docs/build ts/build",
+    "build": "./build.sh",
     "server": "cd docs&&python3 -m http.server"
   },
   "repository": {

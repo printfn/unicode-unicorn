@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
-        "outDir": "./build",
-    	/*"outFile":"./build/build.js",
-    	"module":"amd",*/
+        //"outDir": "./build",
+    	"outFile":"./docs/build/main.js",
+    	//"module":"amd",
     	"noImplicitAny": true,
-        "allowJs": true,
+        "allowJs": false,
         "target": "es6",
         "strictNullChecks": true,
         "lib": ["dom", "es6", "es2015"]
     },
     "include": [
-        "./src/**/*"
+        "./ts/**/*.ts"
     ]
 }
