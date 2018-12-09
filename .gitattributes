@@ -1,6 +1,4 @@
-build/* linguist-vendored
-libs/* linguist-vendored
-data/Unicode/* linguist-vendored
-complete_data/* linguist-vendored
-licenses.html linguist-vendored
-src/compiled-data.ts linguist-vendored
+docs/build/* linguist-vendored
+data/* linguist-vendored
+docs/licenses.html linguist-vendored
+docs/* linguist-documentation=false
