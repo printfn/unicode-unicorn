@@ -81,11 +81,6 @@ function updateSuggestions() {
 }
 
 function normalizeString(form: string) {
-	if (!String.prototype.normalize) {
-		alert(`Your browser currently does not support string normalization.`);
-		return;
-	}
-
 	setStr(stoc(ctos(getStr()).normalize(form)));
 	updateInfo();
 }

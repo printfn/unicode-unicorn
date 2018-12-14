@@ -632,10 +632,6 @@ function updateSuggestions() {
     renderCodepointsInTable(results, `searchResults`, [{ displayName: `Insert`, functionName: `output` }]);
 }
 function normalizeString(form) {
-    if (!String.prototype.normalize) {
-        alert(`Your browser currently does not support string normalization.`);
-        return;
-    }
     setStr(stoc(ctos(getStr()).normalize(form)));
     updateInfo();
 }
