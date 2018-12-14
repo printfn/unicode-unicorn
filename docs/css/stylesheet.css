@@ -16,15 +16,6 @@ pre {
 	white-space: all;
 	word-break: normal;
 }
-.fixed {
-	position: fixed;
-	width: 100%;
-	width: calc(100% - 30px);
-	background-color: white;
-}
-.spacer {
-	background-color: white;
-}
 #codepage td {
 	text-align: center;   
 }
