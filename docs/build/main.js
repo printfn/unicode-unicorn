@@ -858,13 +858,11 @@ function runTests() {
             test();
         }
         catch (e) {
-            $(`#unit-tests-text`).text(`Test #${i + 1} failed: ${e}`);
-            jQueryModal(`#unit-tests-modal`, `show`);
+            alert(`Test #${i + 1} failed: ${e}`);
             return;
         }
     }
-    $(`#unit-tests-text`).text(`All ${tests.length} tests passed.`);
-    jQueryModal(`#unit-tests-modal`, `show`);
+    alert(`All ${tests.length} tests passed.`);
 }
 let global_colorMap = {
     'C': `#f97e77`,
