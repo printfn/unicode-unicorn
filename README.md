@@ -1,4 +1,4 @@
-# Unicode Unicorn
+# Unicode Unicorn - Online Unicode IDE
 
 Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 
