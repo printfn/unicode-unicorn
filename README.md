@@ -1,8 +1,8 @@
-# Unicode Unicorn - Online Unicode IDE
+## Unicode Unicorn - Online Unicode IDE
 
 Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 
-## Building
+### Building
 
 `data` contains various data files that are used during compilation. See below for sources and how to update them.
 
@@ -20,11 +20,15 @@ Execute `$ npm run server` to start a Python webserver from `docs/`.
 
 `$ npm run clean` deletes the `build` directory.
 
-## Sources
+### Sources
 
 This tool uses the Unicode Character Database. It can be downloaded from `http://www.unicode.org/Public/UCD/latest/ucd/`. Move all text files into `UCD/`, extract `Unihan.zip` and move the `Unihan` folder contents into `Unihan/`.
 
 Codepage mapping files are from `ftp://ftp.unicode.org/Public/MAPPINGS/`. Move the appropriate text files into `Mappings/`, and check the references in `Mappings/mappings.txt`.
+
+Download `language-subtag-registry` from IANA (`https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry`) and place it in the repo directory.
+
+Download `emoji-data.txt` from `https://unicode.org/Public/emoji/latest/emoji-data.txt` and place it in `data/Unicode/`.
 
 Download the latest production (i.e. compressed) jQuery from `https://jquery.com/download` into `libs/`, and check the reference at the top of `unicode.html`.
 
@@ -38,6 +42,3 @@ Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `lib
 
 Download `utf8.js` from `https://github.com/mathiasbynens/utf8.js` and place it in `libs/`.
 
-Download `language-subtag-registry` from IANA (`https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry`) and place it in the repo directory.
-
-Download `emoji-data.txt` from `https://unicode.org/Public/emoji/latest/emoji-data.txt` and place it in `data/Unicode/`.
