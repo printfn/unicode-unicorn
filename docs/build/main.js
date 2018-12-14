@@ -680,23 +680,12 @@ function initData(completion) {
         initLanguageData
     ], completion);
 }
-function updateSpacerHeights() {
-    $(`.fixed`).each(function (i, e) {
-        const spacerId = $(e).attr(`data-spacer-id`);
-        const spacer = $(`#${spacerId}`);
-        const extraHeight = spacer.attr(`data-extra-height`)
-            ? parseFloat($(spacer).attr(`data-extra-height`))
-            : 0;
-        spacer.height($(e).height() + extraHeight);
-    });
-}
 let loaded = false;
 $(document).ready(function () {
     if (loaded)
         return;
     loaded = true;
     $(`select`).chosen({ disable_search_threshold: 10, width: `100%` });
-    updateSpacerHeights();
     const startTime = new Date();
     initData(function () {
         initializeSearchStrings();
@@ -743,11 +732,7 @@ $(document).ready(function () {
         $(`select`).on(`change`, function () {
             updateInfo();
         });
-        setInterval(function () {
-            updateSpacerHeights();
-        }, 1000);
         $(`a[data-toggle="tab"]`).on(`shown.bs.tab`, function (e) {
-            updateSpacerHeights();
             callEventListenersForElemId(`output`);
         });
         // This should be on `input` instead, but this doesn't fire on
