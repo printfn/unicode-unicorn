@@ -179,6 +179,9 @@ $(document).ready(function() {
 		$(`#output, #encodedInput`).on(`input`, function() {
 			updateInfo();
 		});
+		$(`#minCodeUnitLength`).on(`input`, function() {
+			updateInfo();
+		});
 		$(`select`).on(`change`, function() {
 			updateInfo();
 		});

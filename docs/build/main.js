@@ -344,8 +344,10 @@ function codepointsToEncoding(encoding, codepoints) {
 function codeUnitsToCodepoints(encoding, codeUnits) {
     return global_encodings[encoding].decode(codeUnits);
 }
-function bytesToText(format, bytes, hexadecimalPadding) {
+function bytesToText(format, bytes, hexadecimalPadding, minLength) {
     const chars = [];
+    if (typeof minLength === "undefined")
+        minLength = 0;
     for (let i = 0; i < bytes.length; ++i) {
         const b = bytes[i];
         let str = ``;
@@ -367,6 +369,8 @@ function bytesToText(format, bytes, hexadecimalPadding) {
                 str = (Array(hexadecimalPadding + 1).join(`0`) + str).substring(str.length);
             }
         }
+        while (str.length < minLength)
+            str = "0" + str;
         chars.push(str);
     }
     if (format.includes(`Prefixed with `)) {
@@ -452,7 +456,8 @@ function encodeOutput(byteOrderMark, encoding, format, joiner, codepoints) {
         const outputString = bytes;
         return escapeHtml(outputString);
     }
-    const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
+    const minLength = parseInt(document.getElementById('minCodeUnitLength').value, 10);
+    const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding), minLength);
     return escapeHtml(joinBytes(joiner, chars));
 }
 function decodeOutput(byteOrderMark, encoding, format, joiner, str) {
@@ -723,6 +728,9 @@ $(document).ready(function () {
             updateSuggestions();
         });
         $(`#output, #encodedInput`).on(`input`, function () {
+            updateInfo();
+        });
+        $(`#minCodeUnitLength`).on(`input`, function () {
             updateInfo();
         });
         $(`select`).on(`change`, function () {

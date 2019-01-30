@@ -176,8 +176,10 @@ function codeUnitsToCodepoints(encoding: string, codeUnits: number[]): number[] 
 	return global_encodings[encoding].decode!(codeUnits);
 }
 
-function bytesToText(format: string, bytes: number[], hexadecimalPadding: number) {
+function bytesToText(format: string, bytes: number[], hexadecimalPadding: number, minLength?: number) {
 	const chars: string[] = [];
+	if (typeof minLength === "undefined")
+		minLength = 0;
 	for (let i = 0; i < bytes.length; ++i) {
 		const b = bytes[i];
 		let str = ``;
@@ -196,6 +198,8 @@ function bytesToText(format: string, bytes: number[], hexadecimalPadding: number
 				str = (Array(hexadecimalPadding + 1).join(`0`) + str).substring(str.length);
 			}
 		}
+		while (str.length < minLength)
+			str = "0" + str;
 		chars.push(str);
 	}
 	if (format.includes(`Prefixed with `)) {
@@ -287,7 +291,8 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, j
 		const outputString = bytes;
 		return escapeHtml(outputString);
 	}
-	const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding));
+	const minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
+	const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding), minLength);
 	return escapeHtml(joinBytes(joiner, chars));
 }
 
