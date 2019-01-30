@@ -179,7 +179,7 @@ $(document).ready(function() {
 		$(`#output, #encodedInput`).on(`input`, function() {
 			updateInfo();
 		});
-		$(`#minCodeUnitLength`).on(`input`, function() {
+		$(`#minCodeUnitLength, #codeUnitPrefix, #codeUnitSuffix, #groupingCount, #groupPrefix, #groupSuffix, #outputJoinerText`).on(`input`, function() {
 			updateInfo();
 		});
 		$(`select`).on(`change`, function() {

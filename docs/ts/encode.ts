@@ -176,48 +176,34 @@ function codeUnitsToCodepoints(encoding: string, codeUnits: number[]): number[] 
 	return global_encodings[encoding].decode!(codeUnits);
 }
 
-function bytesToText(format: string, bytes: number[], hexadecimalPadding: number, minLength?: number) {
+function bytesToText(format: string, bytes: number[], minLength?: number) {
 	const chars: string[] = [];
-	if (typeof minLength === "undefined")
+	if (typeof minLength === `undefined`)
 		minLength = 0;
 	for (let i = 0; i < bytes.length; ++i) {
 		const b = bytes[i];
 		let str = ``;
-		if (format.includes(`Binary`)) {
+		if (format == `Binary`) {
 			str = b.toString(2);
-			if (format.includes(`Padded`)) {
-				str = (Array(hexadecimalPadding * 4 + 1).join(`0`) + str).substring(str.length);
-			}
-		} else if (format.includes(`Octal`)) {
+		} else if (format == `Octal`) {
 			str = b.toString(8);
-		} else if (format.includes(`Decimal`)) {
+		} else if (format == `Decimal`) {
 			str = b.toString(10);
-		} else if (format.includes(`Hexadecimal`)) {
+		} else if (format == `Hexadecimal (uppercase)`) {
 			str = b.toString(16).toUpperCase();
-			if (format.includes(`Padded`)) {
-				str = (Array(hexadecimalPadding + 1).join(`0`) + str).substring(str.length);
-			}
+		} else if (format == `Hexadecimal (lowercase)`) {
+			str = b.toString(16);
 		}
 		while (str.length < minLength)
-			str = "0" + str;
+			str = `0` + str;
+		str = ((document.getElementById('codeUnitPrefix')! as any).value || ``) + str;
+		str = str + ((document.getElementById('codeUnitSuffix')! as any).value || ``);
 		chars.push(str);
-	}
-	if (format.includes(`Prefixed with `)) {
-		const prefix = format.substring(format.indexOf(`'`) + 1, format.lastIndexOf(`'`));
-		for (let i = 0; i < chars.length; ++i) {
-			chars[i] = prefix + chars[i];
-		}
 	}
 	return chars;
 }
 
 function textToBytes(format: string, strings: string[]) {
-	if (format.includes(`Prefixed with `)) {
-		const prefix = format.substring(format.indexOf(`'`) + 1, format.lastIndexOf(`'`));
-		for (let i = 0; i < strings.length; ++i) {
-			strings[i] = strings[i].substring(prefix.length);
-		}
-	}
 	const bytes: number[] = [];
 	for (let i = 0; i < strings.length; ++i) {
 		const str = strings[i];
@@ -234,46 +220,7 @@ function textToBytes(format: string, strings: string[]) {
 	return bytes;
 }
 
-function stringForJoiner(joiner: string) {
-	switch (joiner) {
-		case `Unseparated`:
-			return ``;
-		case `Separated using spaces`:
-			return ` `;
-		case `Separated using commas`:
-			return `,`;
-		case `Separated using commas and spaces`:
-			return `, `;
-		case `Separated using semicolons`:
-			return `;`;
-		case `Separated using semicolons and spaces`:
-			return `; `;
-		case `Separated using linebreaks`:
-			return `\n`;
-		case `Separated using commas and linebreaks`:
-			return `,\n`;
-		default:
-			return ` `;
-	}
-}
-
-function joinBytes(joiner: string, bytes: any[]) {
-	return bytes.join(stringForJoiner(joiner));
-}
-
-function splitBytes(joiner: string, str: string) {
-	return str.split(stringForJoiner(joiner));
-}
-
-function hexadecimalPaddingFromEncoding(encoding: string) {
-	if (encoding.includes(`16-bit code units`))
-		return 4;
-	if (encoding.includes(`32-bit code units`))
-		return 8;
-	return 2;
-}
-
-function encodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, codepoints: number[]) {
+function encodeOutput(byteOrderMark: string, encoding: string, format: string, codepoints: number[]) {
 	const useBOM = byteOrderMark.startsWith(`Use`);
 	if (useBOM) {
 		codepoints.unshift(0xFEFF);
@@ -292,20 +239,57 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, j
 		return escapeHtml(outputString);
 	}
 	const minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
-	const chars = bytesToText(format, bytes, hexadecimalPaddingFromEncoding(encoding), minLength);
-	return escapeHtml(joinBytes(joiner, chars));
+	const chars = bytesToText(format, bytes, minLength);
+	let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
+	if (grouping == 0) grouping = 1;
+	let groups: string[] = [];
+	for (let i = 0; i < chars.length; ++i) {
+		if (i % grouping == 0) {
+			groups.push(chars[i]);
+		} else {
+			groups[groups.length - 1] += chars[i];
+		}
+	}
+	const groupPrefix = (document.getElementById('groupPrefix')! as any).value || ``;
+	const groupSuffix = (document.getElementById('groupSuffix')! as any).value || ``;
+	for (let i = 0; i < groups.length; ++i) {
+		groups[i] = groupPrefix + groups[i] + groupSuffix;
+	}
+	const groupSeparator = (document.getElementById('outputJoinerText')! as any).value || ``;
+	return escapeHtml(groups.join(groupSeparator));
 }
 
-function decodeOutput(byteOrderMark: string, encoding: string, format: string, joiner: string, str: string) {
+function decodeOutput(byteOrderMark: string, encoding: string, format: string, str: string) {
 	if (str === ``)
 		return;
-	if (encoding.includes(`Punycode`) && encoding.includes(`Text`)) {
-		return stoc(punycode.decode(str));
+	let validDigitChars: string[] = [];
+	if (format == `Binary`) {
+		validDigitChars = [`0`, `1`];
+	} else if (format == `Octal`) {
+		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`];
+	} else if (format == `Decimal`) {
+		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
+	} else if (format == `Hexadecimal (uppercase)`) {
+		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`, `D`, `E`, `F`];
+	} else if (format == `Hexadecimal (lowercase)`) {
+		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
 	}
-	if (encoding.includes(`HTML Entities`)) {
-		return stoc(he.decode(ctos(str)));
+	let strings: string[] = [];
+	let currentStr = '';
+	for (let i = 0; i < str.length; ++i) {
+		if (validDigitChars.indexOf(str[i]) != -1) {
+			currentStr += str[i];
+		} else {
+			if (currentStr != '') {
+				strings.push(currentStr);
+				currentStr = '';
+			}
+		}
 	}
-	const strings = splitBytes(joiner, str);
+	if (currentStr != '') {
+		strings.push(currentStr);
+		currentStr = '';
+	}
 	const codeUnits = textToBytes(format, strings);
 	for (let i = 0; i < codeUnits.length; ++i)
 		if (isNaN(codeUnits[i]))

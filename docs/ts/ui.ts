@@ -193,7 +193,6 @@ function showCodepageDetail(codepoint: number) {
 			$(`#byteOrderMark option:selected`).text(),
 			encoding,
 			$(`#outputFormat option:selected`).text(),
-			$(`#outputJoiner option:selected`).text(),
 			[codepoint]
 		);
 		if (html.startsWith(`<span`))
@@ -235,7 +234,6 @@ function updateMojibake() {
 			`Don't use a byte order mark`,
 			encoding1Name,
 			`Decimal`,
-			`Separated using commas and spaces`,
 			codepoints);
 		if (encodedString.startsWith(`<`))
 			return;
@@ -251,7 +249,6 @@ function updateMojibake() {
 				`Don't use a byte order mark`,
 				encoding2Name,
 				`Decimal`,
-				`Separated using commas and spaces`,
 				encodedString);
 			if (!decodedString)
 				return;
@@ -273,6 +270,14 @@ function updateMojibake() {
 		mojibakeOutputStr += `    If the original encoding was ${o.encoding2Name}:<br>        ${mojibakeOutputs[i].text}<br>`;
 	}
 	$(`#mojibakeOutput`).html(mojibakeOutputStr);
+}
+
+function hexadecimalPaddingFromEncoding(encoding: string) {
+    if (encoding.includes(`16-bit code units`))
+        return 4;
+    if (encoding.includes(`32-bit code units`))
+        return 8;
+    return 2;
 }
 
 function updateEncodedLengths() {
@@ -338,7 +343,6 @@ function updateEncodedAndDecodedStrings() {
 		$(`#byteOrderMark option:selected`).text(),
 		$(`#outputEncoding option:selected`).text(),
 		$(`#outputFormat option:selected`).text(),
-		$(`#outputJoiner option:selected`).text(),
 		codepoints
 	));
 
@@ -346,7 +350,6 @@ function updateEncodedAndDecodedStrings() {
 		$(`#byteOrderMark option:selected`).text(),
 		$(`#outputEncoding option:selected`).text(),
 		$(`#outputFormat option:selected`).text(),
-		$(`#outputJoiner option:selected`).text(),
 		$(`#encodedInput`).val()
 	);
 	if (decodedOutput)

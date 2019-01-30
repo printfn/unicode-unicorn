@@ -107,47 +107,29 @@
 					</select>
 					<br>
 					<select id="outputFormat">
-						<option>Binary (Unpadded, Unprefixed)</option>
-						<option>Binary (Padded, Unprefixed)</option>
-						<option>Binary (Unpadded, Prefixed with '0b')</option>
-						<option>Binary (Padded, Prefixed with '0b')</option>
-						<option>Binary (Unpadded, Prefixed with '\b')</option>
-						<option>Binary (Padded, Prefixed with '\b')</option>
-						<option>Octal (Unprefixed)</option>
-						<option>Octal (Prefixed with '0o')</option>
-						<option>Octal (Prefixed with '0')</option>
-						<option>Octal (Prefixed with '\o')</option>
+						<option>Binary</option>
+						<option>Octal</option>
 						<option>Decimal</option>
-						<option>Hexadecimal (Unpadded, Unprefixed)</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '0x')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '0X')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '\x')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '\X')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '\u')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with '\U')</option>
-						<option>Hexadecimal (Unpadded, Prefixed with 'U+')</option>
-						<option>Hexadecimal (Padded, Unprefixed)</option>
-						<option selected="selected">Hexadecimal (Padded, Prefixed with '0x')</option>
-						<option>Hexadecimal (Padded, Prefixed with '0X')</option>
-						<option>Hexadecimal (Padded, Prefixed with '\x')</option>
-						<option>Hexadecimal (Padded, Prefixed with '\X')</option>
-						<option>Hexadecimal (Padded, Prefixed with '\u')</option>
-						<option>Hexadecimal (Padded, Prefixed with '\U')</option>
-						<option>Hexadecimal (Padded, Prefixed with 'U+')</option>
+						<option selected="selected">Hexadecimal (uppercase)</option>
+						<option>Hexadecimal (lowercase)</option>
 					</select>
 					<br>
-					Minimum code unit length: <input type="number" value="0" id="minCodeUnitLength"> digits
+					Code Unit Padding: <input type="number" value="2" min="0" id="minCodeUnitLength"> digits
 					<br>
-					<select id="outputJoiner">
-						<option>Unseparated</option>
-						<option>Separated using spaces</option>
-						<option>Separated using commas</option>
-						<option selected="selected">Separated using commas and spaces</option>
-						<option>Separated using semicolons</option>
-						<option>Separated using semicolons and spaces</option>
-						<option>Separated using linebreaks</option>
-						<option>Separated using commas and linebreaks</option>
-					</select>
+					Code Unit Prefix: <input type="text" value="\u" id="codeUnitPrefix" style="width: unset;">
+					<br>
+					Code Unit Suffix: <input type="text" id="codeUnitSuffix" style="width: unset;">
+					<br>
+					Grouping: <input type="number" value="8" id="groupingCount"> code units
+					<br>
+					Group Prefix: <input type="text" id="groupPrefix" style="width: unset;" value="&quot;">
+					<br>
+					Group Suffix: <input type="text" id="groupSuffix" style="width: unset;" value="&quot;">
+					<br>
+					Group Separator:
+					<br>
+					<textarea id="outputJoinerText"> + 
+</textarea>
 				</p>
 				<pre id="encodedOutput"></pre>
 				<textarea id="encodedInput" placeholder="Input to decode using above settings"></textarea>
