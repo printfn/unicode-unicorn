@@ -238,7 +238,26 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, c
 		const outputString = bytes;
 		return escapeHtml(outputString);
 	}
-	const minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
+	let minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
+	if (minLength == -1) {
+		let bytesPerCodeUnit = 1;
+		// set minLength automatically based on code unit size and base (hex, binary, etc.)
+		if (encoding.includes('32-bit code units')) {
+			bytesPerCodeUnit = 4;
+		} else if (encoding.includes('16-bit code units')) {
+			bytesPerCodeUnit = 2;
+		}
+		if (format == `Binary`) {
+			minLength = bytesPerCodeUnit * 8; // 8, 16, or 32
+		} else if (format == `Octal`) {
+			minLength = bytesPerCodeUnit * 3; // 3, 6, or 12
+		} else if (format == `Decimal`) {
+			minLength = 0;
+		} else if (format == `Hexadecimal (uppercase)` || format == `Hexadecimal (lowercase)`) {
+			minLength = bytesPerCodeUnit * 2; // 2, 4 or 8
+		}
+		console.log(minLength);
+	}
 	const chars = bytesToText(format, bytes, minLength);
 	let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
 	if (grouping == 0) grouping = 1;
