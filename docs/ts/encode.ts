@@ -239,7 +239,7 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, c
 		return escapeHtml(outputString);
 	}
 	let minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
-	if (minLength == -1) {
+	if (minLength == 0) {
 		let bytesPerCodeUnit = 1;
 		// set minLength automatically based on code unit size and base (hex, binary, etc.)
 		if (encoding.includes('32-bit code units')) {
