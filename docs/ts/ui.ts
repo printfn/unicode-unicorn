@@ -432,12 +432,15 @@ function updateSelectOptions(selector: string, html: string) {
 
 function saveToSlot(slotNumber: number) {
 	try {
-		localStorage.setItem(`slot${slotNumber}`, ctos(getStr()));
+		let str = ctos(getStr());
+		if (str) {
+			localStorage.setItem(`slot${slotNumber}`, str);
+			alert(`Stored string in slot ${slotNumber}.`);
+			return;
+		}
 	} catch {
-		alert('Failed to store string!');
-		return;
 	}
-	alert(`Stored string in slot ${slotNumber}.`);
+	alert('Failed to store string!');
 }
 
 function loadFromSlot(slotNumber: number) {

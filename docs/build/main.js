@@ -1269,13 +1269,16 @@ function updateSelectOptions(selector, html) {
 }
 function saveToSlot(slotNumber) {
     try {
-        localStorage.setItem(`slot${slotNumber}`, ctos(getStr()));
+        let str = ctos(getStr());
+        if (str) {
+            localStorage.setItem(`slot${slotNumber}`, str);
+            alert(`Stored string in slot ${slotNumber}.`);
+            return;
+        }
     }
     catch (_a) {
-        alert('Failed to store string!');
-        return;
     }
-    alert(`Stored string in slot ${slotNumber}.`);
+    alert('Failed to store string!');
 }
 function loadFromSlot(slotNumber) {
     let str = localStorage.getItem(`slot${slotNumber}`);
