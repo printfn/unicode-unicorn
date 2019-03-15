@@ -1267,6 +1267,25 @@ function updateSelectOptions(selector, html) {
     $(selector).html(html);
     $(selector).trigger(`chosen:updated`);
 }
+function saveToSlot(slotNumber) {
+    try {
+        localStorage.setItem(`slot${slotNumber}`, ctos(getStr()));
+    }
+    catch (_a) {
+        alert('Failed to store string!');
+        return;
+    }
+    alert(`Stored string in slot ${slotNumber}.`);
+}
+function loadFromSlot(slotNumber) {
+    let str = localStorage.getItem(`slot${slotNumber}`);
+    if (!str) {
+        alert(`Couldn't find anything in slot ${slotNumber}!`);
+        return;
+    }
+    setStr(stoc(str));
+    alert(`Successfully loaded string from slot ${slotNumber}.`);
+}
 function variationSequencesForCodepoint(codepoint) {
     const results = [];
     for (let i = 0; i < global_variationSequences.length; ++i) {

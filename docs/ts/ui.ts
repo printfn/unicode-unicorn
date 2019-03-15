@@ -429,3 +429,23 @@ function updateSelectOptions(selector: string, html: string) {
 	$(selector).html(html);
 	$(selector).trigger(`chosen:updated`);
 }
+
+function saveToSlot(slotNumber: number) {
+	try {
+		localStorage.setItem(`slot${slotNumber}`, ctos(getStr()));
+	} catch {
+		alert('Failed to store string!');
+		return;
+	}
+	alert(`Stored string in slot ${slotNumber}.`);
+}
+
+function loadFromSlot(slotNumber: number) {
+	let str = localStorage.getItem(`slot${slotNumber}`);
+	if (!str) {
+		alert(`Couldn't find anything in slot ${slotNumber}!`);
+		return;
+	}
+	setStr(stoc(str));
+	alert(`Successfully loaded string from slot ${slotNumber}.`);
+}
