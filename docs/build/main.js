@@ -37,13 +37,9 @@ function callMultipleAsync(functions, completion) {
     }
 }
 function initBlockData(completion) {
-    let html = ``;
     for (let i = 0; i < global_blockRanges.length; ++i) {
         const b = global_blockRanges[i];
-        html += `<option data-block="${b.blockName}">` +
-            `${b.blockName} (from U+${itos(b.startCodepoint, 16, 4)} to U+${itos(b.endCodepoint, 16, 4)})</option>`;
     }
-    updateSelectOptions(`.all-blocks`, html);
     completion();
 }
 function getBlockForCodepoint(codepoint) {
@@ -742,9 +738,6 @@ $(document).ready(function () {
         $(`#input`).on(`input`, function (e) {
             updateSuggestions();
         });
-        $(`#searchBlock`).on(`change`, function (e) {
-            updateSuggestions();
-        });
         $(`#output, #encodedInput`).on(`input`, function () {
             updateInfo();
         });
@@ -771,7 +764,7 @@ $(document).ready(function () {
 });
 let global_search_strings = [];
 function getSearchString(codepoint) {
-    let res = `${ctos([codepoint])}|U+${itos(codepoint, 16, 4)}|cp:${codepoint}|name:${getName(codepoint, true)}|script:${getScriptForCodepoint(codepoint).replace(/_/g, ` `)}|category:${getCharacterCategoryName(codepoint)}`;
+    let res = `${ctos([codepoint])}|U+${itos(codepoint, 16, 4)}|cp:${codepoint}|name:${getName(codepoint, true)}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(codepoint).replace(/_/g, ` `)}|category:${getCharacterCategoryName(codepoint)}`;
     for (let i = 0; i < global_aliases.length; ++i) {
         if (global_aliases[i].codepoint == codepoint) {
             res += `|name:${global_aliases[i].alias}`;
@@ -812,20 +805,10 @@ function searchCodepoints(str) {
     for (let i = 0; i < words.length; ++i) {
         words[i] = words[i].trim();
     }
-    const selectedElements = $(`#searchBlock option:selected`);
-    const blocks = [];
-    for (let i = 0; i < selectedElements.length; ++i) {
-        const block = selectedElements[i].getAttribute(`data-block`);
-        if (block) {
-            blocks.push(block);
-        }
-    }
     for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
         const range = global_all_assigned_ranges[i];
         const end = range.endCodepoint;
         for (let c = range.startCodepoint; c <= end; ++c) {
-            if (blocks.length > 0 && blocks.indexOf(getBlockForCodepoint(c)) == -1)
-                continue;
             const searchString = global_search_strings[c];
             if (!searchString)
                 continue;

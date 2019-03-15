@@ -1,11 +1,7 @@
 function initBlockData(completion: () => void) {
-    let html = ``;
     for (let i = 0; i < global_blockRanges.length; ++i) {
         const b = global_blockRanges[i];
-		html += `<option data-block="${b.blockName}">` + 
-		`${b.blockName} (from U+${itos(b.startCodepoint, 16, 4)} to U+${itos(b.endCodepoint, 16, 4)})</option>`;
     }
-    updateSelectOptions(`.all-blocks`, html);
     completion();
 }
 

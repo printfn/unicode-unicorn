@@ -173,9 +173,6 @@ $(document).ready(function() {
 		$(`#input`).on(`input`, function(e) {
 			updateSuggestions();
 		});
-		$(`#searchBlock`).on(`change`, function(e) {
-			updateSuggestions();
-		});
 		$(`#output, #encodedInput`).on(`input`, function() {
 			updateInfo();
 		});
