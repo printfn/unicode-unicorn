@@ -57,7 +57,7 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
 			<td>${buttonStr}</td>
 			<td>U+${itos(codepoint, 16, 4)}</td>
 			<td>${codepoint}</td>
-			<td>${displayCodepoint(codepoint)}</td>
+			<td class="lang-attr">${displayCodepoint(codepoint)}</td>
 			<td>${getCharacterCategoryName(codepoint)}</td>
 			<td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${
 				getHtmlNameDescription(codepoint)
@@ -416,9 +416,17 @@ function updateLanguage() {
 			lang = textboxCode;
 		}
 	}
-	
-	$(`html`).attr(`lang`, lang);
-	$(`html`).attr(`xml:lang`, lang);
+
+	let elems = document.getElementsByClassName('lang-attr');
+	for (let i = 0; i < elems.length; ++i) {
+		if (lang) {
+			elems[i].setAttribute('lang', lang);
+			elems[i].setAttribute('xml:lang', lang);
+		} else {
+			elems[i].removeAttribute('lang');
+			elems[i].removeAttribute('xml:lang');
+		}
+	}
 }
 
 function updateUseInternalString() {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>Unicode Unicorn</title>
@@ -30,7 +30,7 @@
 		</div>
 
 		<p>
-			<textarea id="output"></textarea>
+			<textarea id="output" class="lang-attr"></textarea>
 		</p>
 
 		<!-- Nav tabs -->
@@ -70,7 +70,7 @@
 				<div id="advanced-search-div">
 					<table style="width: 100%">
 						<tr><td colspan="2"><b>Search for a codepoint:</b></td></tr>
-						<tr><td colspan="2"><input type="text" id="input"></td></tr>
+						<tr><td colspan="2"><input type="text" id="input" class="lang-attr"></td></tr>
 						<tr>
 							<td>Block:</td>
 							<td>
@@ -86,7 +86,7 @@
 				<p>
 					String:
 				</p>
-				<div id="string"></div>
+				<div id="string" class="lang-attr"></div>
 				<p>
 					<br>
 					Extended grapheme clusters: <span id="extendedGraphemeClusters">0</span>
@@ -132,11 +132,11 @@
 					<br>
 					Group Separator:
 					<br>
-					<textarea id="outputJoinerText"> + 
+					<textarea id="outputJoinerText" class="lang-attr"> + 
 </textarea>
 				</p>
 				<pre id="encodedOutput"></pre>
-				<textarea id="encodedInput" placeholder="Input to decode using above settings"></textarea>
+				<textarea id="encodedInput" class="lang-attr" placeholder="Input to decode using above settings"></textarea>
 				<table class="table table-striped" id="decodedCodepoints"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="mojibake">
