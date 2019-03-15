@@ -256,7 +256,6 @@ function encodeOutput(byteOrderMark: string, encoding: string, format: string, c
 		} else if (format == `Hexadecimal (uppercase)` || format == `Hexadecimal (lowercase)`) {
 			minLength = bytesPerCodeUnit * 2; // 2, 4 or 8
 		}
-		console.log(minLength);
 	}
 	const chars = bytesToText(format, bytes, minLength);
 	let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
