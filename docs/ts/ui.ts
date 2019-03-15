@@ -421,10 +421,8 @@ function updateLanguage() {
 	for (let i = 0; i < elems.length; ++i) {
 		if (lang) {
 			elems[i].setAttribute('lang', lang);
-			elems[i].setAttribute('xml:lang', lang);
 		} else {
 			elems[i].removeAttribute('lang');
-			elems[i].removeAttribute('xml:lang');
 		}
 	}
 }
