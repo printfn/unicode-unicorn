@@ -9,6 +9,8 @@ let global_colorMap: { [key: string]: string; } = {
 	'Z': `#a8a8a8`,
 };
 
+let global_lang: string = '';
+
 interface ButtonInfo {
 	displayName: string; // text displayed on button
 	functionName: string; // name of global function called on click
@@ -23,6 +25,7 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
 		table.html(``);
 		return;
 	}
+	let langAttr = global_lang ? `lang="${global_lang}"` : ``;
 	let html = `
 	<thead>
 		<tr>
@@ -57,7 +60,7 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
 			<td>${buttonStr}</td>
 			<td>U+${itos(codepoint, 16, 4)}</td>
 			<td>${codepoint}</td>
-			<td class="lang-attr">${displayCodepoint(codepoint)}</td>
+			<td class="lang-attr" ${langAttr}>${displayCodepoint(codepoint)}</td>
 			<td>${getCharacterCategoryName(codepoint)}</td>
 			<td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${
 				getHtmlNameDescription(codepoint)
@@ -425,6 +428,7 @@ function updateLanguage() {
 			elems[i].removeAttribute('lang');
 		}
 	}
+	global_lang = lang;
 }
 
 function updateUseInternalString() {

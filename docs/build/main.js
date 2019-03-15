@@ -877,12 +877,14 @@ let global_colorMap = {
     'S': `#7680f9`,
     'Z': `#a8a8a8`,
 };
+let global_lang = '';
 function renderCodepointsInTable(codepoints, tableId, buttons) {
     const table = $(`#${tableId}`);
     if (codepoints.length === 0) {
         table.html(``);
         return;
     }
+    let langAttr = global_lang ? `lang="${global_lang}"` : ``;
     let html = `
 	<thead>
 		<tr>
@@ -917,7 +919,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
 			<td>${buttonStr}</td>
 			<td>U+${itos(codepoint, 16, 4)}</td>
 			<td>${codepoint}</td>
-			<td class="lang-attr">${displayCodepoint(codepoint)}</td>
+			<td class="lang-attr" ${langAttr}>${displayCodepoint(codepoint)}</td>
 			<td>${getCharacterCategoryName(codepoint)}</td>
 			<td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${getHtmlNameDescription(codepoint)}</td>
 		</tr>`;
@@ -1243,13 +1245,12 @@ function updateLanguage() {
     for (let i = 0; i < elems.length; ++i) {
         if (lang) {
             elems[i].setAttribute('lang', lang);
-            elems[i].setAttribute('xml:lang', lang);
         }
         else {
             elems[i].removeAttribute('lang');
-            elems[i].removeAttribute('xml:lang');
         }
     }
+    global_lang = lang;
 }
 function updateUseInternalString() {
     global_useInternalString = $(`#useInternalString`).is(`:checked`);
