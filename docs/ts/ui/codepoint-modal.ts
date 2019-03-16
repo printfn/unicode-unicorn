@@ -1,3 +1,12 @@
+function tryFillElement(id: string, value: string) {
+  if (value) {
+    $(`#${id}`).show();
+    $(`#${id}-content`).text(value);
+  } else {
+    $(`#${id}`).hide();
+  }
+}
+
 function showCodepageDetail(codepoint: number) {
   $(`#detail-codepoint-hex`).text(itos(codepoint, 16, 4));
   $(`#detail-codepoint-decimal`).text(codepoint);
@@ -13,40 +22,11 @@ function showCodepageDetail(codepoint: number) {
     if (global_aliases[i].codepoint == codepoint)
       matchingAliases.push(global_aliases[i].alias);
   }
-  if (matchingAliases.length === 0) {
-    $(`#detail-aliases`).hide();
-  } else {
-    $(`#detail-aliases`).show();
-    $(`#detail-aliases-list`).text(matchingAliases.join(`, `));
-  }
-  const meaning = global_han_meanings[codepoint];
-  if (meaning) {
-    $(`#detail-meaning`).show();
-    $(`#detail-meaning-content`).text(meaning);
-  } else {
-    $(`#detail-meaning`).hide();
-  }
-  const mandarin = global_mandarin_readings[codepoint];
-  if (mandarin) {
-    $(`#detail-mandarin`).show();
-    $(`#detail-mandarin-content`).text(mandarin);
-  } else {
-    $(`#detail-mandarin`).hide();
-  }
-  const kun = global_kun_readings[codepoint];
-  if (kun) {
-    $(`#detail-kun`).show();
-    $(`#detail-kun-content`).text(kun);
-  } else {
-    $(`#detail-kun`).hide();
-  }
-  const on = global_on_readings[codepoint];
-  if (on) {
-    $(`#detail-on`).show();
-    $(`#detail-on-content`).text(on);
-  } else {
-    $(`#detail-on`).hide();
-  }
+  tryFillElement('detail-aliases', matchingAliases.join(`, `));
+  tryFillElement('detail-meaning', global_han_meanings[codepoint]);
+  tryFillElement('detail-mandarin', global_mandarin_readings[codepoint]);
+  tryFillElement('detail-kun', global_kun_readings[codepoint]);
+  tryFillElement('detail-on', global_on_readings[codepoint]);
   const variationSequences = variationSequencesForCodepoint(codepoint).concat(ideographicVariationSequencesForCodepoint(codepoint));
   if (variationSequences.length === 0) {
     $(`#detail-variation-sequences`).hide();
@@ -87,8 +67,8 @@ function showCodepageDetail(codepoint: number) {
 
   $(`#detail-encoding-outputs`).html(encodingsString);
 
-  $(`#detail-previous-cp`).attr(`data-cp`, codepoint != 0 ? itos(codepoint - 1, 10) : itos(0x10FFFF, 10));
-  $(`#detail-next-cp`).attr(`data-cp`, codepoint != 0x10FFFF ? itos(codepoint + 1, 10) : itos(0, 10));
+  $(`#detail-previous-cp`).attr(`data-cp`, previousCodepoint(codepoint));
+  $(`#detail-next-cp`).attr(`data-cp`, nextCodepoint(codepoint));
   
   jQueryModal(`#codepoint-detail`, `show`);
 }
