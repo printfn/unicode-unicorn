@@ -53,9 +53,9 @@ function getBlockForCodepoint(codepoint) {
 }
 function getSyllableTypeForCodepoint(codepoint) {
     for (let i = 0; i < global_syllableRanges.length; ++i) {
-        if (codepoint >= global_syllableRanges[i].startCodepoint &&
-            codepoint <= global_syllableRanges[i].endCodepoint) {
-            return global_syllableRanges[i].syllableType;
+        if (codepoint >= global_syllableRanges[i].s &&
+            codepoint <= global_syllableRanges[i].e) {
+            return global_syllableRanges[i].v;
         }
     }
     return `Not_Applicable`;
@@ -65,9 +65,9 @@ function getShortJamoName(codepoint) {
 }
 function getScriptForCodepoint(codepoint) {
     for (let i = 0; i < global_scriptRanges.length; ++i) {
-        if (codepoint >= global_scriptRanges[i].startCodepoint &&
-            codepoint <= global_scriptRanges[i].endCodepoint) {
-            return global_scriptRanges[i].scriptName;
+        if (codepoint >= global_scriptRanges[i].s &&
+            codepoint <= global_scriptRanges[i].e) {
+            return global_scriptRanges[i].v;
         }
     }
     return `Unknown`;

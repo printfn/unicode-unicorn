@@ -17,8 +17,8 @@ declare var global_encodingData: { name: string, type: string, data: string }[]
 declare var global_graphemeBreakData: { [codepoint: number]: string; }
 declare var global_extendedPictograph: number[]
 declare var global_blockRanges: { startCodepoint: number; endCodepoint: number; blockName: string; }[]
-declare var global_syllableRanges: { startCodepoint: number; endCodepoint: number; syllableType: string; }[]
+declare var global_syllableRanges: { s: number; e: number; v: string; }[]
 declare var global_shortJamoNames: { [codepoint: number]: string; }
-declare var global_scriptRanges: { startCodepoint: number; endCodepoint: number; scriptName: string; }[]
+declare var global_scriptRanges: { s: number; e: number; v: string; }[]
 declare var global_allLanguageTagsHTML: { [key: string]: string; }
 declare var global_commonLanguageTagsHTML: { [key: string]: string; }

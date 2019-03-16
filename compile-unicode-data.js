@@ -49,7 +49,7 @@ function iterateOverFile(path, before, each, after) {
 	}
 }
 
-function iterateOverFileWithRanges(path, callback) {
+function iterateOverFileWithRanges(path, globalArray) {
 	iterateOverFile(path, undefined, function(line) {
 		const splitLine = line.split(`;`);
 		let startCodepoint = 0, endCodepoint = 0;
@@ -61,7 +61,11 @@ function iterateOverFileWithRanges(path, callback) {
 			endCodepoint = startCodepoint;
 		}
 		const value = splitLine[1].trim();
-		callback(startCodepoint, endCodepoint, value);
+		globalArray.push({
+			s: startCodepoint,
+			e: endCodepoint,
+			v: value
+		});
 	});
 }
 
@@ -375,13 +379,7 @@ function iterateOverFileWithRanges(path, callback) {
 		});
 	});
 
-	iterateOverFileWithRanges(`data/Unicode/UCD/HangulSyllableType.txt`, function(startCodepoint, endCodepoint, syllableType) {
-		global_syllableRanges.push({
-			startCodepoint: startCodepoint,
-			endCodepoint: endCodepoint,
-			syllableType: syllableType
-		});
-	});
+	iterateOverFileWithRanges(`data/Unicode/UCD/HangulSyllableType.txt`, global_syllableRanges);
 
 	iterateOverFile(`data/Unicode/UCD/Jamo.txt`, undefined, function(line) {
 		const splitLine = line.split(`;`);
@@ -390,18 +388,12 @@ function iterateOverFileWithRanges(path, callback) {
 		global_shortJamoNames[codepoint] = shortJamoName;
 	});
 
-	iterateOverFileWithRanges(`data/Unicode/UCD/Scripts.txt`, function(startCodepoint, endCodepoint, scriptName) {
-		global_scriptRanges.push({
-			startCodepoint: startCodepoint,
-			endCodepoint: endCodepoint,
-			scriptName: scriptName
-		});
-	});
+	iterateOverFileWithRanges(`data/Unicode/UCD/Scripts.txt`, global_scriptRanges);
 
 	out(`global_blockRanges`, `{ startCodepoint: number; endCodepoint: number; blockName: string; }[]`, global_blockRanges);
-	out(`global_syllableRanges`, `{ startCodepoint: number; endCodepoint: number; syllableType: string; }[]`, global_syllableRanges);
+	out(`global_syllableRanges`, `{ s: number; e: number; v: string; }[]`, global_syllableRanges);
 	out(`global_shortJamoNames`, `{ [codepoint: number]: string; }`, global_shortJamoNames);
-	out(`global_scriptRanges`, `{ startCodepoint: number; endCodepoint: number; scriptName: string; }[]`, global_scriptRanges);
+	out(`global_scriptRanges`, `{ s: number; e: number; v: string; }[]`, global_scriptRanges);
 
 })();
 
