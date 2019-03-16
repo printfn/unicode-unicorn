@@ -186,18 +186,7 @@ function bytesToText(format: string, bytes: number[], minLength?: number) {
 		minLength = 0;
 	for (let i = 0; i < bytes.length; ++i) {
 		const b = bytes[i];
-		let str = ``;
-		if (format == `Binary`) {
-			str = b.toString(2);
-		} else if (format == `Octal`) {
-			str = b.toString(8);
-		} else if (format == `Decimal`) {
-			str = b.toString(10);
-		} else if (format == `Hexadecimal (uppercase)`) {
-			str = b.toString(16).toUpperCase();
-		} else if (format == `Hexadecimal (lowercase)`) {
-			str = b.toString(16);
-		}
+		let str = numberToStringWithFormat(b, format);
 		while (str.length < minLength)
 			str = `0` + str;
 		str = ((document.getElementById('codeUnitPrefix')! as any).value || ``) + str;
@@ -211,15 +200,7 @@ function textToBytes(format: string, strings: string[]) {
 	const bytes: number[] = [];
 	for (let i = 0; i < strings.length; ++i) {
 		const str = strings[i];
-		if (format.includes(`Binary`)) {
-			bytes.push(parseInt(str, 2));
-		} else if (format.includes(`Octal`)) {
-			bytes.push(parseInt(str, 8));
-		} else if (format.includes(`Decimal`)) {
-			bytes.push(parseInt(str, 10));
-		} else if (format.includes(`Hexadecimal`)) {
-			bytes.push(parseInt(str, 16));
-		}
+		bytes.push(parseIntWithFormat(str, format));
 	}
 	return bytes;
 }

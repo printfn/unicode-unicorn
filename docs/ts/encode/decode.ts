@@ -1,18 +1,13 @@
-function decodeOutput(byteOrderMark: string, encoding: string, format: string, str: string) {
-	if (str === ``)
-		return;
-	let validDigitChars: string[] = [];
-	if (format == `Binary`) {
-		validDigitChars = [`0`, `1`];
-	} else if (format == `Octal`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`];
-	} else if (format == `Decimal`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
-	} else if (format == `Hexadecimal (uppercase)`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`, `D`, `E`, `F`];
-	} else if (format == `Hexadecimal (lowercase)`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
-	}
+function validDigitsForFormat(format: string) {
+	let validDigitChars: string[] = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
+	validDigitChars = validDigitChars.slice(0, numberForFormat(format));
+	if (format = `Hexadecimal (uppercase)`)
+		validDigitChars = validDigitChars.map(s => s.toUpperCase());
+	return validDigitChars;
+}
+
+function splitByFormatDigits(str: string, format: string) {
+	let validDigitChars = validDigitsForFormat(format);
 	let strings: string[] = [];
 	let currentStr = '';
 	for (let i = 0; i < str.length; ++i) {
@@ -29,6 +24,13 @@ function decodeOutput(byteOrderMark: string, encoding: string, format: string, s
 		strings.push(currentStr);
 		currentStr = '';
 	}
+	return strings;
+}
+
+function decodeOutput(byteOrderMark: string, encoding: string, format: string, str: string) {
+	if (!str)
+		return;
+	let strings = splitByFormatDigits(str, format);
 	const codeUnits = textToBytes(format, strings);
 	for (let i = 0; i < codeUnits.length; ++i)
 		if (isNaN(codeUnits[i]))

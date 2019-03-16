@@ -602,25 +602,15 @@ function ideographicVariationSequencesForCodepoint(codepoint) {
     }
     return results;
 }
-function decodeOutput(byteOrderMark, encoding, format, str) {
-    if (str === ``)
-        return;
-    let validDigitChars = [];
-    if (format == `Binary`) {
-        validDigitChars = [`0`, `1`];
-    }
-    else if (format == `Octal`) {
-        validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`];
-    }
-    else if (format == `Decimal`) {
-        validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
-    }
-    else if (format == `Hexadecimal (uppercase)`) {
-        validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`, `D`, `E`, `F`];
-    }
-    else if (format == `Hexadecimal (lowercase)`) {
-        validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
-    }
+function validDigitsForFormat(format) {
+    let validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
+    validDigitChars = validDigitChars.slice(0, numberForFormat(format));
+    if (format = `Hexadecimal (uppercase)`)
+        validDigitChars = validDigitChars.map(s => s.toUpperCase());
+    return validDigitChars;
+}
+function splitByFormatDigits(str, format) {
+    let validDigitChars = validDigitsForFormat(format);
     let strings = [];
     let currentStr = '';
     for (let i = 0; i < str.length; ++i) {
@@ -638,6 +628,12 @@ function decodeOutput(byteOrderMark, encoding, format, str) {
         strings.push(currentStr);
         currentStr = '';
     }
+    return strings;
+}
+function decodeOutput(byteOrderMark, encoding, format, str) {
+    if (!str)
+        return;
+    let strings = splitByFormatDigits(str, format);
     const codeUnits = textToBytes(format, strings);
     for (let i = 0; i < codeUnits.length; ++i)
         if (isNaN(codeUnits[i]))
@@ -872,22 +868,7 @@ function bytesToText(format, bytes, minLength) {
         minLength = 0;
     for (let i = 0; i < bytes.length; ++i) {
         const b = bytes[i];
-        let str = ``;
-        if (format == `Binary`) {
-            str = b.toString(2);
-        }
-        else if (format == `Octal`) {
-            str = b.toString(8);
-        }
-        else if (format == `Decimal`) {
-            str = b.toString(10);
-        }
-        else if (format == `Hexadecimal (uppercase)`) {
-            str = b.toString(16).toUpperCase();
-        }
-        else if (format == `Hexadecimal (lowercase)`) {
-            str = b.toString(16);
-        }
+        let str = numberToStringWithFormat(b, format);
         while (str.length < minLength)
             str = `0` + str;
         str = (document.getElementById('codeUnitPrefix').value || ``) + str;
@@ -900,20 +881,34 @@ function textToBytes(format, strings) {
     const bytes = [];
     for (let i = 0; i < strings.length; ++i) {
         const str = strings[i];
-        if (format.includes(`Binary`)) {
-            bytes.push(parseInt(str, 2));
-        }
-        else if (format.includes(`Octal`)) {
-            bytes.push(parseInt(str, 8));
-        }
-        else if (format.includes(`Decimal`)) {
-            bytes.push(parseInt(str, 10));
-        }
-        else if (format.includes(`Hexadecimal`)) {
-            bytes.push(parseInt(str, 16));
-        }
+        bytes.push(parseIntWithFormat(str, format));
     }
     return bytes;
+}
+function numberForFormat(format) {
+    switch (format) {
+        case `Binary`:
+            return 2;
+        case `Octal`:
+            return 8;
+        case `Decimal`:
+            return 10;
+        case `Hexadecimal (uppercase)`:
+            return 16;
+        case `Hexadecimal (lowercase)`:
+            return 16;
+        default:
+            throw `Invalid format: ${format}`;
+    }
+}
+function numberToStringWithFormat(n, format) {
+    let str = n.toString(numberForFormat(format));
+    if (format == `Hexadecimal (uppercase)`)
+        str = str.toUpperCase();
+    return str;
+}
+function parseIntWithFormat(str, format) {
+    return parseInt(str, numberForFormat(format));
 }
 function updateRenderedCodepage() {
     const encodingName = $(`#codepageEncoding option:selected`).text();
