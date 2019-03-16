@@ -1,6 +1,3 @@
-declare let punycode: any;
-declare let utf8: any;
-
 interface Encoding {
 	type: string;
 	encode?: (codepoints: number[]) => (number[] | number);
@@ -10,21 +7,11 @@ interface Encoding {
 
 let global_encodings: { [encodingName: string]: Encoding; } = {};
 
+declare let punycode: any;
+declare let utf8: any;
+
 function escapeHtml(string: string): string {
 	return he.encode(string);
-}
-
-function displayCodepoint(codepoint?: number): string {
-	if (typeof codepoint == `undefined`)
-		return ``;
-	if (codepoint < 0x20)
-		codepoint += 0x2400;
-	if (codepoint == 0x7F)
-		codepoint = 0x2421;
-	let codepoints = [codepoint];
-	if (graphemeBreakValueForCodepoint(codepoint) == `Extend`)
-		codepoints = [0x25CC, codepoint];
-	return escapeHtml(ctos(codepoints));
 }
 
 function ctos(codepoints: any): string {
@@ -218,105 +205,4 @@ function textToBytes(format: string, strings: string[]) {
 		}
 	}
 	return bytes;
-}
-
-function encodeOutput(byteOrderMark: string, encoding: string, format: string, codepoints: number[]) {
-	const useBOM = byteOrderMark.startsWith(`Use`);
-	if (useBOM) {
-		codepoints.unshift(0xFEFF);
-	}
-	const bytes = codepointsToEncoding(encoding, codepoints);
-	if (typeof bytes == `number`) {
-		// input contains codepoints incompatible with the selected encoding
-		const invalidCodepoint = bytes;
-		return `<span style="color: red">Text cannot be encoded in ${encoding
-		} because it contains incompatible characters.\nThe first such incompatible character is U+${
-			itos(invalidCodepoint, 16, 4)
-		} - ${getHtmlNameDescription(invalidCodepoint)} (${
-			displayCodepoint(invalidCodepoint)}).</span>`;
-	} else if (typeof bytes == `string`) {
-		const outputString = bytes;
-		return escapeHtml(outputString);
-	}
-	let minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
-	if (minLength == 0) {
-		let bytesPerCodeUnit = 1;
-		// set minLength automatically based on code unit size and base (hex, binary, etc.)
-		if (encoding.includes('32-bit code units')) {
-			bytesPerCodeUnit = 4;
-		} else if (encoding.includes('16-bit code units')) {
-			bytesPerCodeUnit = 2;
-		}
-		if (format == `Binary`) {
-			minLength = bytesPerCodeUnit * 8; // 8, 16, or 32
-		} else if (format == `Octal`) {
-			minLength = bytesPerCodeUnit * 3; // 3, 6, or 12
-		} else if (format == `Decimal`) {
-			minLength = 0;
-		} else if (format == `Hexadecimal (uppercase)` || format == `Hexadecimal (lowercase)`) {
-			minLength = bytesPerCodeUnit * 2; // 2, 4 or 8
-		}
-	}
-	const chars = bytesToText(format, bytes, minLength);
-	let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
-	if (grouping == 0) grouping = 1;
-	let groups: string[] = [];
-	for (let i = 0; i < chars.length; ++i) {
-		if (i % grouping == 0) {
-			groups.push(chars[i]);
-		} else {
-			groups[groups.length - 1] += chars[i];
-		}
-	}
-	const groupPrefix = (document.getElementById('groupPrefix')! as any).value || ``;
-	const groupSuffix = (document.getElementById('groupSuffix')! as any).value || ``;
-	for (let i = 0; i < groups.length; ++i) {
-		groups[i] = groupPrefix + groups[i] + groupSuffix;
-	}
-	const groupSeparator = (document.getElementById('outputJoinerText')! as any).value || ``;
-	return escapeHtml(groups.join(groupSeparator));
-}
-
-function decodeOutput(byteOrderMark: string, encoding: string, format: string, str: string) {
-	if (str === ``)
-		return;
-	let validDigitChars: string[] = [];
-	if (format == `Binary`) {
-		validDigitChars = [`0`, `1`];
-	} else if (format == `Octal`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`];
-	} else if (format == `Decimal`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`];
-	} else if (format == `Hexadecimal (uppercase)`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`, `D`, `E`, `F`];
-	} else if (format == `Hexadecimal (lowercase)`) {
-		validDigitChars = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `a`, `b`, `c`, `d`, `e`, `f`];
-	}
-	let strings: string[] = [];
-	let currentStr = '';
-	for (let i = 0; i < str.length; ++i) {
-		if (validDigitChars.indexOf(str[i]) != -1) {
-			currentStr += str[i];
-		} else {
-			if (currentStr != '') {
-				strings.push(currentStr);
-				currentStr = '';
-			}
-		}
-	}
-	if (currentStr != '') {
-		strings.push(currentStr);
-		currentStr = '';
-	}
-	const codeUnits = textToBytes(format, strings);
-	for (let i = 0; i < codeUnits.length; ++i)
-		if (isNaN(codeUnits[i]))
-			return;
-	const codepoints = codeUnitsToCodepoints(encoding, codeUnits);
-	if (!codepoints) return;
-	const useBOM = byteOrderMark.startsWith(`Use`);
-	if (useBOM) {
-		codepoints.unshift(1);
-	}
-	return codepoints;
 }
