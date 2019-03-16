@@ -885,76 +885,35 @@ function runTests() {
     }
     alert(`All ${tests.length} tests passed.`);
 }
-let global_colorMap = {
-    'C': `#f97e77`,
-    'L': `#f9e776`,
-    'N': `#b7f976`,
-    'P': `#76f9ee`,
-    'S': `#7680f9`,
-    'Z': `#a8a8a8`,
-};
-let global_lang = '';
-function renderCodepointsInTable(codepoints, tableId, buttons) {
-    const table = $(`#${tableId}`);
-    if (codepoints.length === 0) {
-        table.html(``);
-        return;
+function variationSequencesForCodepoint(codepoint) {
+    const results = [];
+    for (let i = 0; i < global_variationSequences.length; ++i) {
+        if (global_variationSequences[i].baseCodepoint == codepoint)
+            results.push(global_variationSequences[i]);
     }
-    let langAttr = global_lang ? `lang="${global_lang}"` : ``;
-    let html = `
-	<thead>
-		<tr>
-			<th></th>
-			<th>Codepoint (Hex)</th>
-			<th>Codepoint (Decimal)</th>
-			<th>Character</th>
-			<th>Category</th>
-			<th>Name</th>
-		</tr>
-	</thead>
-	<tbody>`;
-    let i = 0;
-    for (i = 0; i < codepoints.length; ++i) {
-        const codepoint = codepoints[i];
-        let buttonStr = ``;
-        for (const j in buttons) {
-            const buttonDescription = buttons[j];
-            let disabled = ``;
-            if (buttonDescription.require) {
-                if (!buttonDescription.require(i, codepoints.length)) {
-                    disabled = `disabled`;
-                }
-            }
-            buttonStr += `<input
-				type="button" ${disabled}
-				onclick="${buttonDescription.functionName}(${codepoint}, ${i})"
-				value="${buttonDescription.displayName}">`;
-        }
-        html += `
-		<tr>
-			<td>${buttonStr}</td>
-			<td>U+${itos(codepoint, 16, 4)}</td>
-			<td>${codepoint}</td>
-			<td class="lang-attr" ${langAttr}>${displayCodepoint(codepoint)}</td>
-			<td>${getCharacterCategoryName(codepoint)}</td>
-			<td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${getHtmlNameDescription(codepoint)}</td>
-		</tr>`;
-    }
-    if (i >= 256) {
-        html += `<tr><td colspan="6">Showing only the first 256 rows.</td></tr>`;
-    }
-    html += `</tbody>`;
-    table.hide();
-    table.html(html);
-    table.show();
+    return results;
 }
-function randomColorForKey(key) {
-    if (global_colorMap[key]) {
-        return global_colorMap[key];
+function urlForIdeographicCollection(name) {
+    for (let i = 0; i < global_ideographicVariationCollections.length; ++i) {
+        const collection = global_ideographicVariationCollections[i];
+        if (collection.name != name)
+            continue;
+        return collection.url;
     }
-    return global_colorMap[key] = randomColor({
-        luminosity: `light`
-    });
+}
+function ideographicVariationSequencesForCodepoint(codepoint) {
+    const results = [];
+    for (let i = 0; i < global_ideographicVariationSequences.length; ++i) {
+        if (global_ideographicVariationSequences[i].b == codepoint) {
+            var ivs = global_ideographicVariationSequences[i];
+            results.push({
+                baseCodepoint: ivs.b,
+                variationSelector: ivs.v,
+                description: `ideographic (entry ${ivs.i} in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(ivs.c)}">${ivs.c}</a>)`
+            });
+        }
+    }
+    return results;
 }
 function updateRenderedCodepage() {
     const encodingName = $(`#codepageEncoding option:selected`).text();
@@ -1075,58 +1034,125 @@ function showCodepageDetail(codepoint) {
     $(`#detail-next-cp`).attr(`data-cp`, codepoint != 0x10FFFF ? itos(codepoint + 1, 10) : itos(0, 10));
     jQueryModal(`#codepoint-detail`, `show`);
 }
+// called from button in modal dialog to navigate to a different codepoint
 function changeDetail(elem) {
     $(elem).blur(); // remove focus
     const codepointToShow = parseInt($(elem).attr(`data-cp`), 10);
     showCodepageDetail(codepointToShow);
 }
-function initLicenseInfo(completion) {
-    requestAsync(`data/licenses.html`, function (lines) {
-        $(`#licenses-text`).html(lines.join(`\n`));
-        completion();
+function renderCodepointsInTable(codepoints, tableId, buttons) {
+    const table = $(`#${tableId}`);
+    if (codepoints.length === 0) {
+        table.html(``);
+        return;
+    }
+    let langAttr = global_lang ? `lang="${global_lang}"` : ``;
+    let html = `
+  <thead>
+    <tr>
+      <th></th>
+      <th>Codepoint (Hex)</th>
+      <th>Codepoint (Decimal)</th>
+      <th>Character</th>
+      <th>Category</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>`;
+    let i = 0;
+    for (i = 0; i < codepoints.length; ++i) {
+        const codepoint = codepoints[i];
+        let buttonStr = ``;
+        for (const j in buttons) {
+            const buttonDescription = buttons[j];
+            let disabled = ``;
+            if (buttonDescription.require) {
+                if (!buttonDescription.require(i, codepoints.length)) {
+                    disabled = `disabled`;
+                }
+            }
+            buttonStr += `<input
+        type="button" ${disabled}
+        onclick="${buttonDescription.functionName}(${codepoint}, ${i})"
+        value="${buttonDescription.displayName}">`;
+        }
+        html += `
+    <tr>
+      <td>${buttonStr}</td>
+      <td>U+${itos(codepoint, 16, 4)}</td>
+      <td>${codepoint}</td>
+      <td class="lang-attr" ${langAttr}>${displayCodepoint(codepoint)}</td>
+      <td>${getCharacterCategoryName(codepoint)}</td>
+      <td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${getHtmlNameDescription(codepoint)}</td>
+    </tr>`;
+    }
+    if (i >= 256) {
+        html += `<tr><td colspan="6">Showing only the first 256 rows.</td></tr>`;
+    }
+    html += `</tbody>`;
+    table.hide();
+    table.html(html);
+    table.show();
+}
+function updateCodepointList() {
+    const codepoints = getStr();
+    renderCodepointsInTable(codepoints, `codepointlist`, [{
+            displayName: `Delete`,
+            functionName: `deleteAtIndex`
+        }, {
+            displayName: `Move up`,
+            functionName: `moveUp`,
+            require: function (i, length) { return i != 0; }
+        }, {
+            displayName: `Move down`,
+            functionName: `moveDown`,
+            require: function (i, length) { return i != length - 1; }
+        }]);
+}
+let global_colorMap = {
+    'C': `#f97e77`,
+    'L': `#f9e776`,
+    'N': `#b7f976`,
+    'P': `#76f9ee`,
+    'S': `#7680f9`,
+    'Z': `#a8a8a8`,
+};
+function randomColorForKey(key) {
+    if (global_colorMap[key]) {
+        return global_colorMap[key];
+    }
+    return global_colorMap[key] = randomColor({
+        luminosity: `light`
     });
 }
-function updateMojibake() {
+function updateEncodedAndDecodedStrings() {
     const codepoints = getStr();
-    const mojibakeOutputs = [];
-    $(`#mojibakeEncodings option`).each(function (i, e) {
-        if (!e.selected)
+    $(`#encodedOutput`).html(encodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), codepoints));
+    const decodedOutput = decodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), $(`#encodedInput`).val());
+    if (decodedOutput)
+        renderCodepointsInTable(decodedOutput, `decodedCodepoints`, [{ displayName: `Insert`, functionName: `output` }]);
+}
+function saveToSlot(slotNumber) {
+    try {
+        let str = ctos(getStr());
+        if (str) {
+            localStorage.setItem(`slot${slotNumber}`, str);
+            alert(`Stored string in slot ${slotNumber}.`);
             return;
-        const encoding1Name = $(e).text();
-        if (global_encodings[encoding1Name].type == `text function`)
-            return;
-        const encodedString = encodeOutput(`Don't use a byte order mark`, encoding1Name, `Decimal`, codepoints);
-        if (encodedString.startsWith(`<`))
-            return;
-        $(`#mojibakeEncodings option`).each(function (j, f) {
-            if (i == j)
-                return;
-            if (!f.selected)
-                return;
-            const encoding2Name = $(f).text();
-            if (global_encodings[encoding2Name].type == `text function`)
-                return;
-            const decodedString = decodeOutput(`Don't use a byte order mark`, encoding2Name, `Decimal`, encodedString);
-            if (!decodedString)
-                return;
-            mojibakeOutputs.push({
-                encoding1Name: encoding1Name,
-                encoding2Name: encoding2Name,
-                text: ctos(decodedString)
-            });
-        });
-    });
-    let mojibakeOutputStr = ``;
-    let lastEncoding1 = ``;
-    for (let i = 0; i < mojibakeOutputs.length; ++i) {
-        const o = mojibakeOutputs[i];
-        if (o.encoding1Name != lastEncoding1) {
-            lastEncoding1 = o.encoding1Name;
-            mojibakeOutputStr += `Assuming the input was erroneously interpreted as ${o.encoding1Name}:<br>`;
         }
-        mojibakeOutputStr += `    If the original encoding was ${o.encoding2Name}:<br>        ${mojibakeOutputs[i].text}<br>`;
     }
-    $(`#mojibakeOutput`).html(mojibakeOutputStr);
+    catch (_a) {
+    }
+    alert('Failed to store string!');
+}
+function loadFromSlot(slotNumber) {
+    let str = localStorage.getItem(`slot${slotNumber}`);
+    if (!str) {
+        alert(`Couldn't find anything in slot ${slotNumber}!`);
+        return;
+    }
+    setStr(stoc(str));
+    alert(`Successfully loaded string from slot ${slotNumber}.`);
 }
 function hexadecimalPaddingFromEncoding(encoding) {
     if (encoding.includes(`16-bit code units`))
@@ -1176,28 +1202,49 @@ function updateEncodedLengths() {
     $(`#encodingLengths`).html(encodingLengthsStr + `</tbody>`);
     $(`#string`).html(escapeHtml(ctos(getStr())).replace(/\n/g, `<br>`));
 }
-function updateCodepointList() {
+function updateMojibake() {
     const codepoints = getStr();
-    renderCodepointsInTable(codepoints, `codepointlist`, [{
-            displayName: `Delete`,
-            functionName: `deleteAtIndex`
-        }, {
-            displayName: `Move up`,
-            functionName: `moveUp`,
-            require: function (i, length) { return i != 0; }
-        }, {
-            displayName: `Move down`,
-            functionName: `moveDown`,
-            require: function (i, length) { return i != length - 1; }
-        }]);
+    const mojibakeOutputs = [];
+    $(`#mojibakeEncodings option`).each(function (i, e) {
+        if (!e.selected)
+            return;
+        const encoding1Name = $(e).text();
+        if (global_encodings[encoding1Name].type == `text function`)
+            return;
+        const encodedString = encodeOutput(`Don't use a byte order mark`, encoding1Name, `Decimal`, codepoints);
+        if (encodedString.startsWith(`<`))
+            return;
+        $(`#mojibakeEncodings option`).each(function (j, f) {
+            if (i == j)
+                return;
+            if (!f.selected)
+                return;
+            const encoding2Name = $(f).text();
+            if (global_encodings[encoding2Name].type == `text function`)
+                return;
+            const decodedString = decodeOutput(`Don't use a byte order mark`, encoding2Name, `Decimal`, encodedString);
+            if (!decodedString)
+                return;
+            mojibakeOutputs.push({
+                encoding1Name: encoding1Name,
+                encoding2Name: encoding2Name,
+                text: ctos(decodedString)
+            });
+        });
+    });
+    let mojibakeOutputStr = ``;
+    let lastEncoding1 = ``;
+    for (let i = 0; i < mojibakeOutputs.length; ++i) {
+        const o = mojibakeOutputs[i];
+        if (o.encoding1Name != lastEncoding1) {
+            lastEncoding1 = o.encoding1Name;
+            mojibakeOutputStr += `Assuming the input was erroneously interpreted as ${o.encoding1Name}:<br>`;
+        }
+        mojibakeOutputStr += `    If the original encoding was ${o.encoding2Name}:<br>        ${mojibakeOutputs[i].text}<br>`;
+    }
+    $(`#mojibakeOutput`).html(mojibakeOutputStr);
 }
-function updateEncodedAndDecodedStrings() {
-    const codepoints = getStr();
-    $(`#encodedOutput`).html(encodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), codepoints));
-    const decodedOutput = decodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), $(`#encodedInput`).val());
-    if (decodedOutput)
-        renderCodepointsInTable(decodedOutput, `decodedCodepoints`, [{ displayName: `Insert`, functionName: `output` }]);
-}
+let global_lang = '';
 function updateLanguage() {
     let lang = ``;
     const textboxCode = $(`#languageCode`).val();
@@ -1274,57 +1321,5 @@ function updateUseInternalString() {
 function updateSelectOptions(selector, html) {
     $(selector).html(html);
     $(selector).trigger(`chosen:updated`);
-}
-function saveToSlot(slotNumber) {
-    try {
-        let str = ctos(getStr());
-        if (str) {
-            localStorage.setItem(`slot${slotNumber}`, str);
-            alert(`Stored string in slot ${slotNumber}.`);
-            return;
-        }
-    }
-    catch (_a) {
-    }
-    alert('Failed to store string!');
-}
-function loadFromSlot(slotNumber) {
-    let str = localStorage.getItem(`slot${slotNumber}`);
-    if (!str) {
-        alert(`Couldn't find anything in slot ${slotNumber}!`);
-        return;
-    }
-    setStr(stoc(str));
-    alert(`Successfully loaded string from slot ${slotNumber}.`);
-}
-function variationSequencesForCodepoint(codepoint) {
-    const results = [];
-    for (let i = 0; i < global_variationSequences.length; ++i) {
-        if (global_variationSequences[i].baseCodepoint == codepoint)
-            results.push(global_variationSequences[i]);
-    }
-    return results;
-}
-function urlForIdeographicCollection(name) {
-    for (let i = 0; i < global_ideographicVariationCollections.length; ++i) {
-        const collection = global_ideographicVariationCollections[i];
-        if (collection.name != name)
-            continue;
-        return collection.url;
-    }
-}
-function ideographicVariationSequencesForCodepoint(codepoint) {
-    const results = [];
-    for (let i = 0; i < global_ideographicVariationSequences.length; ++i) {
-        if (global_ideographicVariationSequences[i].b == codepoint) {
-            var ivs = global_ideographicVariationSequences[i];
-            results.push({
-                baseCodepoint: ivs.b,
-                variationSelector: ivs.v,
-                description: `ideographic (entry ${ivs.i} in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(ivs.c)}">${ivs.c}</a>)`
-            });
-        }
-    }
-    return results;
 }
 //# sourceMappingURL=main.js.map

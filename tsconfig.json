@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-    	"outFile":"./docs/build/main.js",
-    	"noImplicitAny": true,
-        "allowJs": false,
-        "target": "es6",
-        "strictNullChecks": true,
-        "sourceMap": true,
-        "lib": ["dom", "es6", "es2015"]
-    },
-    "include": [
-        "./docs/ts/*.ts",
-        "./docs/build/compiled-data-declarations.ts"
-    ]
+	"compilerOptions": {
+		"outFile":"./docs/build/main.js",
+		"noImplicitAny": true,
+		"allowJs": false,
+		"target": "es6",
+		"strictNullChecks": true,
+		"sourceMap": true,
+		"lib": ["dom", "es6", "es2015"]
+	},
+	"include": [
+		"./docs/ts/**/*.ts",
+		"./docs/build/compiled-data-declarations.ts"
+	]
 }
