@@ -40,6 +40,22 @@ function iterateOverFile(path, before, each, after) {
 	}
 }
 
+function iterateOverFileWithRanges(path, callback) {
+	iterateOverFile(path, undefined, function(line) {
+		const splitLine = line.split(`;`);
+		let startCodepoint = 0, endCodepoint = 0;
+		if (splitLine[0].trim().split(`..`).length == 2) {
+			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
+			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
+		} else {
+			startCodepoint = parseInt(splitLine[0].trim(), 16);
+			endCodepoint = startCodepoint;
+		}
+		const value = splitLine[1].trim();
+		callback(startCodepoint, endCodepoint, value);
+	});
+}
+
 // Unicode data, han & search
 (function() {
 
@@ -352,17 +368,7 @@ function iterateOverFile(path, before, each, after) {
 		});
 	});
 
-	iterateOverFile(`data/Unicode/UCD/HangulSyllableType.txt`, undefined, function(line) {
-		const splitLine = line.split(`;`);
-		let startCodepoint = 0, endCodepoint = 0;
-		if (splitLine[0].trim().split(`..`).length == 2) {
-			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
-			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
-		} else {
-			startCodepoint = parseInt(splitLine[0].trim(), 16);
-			endCodepoint = startCodepoint;
-		}
-		const syllableType = splitLine[1].trim();
+	iterateOverFileWithRanges(`data/Unicode/UCD/HangulSyllableType.txt`, function(startCodepoint, endCodepoint, syllableType) {
 		global_syllableRanges.push({
 			startCodepoint: startCodepoint,
 			endCodepoint: endCodepoint,
@@ -377,18 +383,12 @@ function iterateOverFile(path, before, each, after) {
 		global_shortJamoNames[codepoint] = shortJamoName;
 	});
 
-	iterateOverFile(`data/Unicode/UCD/Scripts.txt`, undefined, function(line) {
-		const splitLine = line.split(`;`);
-		let startCodepoint = 0, endCodepoint = 0;
-		if (splitLine[0].trim().split(`..`).length == 2) {
-			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
-			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
-		} else {
-			startCodepoint = parseInt(splitLine[0].trim(), 16);
-			endCodepoint = startCodepoint;
-		}
-		const scriptName = splitLine[1].trim();
-		global_scriptRanges.push({startCodepoint: startCodepoint, endCodepoint: endCodepoint, scriptName: scriptName});
+	iterateOverFileWithRanges(`data/Unicode/UCD/Scripts.txt`, function(startCodepoint, endCodepoint, scriptName) {
+		global_scriptRanges.push({
+			startCodepoint: startCodepoint,
+			endCodepoint: endCodepoint,
+			scriptName: scriptName
+		});
 	});
 
 	out(`global_blockRanges`, `{ startCodepoint: number; endCodepoint: number; blockName: string; }[]`, global_blockRanges);
