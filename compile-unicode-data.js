@@ -5,6 +5,15 @@
 const fs = require('fs');
 const { exec } = require('child_process');
 
+Array.prototype.sortByProperty = function(prop, reverse) {
+	return this.sort(function(a, b) {
+		if (reverse)
+			return a[prop] < b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
+		else
+			return a[prop] > b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
+	});
+}
+
 let finalOutputJS = ``;
 let finalOutputTS = ``;
 let lengths = [];
@@ -150,9 +159,7 @@ function iterateOverFileWithRanges(path, callback) {
 			return 2;
 		if (a.alias < b.alias)
 			return -1;
-		if (a.alias > b.alias)
-			return 1;
-		return 0;
+		return a.alias > b.alias ? 1 : 0;
 	});
 
 	/*const getSearchString = function(codepoint) {
@@ -438,12 +445,8 @@ function iterateOverFileWithRanges(path, callback) {
 			});
 		}
 	}
-	commonLanguageTags.sort(function(a, b) {
-		return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
-	});
-	allLanguageTags.sort(function(a, b) {
-		return a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
-	});
+	commonLanguageTags.sortByProperty('name');
+	allLanguageTags.sortByProperty('name');
 	let tagsToHTMLStrings = function(languageTags) {
 		const htmls = {};
 		for (let i = 0; i < languageTags.length; ++i) {
@@ -457,11 +460,10 @@ function iterateOverFileWithRanges(path, callback) {
 	out(`global_commonLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(commonLanguageTags));
 })();
 
-lengths.sort(function(a, b) {
-	return a.length < b.length ? 1 : a.length == b.length ? 0 : -1;
-});
+lengths.sortByProperty('length', true);
+
 console.log(`Total length: ${finalOutputJS.length}`);
-for (let i in lengths) {
+for (let i = 0; i < lengths.length; ++i) {
 	const x = lengths[i];
 	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutputJS.length * 100}%)`);
 }
