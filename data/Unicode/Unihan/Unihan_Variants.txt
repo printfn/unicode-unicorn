@@ -1,7 +1,7 @@
 #
 # Unihan_Variants.txt
-# Date: 2018-05-18 02:15:26 GMT [JHJ]
-# Unicode version: 11.0.0
+# Date: 2018-11-09 21:36:19 GMT [JHJ]
+# Unicode version: 12.0.0
 #
 # Unicode Character Database
 # © 2018 Unicode®, Inc.
@@ -12006,7 +12006,6 @@ U+27717	kSimplifiedVariant	U+461E
 U+27735	kSimplifiedVariant	U+464A
 U+2775E	kSimplifiedVariant	U+461B
 U+277AA	kSemanticVariant	U+27640<kMatthews
-U+27835	kSimplifiedVariant	U+2C88D
 U+27959	kZVariant	U+23040
 U+27A59	kSemanticVariant	U+8A95<kLau,kMeyerWempe
 U+27A59	kSimplifiedVariant	U+4725
@@ -12385,7 +12384,6 @@ U+2BF6E	kSemanticVariant	U+64CB<kFennIndex:T,kLau:T,kMeyerWempe U+6529<kFennInde
 U+2C461	kSemanticVariant	U+7785<kFennIndex:T U+77C1<kFennIndex:T
 U+2C4FC	kTraditionalVariant	U+7A68
 U+2C62D	kTraditionalVariant	U+7D9D
-U+2C88D	kTraditionalVariant	U+27835
 U+2C925	kTraditionalVariant	U+8B54
 U+2CBCE	kTraditionalVariant	U+96A4
 U+2CE23	kTraditionalVariant	U+9DB1

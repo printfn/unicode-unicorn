@@ -2,6 +2,14 @@
 #
 # History:
 #
+# 2017-12-12 Registration of additional sequences in the Adobe-Japan1
+#            collection. Combined registration of the KRName collection
+#            and of sequences in that collection. Registration of
+#            additional sequences in the Moji_Joho collection.
+#
+# 2016-08-15 Combined registration of the MSARG collection and of
+#            sequences in that collection.
+#
 # 2014-05-16 Combined registration of the Moji_Joho collection and of
 #            sequences in that collection.
 #
@@ -9,20 +17,22 @@
 #            collection. Registration of additional sequences in the
 #            Hanyo-Denshi collection.
 #
-# 2010-11-14 Combined registration of the Hanyo-Denshi collection and of
-#            sequences in that collection.
+# 2010-11-14 Combined registration of the Hanyo-Denshi collection and
+#            of sequences in that collection.
 #
-# 2007-12-14 Combined registration of the Adobe-Japan1 collection and of
-#            sequences in that collection.
+# 2007-12-14 Combined registration of the Adobe-Japan1 collection and
+#            of sequences in that collection.
 #
 # This file is part of the Unicode Ideographic Variation Database (IVD).
 # For more details on the IVD, see UTS #37:
 # http://www.unicode.org/reports/tr37/
 #
-# Copyright 2006-2014 Unicode, Inc.
+# Copyright 2006-2017 Unicode, Inc.
 # For terms of use, see: http://www.unicode.org/terms_of_use.html
 #
-Adobe-Japan1; CID\+[0-9]+; http://www.adobe.com/devnet/font/pdfs/5078.Adobe-Japan1-6.pdf
+Adobe-Japan1; CID\+[0-9]+; https://github.com/adobe-type-tools/Adobe-Japan1/
 Hanyo-Denshi; [A-Z][A-Z][0-9A-F]+S*; http://www.itscj.ipsj.or.jp/domestic/sc02/hanyo-denshi/20100331
-Moji_Joho; MJ[0-9]{6}; http://mojikiban.ipa.go.jp/mjc/1/
+KRName; KRName_[0-9A-F]{4}_[0-9]{2}; https://github.com/adobe-type-tools/krname-ivd-collection/
+Moji_Joho; MJ[0-9]{6}; http://mojikiban.ipa.go.jp/mjc/
+MSARG; M([AB]_[0-9A-F]{4}|C_[0-9]{5}|D_[0-9A-F]{4,5}|E_[0-9A-F]{4,5}_[0-9]{3}); http://www.iso10646hk.net/ivd/MSARG/
 # EOF

@@ -1,7 +1,7 @@
 #
 # Unihan_NumericValues.txt
-# Date: 2018-05-18 02:15:26 GMT [JHJ]
-# Unicode version: 11.0.0
+# Date: 2018-11-09 21:36:19 GMT [JHJ]
+# Unicode version: 12.0.0
 #
 # Unicode Character Database
 # © 2018 Unicode®, Inc.
