@@ -375,12 +375,41 @@ function moveDown(codepoint, index) {
     setStr(codepoints);
     updateInfo();
 }
+function initGlobalVariables(data) {
+    global_data = data["global_data"];
+    global_ranges = data["global_ranges"];
+    global_all_assigned_ranges = data["global_all_assigned_ranges"];
+    global_category = data["global_category"];
+    global_categoryRanges = data["global_categoryRanges"];
+    global_generalCategoryNames = data["global_generalCategoryNames"];
+    global_aliases = data["global_aliases"];
+    global_han_meanings = data["global_han_meanings"];
+    global_mandarin_readings = data["global_mandarin_readings"];
+    global_kun_readings = data["global_kun_readings"];
+    global_on_readings = data["global_on_readings"];
+    global_variationSequences = data["global_variationSequences"];
+    global_ideographicVariationSequences = data["global_ideographicVariationSequences"];
+    global_ideographicVariationCollections = data["global_ideographicVariationCollections"];
+    global_encodingNames = data["global_encodingNames"];
+    global_encodingData = data["global_encodingData"];
+    global_graphemeBreakData = data["global_graphemeBreakData"];
+    global_extendedPictograph = data["global_extendedPictograph"];
+    global_blockRanges = data["global_blockRanges"];
+    global_syllableRanges = data["global_syllableRanges"];
+    global_shortJamoNames = data["global_shortJamoNames"];
+    global_scriptRanges = data["global_scriptRanges"];
+    global_allLanguageTagsHTML = data["global_allLanguageTagsHTML"];
+    global_commonLanguageTagsHTML = data["global_commonLanguageTagsHTML"];
+}
 function initData(completion) {
-    callMultipleAsync([
-        initializeMappings,
-        initBlockData,
-        initLanguageData
-    ], completion);
+    $.getJSON('build/compiled-data.json', function (data) {
+        initGlobalVariables(data);
+        callMultipleAsync([
+            initializeMappings,
+            initBlockData,
+            initLanguageData
+        ], completion);
+    });
 }
 let loaded = false;
 $(document).ready(function () {

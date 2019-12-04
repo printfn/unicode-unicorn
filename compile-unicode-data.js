@@ -14,17 +14,10 @@ Array.prototype.sortByProperty = function(prop, reverse) {
 	});
 }
 
-let finalOutputJS = ``;
-let finalOutputTS = ``;
+let finalOutputObject = {};
 let lengths = [];
 function out(varname, typestr, variable) {
-	if (typeof(variable) == 'undefined') {
-		variable = typestr;
-		finalOutputJS += `const ${varname} = ${JSON.stringify(variable)};\n`;
-	} else {
-		finalOutputJS += `const ${varname} = ${JSON.stringify(variable)};\n`;
-		finalOutputTS += `declare var ${varname}: ${typestr}\n`;
-	}
+	finalOutputObject[varname] = variable;
 	lengths.push({
 		name: varname,
 		length: JSON.stringify(variable).length
@@ -454,11 +447,11 @@ function iterateOverFileWithRanges(path, globalArray) {
 
 lengths.sortByProperty('length', true);
 
-console.log(`Total length: ${finalOutputJS.length}`);
+const finalOutputString = JSON.stringify(finalOutputObject);
+console.log(`Total length: ${finalOutputString.length}`);
 for (let i = 0; i < lengths.length; ++i) {
 	const x = lengths[i];
-	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutputJS.length * 100}%)`);
+	console.log(`${x.name}: ${x.length} (${lengths[i].length / finalOutputString.length * 100}%)`);
 }
 
-fs.writeFileSync('docs/build/compiled-data.js', finalOutputJS);
-fs.writeFileSync('docs/build/compiled-data-declarations.ts', finalOutputTS);
+fs.writeFileSync('docs/build/compiled-data.json', finalOutputString);
