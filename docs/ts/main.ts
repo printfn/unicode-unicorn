@@ -153,13 +153,16 @@ function initGlobalVariables(data: any) {
 }
 
 function initData(completion: () => void) {
-	$.getJSON('build/compiled-data.json', function(data) {
-		initGlobalVariables(data);
+	const req = new XMLHttpRequest();
+	req.open('GET', 'build/compiled-data.json', true);
+	req.onload = function () {
+		initGlobalVariables(JSON.parse(req.response as string));
 		callMultipleAsync([
 			initializeMappings,
 			initBlockData,
 			initLanguageData], completion);
-	});
+	};
+	req.send(null);
 }
 
 let loaded = false;

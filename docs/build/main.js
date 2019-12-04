@@ -402,14 +402,17 @@ function initGlobalVariables(data) {
     global_commonLanguageTagsHTML = data["global_commonLanguageTagsHTML"];
 }
 function initData(completion) {
-    $.getJSON('build/compiled-data.json', function (data) {
-        initGlobalVariables(data);
+    const req = new XMLHttpRequest();
+    req.open('GET', 'build/compiled-data.json', true);
+    req.onload = function () {
+        initGlobalVariables(JSON.parse(req.response));
         callMultipleAsync([
             initializeMappings,
             initBlockData,
             initLanguageData
         ], completion);
-    });
+    };
+    req.send(null);
 }
 let loaded = false;
 $(document).ready(function () {
