@@ -434,7 +434,9 @@ $(document).ready(function () {
                     showCodepageDetail(parseInt(arg[1]));
                 }
                 else if (arg[0] == `str`) {
-                    setStr(stoc(arg[1]));
+                    // search queries via the omnibox are URL-escaped, and spaces
+                    // are converted to '+'.
+                    setStr(stoc(unescape(arg[1].replace(/\+/g, ' '))));
                 }
             }
         };
