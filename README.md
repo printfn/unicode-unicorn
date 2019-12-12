@@ -11,7 +11,7 @@ Click [here](https://unicode.website/) for a live demo of Unicode Unicorn.
 `docs/build` contains compiled JavaScript and CSS files. It can be regenerated
 with `$ npm run build`, which performs the following tasks:
 
-1. Generate `docs/build/compiled-data-declarations.ts` and `docs/build/compiled-data.js` from various data files in `data`.
+1. Generate `docs/build/compiled-data.json` from various data files in `data`.
 2. Run `tsc`, which compiles all `.ts` files in `docs/ts` into `docs/build/main.js`
 3. Merge important library `.js` files from `node_modules` into `docs/build/libs.js`.
 4. Copy library CSS and PNG files from `node_modules` to `docs/build/`
