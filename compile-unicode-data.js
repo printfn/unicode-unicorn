@@ -21,16 +21,23 @@ function out(varname, typestr, variable) {
 	})
 }
 
+function stripCommentsFromLine(line) {
+	if (line.length === 0 || line[0] == '#') {
+		return;
+	}
+	if (line.indexOf(`#`) != -1) {
+		return line.substring(0, line.indexOf('#'));
+	}
+	return line;
+}
+
 function iterateOverFile(path, each) {
 	const lines = fs.readFileSync(path, 'utf8').split('\n');
-	for (var line of lines) {
-		if (line.length === 0 || line[0] == '#') {
-			continue;
+	for (const line of lines) {
+		const lineWithoutComments = stripCommentsFromLine(line);
+		if (lineWithoutComments) {
+			each(lineWithoutComments);
 		}
-		if (line.indexOf(`#`) != -1) {
-			line = line.substring(0, line.indexOf('#'));
-		}
-		each(line);
 	}
 }
 
