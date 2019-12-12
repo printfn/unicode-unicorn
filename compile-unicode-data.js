@@ -375,6 +375,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		if (fields[`Type`] == `redundant`) continue;
 		// there is a lang value for every valid lang+extlang combination
 		if (fields[`Type`] == `extlang`) continue;
+		if (fields[`Deprecated`]) continue;
 
 		if (!fields[`Subtag`] || !fields[`Description`])
 			throw `Invalid Format`;
