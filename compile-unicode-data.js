@@ -21,10 +21,8 @@ function out(varname, typestr, variable) {
 	})
 }
 
-function iterateOverFile(path, before, each) {
+function iterateOverFile(path, each) {
 	const lines = fs.readFileSync(path, `utf8`).split('\n');
-	if (before)
-		before(lines);
 	if (each) {
 		for (let i = 0; i < lines.length; ++i) {
 			let line = lines[i];
@@ -40,7 +38,7 @@ function iterateOverFile(path, before, each) {
 }
 
 function iterateOverFileWithRanges(path, globalArray) {
-	iterateOverFile(path, undefined, function(line) {
+	iterateOverFile(path, function(line) {
 		const splitLine = line.split(`;`);
 		let startCodepoint = 0, endCodepoint = 0;
 		if (splitLine[0].trim().split(`..`).length == 2) {
@@ -81,7 +79,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 
 	let startCodepoint = 0;
 
-	iterateOverFile(`data/Unicode/Unihan/Unihan_Readings.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/Unihan/Unihan_Readings.txt`, function(line) {
 		const fields = line.split(`\t`);
 		const codepoint = parseInt(fields[0].substring(2), 16);
 		if (fields[1] == `kDefinition`) {
@@ -95,7 +93,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	iterateOverFile(`data/Unicode/UCD/UnicodeData.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/UnicodeData.txt`, function(line) {
 		const data_line = line.split(`;`);
 		if (data_line[1].endsWith(`, First>`)) {
 			startCodepoint = parseInt(data_line[0], 16);
@@ -129,7 +127,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	iterateOverFile(`data/Unicode/UCD/PropertyValueAliases.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/PropertyValueAliases.txt`, function(line) {
 		let splitLine = line.split(`#`);
 		splitLine = splitLine[0];
 		splitLine = splitLine.split(`;`);
@@ -140,7 +138,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
 	});
 
-	iterateOverFile(`data/Unicode/UCD/NameAliases.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/NameAliases.txt`, function(line) {
 		const splitLine = line.split(`;`);
 		const codepoint = parseInt(splitLine[0], 16);
 		global_aliases.push({codepoint: codepoint, alias: splitLine[1], type: splitLine[2]});
@@ -210,7 +208,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_ideographicVariationSequences = [];
 	let global_ideographicVariationCollections = [];
 
-	iterateOverFile(`data/Unicode/UCD/StandardizedVariants.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/StandardizedVariants.txt`, function(line) {
 		const fields = line.split(`;`);
 		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
 		const description = fields[1].trim();
@@ -225,7 +223,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		});
 	});
 
-	iterateOverFile(`data/Unicode/IVD/IVD_Collections.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/IVD/IVD_Collections.txt`, function(line) {
 		const fields = line.split(`;`);
 		global_ideographicVariationCollections.push({
 			name: fields[0],
@@ -233,7 +231,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		});
 	});
 
-	iterateOverFile(`data/Unicode/IVD/IVD_Sequences.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/IVD/IVD_Sequences.txt`, function(line) {
 		const fields = line.split(`;`);
 		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
 		const collection = fields[1].trim();
@@ -256,7 +254,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_encodingNames = [];
 	let global_encodingData = [];
 
-	iterateOverFile(`data/encodings.txt`, undefined, function(line) {
+	iterateOverFile(`data/encodings.txt`, function(line) {
 		const parts = line.split(`\t`);
 		const type = parts[0];
 		const name = parts[1];
@@ -278,7 +276,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_graphemeBreakData = {};
 	let global_extendedPictograph = [];
 
-	iterateOverFile(`data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt`, function() {}, function(line) {
+	iterateOverFile(`data/Unicode/UCD/auxiliary/GraphemeBreakProperty.txt`, function(line) {
 		let state = 1;
 		let startCodepoint = ``;
 		let endCodepoint = ``;
@@ -330,7 +328,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	iterateOverFile(`data/Unicode/emoji-data.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/emoji-data.txt`, function(line) {
 		const components = line.split(`;`);
 		if (components.length != 2) return;
 		if (components[1].trim() != `Extended_Pictographic`) return;
@@ -357,7 +355,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_shortJamoNames = {};
 	let global_scriptRanges = [];
 
-	iterateOverFile(`data/Unicode/UCD/Blocks.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/Blocks.txt`, function(line) {
 		const splitLine = line.split(`;`);
 		const startCodepoint = parseInt(splitLine[0].split(`..`)[0], 16);
 		const endCodepoint = parseInt(splitLine[0].split(`..`)[1], 16);
@@ -371,7 +369,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 
 	iterateOverFileWithRanges(`data/Unicode/UCD/HangulSyllableType.txt`, global_syllableRanges);
 
-	iterateOverFile(`data/Unicode/UCD/Jamo.txt`, undefined, function(line) {
+	iterateOverFile(`data/Unicode/UCD/Jamo.txt`, function(line) {
 		const splitLine = line.split(`;`);
 		const codepoint = parseInt(splitLine[0].trim(), 16);
 		const shortJamoName = splitLine[1].trim();
