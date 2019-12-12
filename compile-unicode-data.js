@@ -22,18 +22,15 @@ function out(varname, typestr, variable) {
 }
 
 function iterateOverFile(path, each) {
-	const lines = fs.readFileSync(path, `utf8`).split('\n');
-	if (each) {
-		for (let i = 0; i < lines.length; ++i) {
-			let line = lines[i];
-			if (line.length === 0 || line[0] == `#`) {
-				continue;
-			}
-			if (line.indexOf(`#`) != -1) {
-				line = line.substring(0, line.indexOf(`#`));
-			}
-			each(line);
+	const lines = fs.readFileSync(path, 'utf8').split('\n');
+	for (var line of lines) {
+		if (line.length === 0 || line[0] == '#') {
+			continue;
 		}
+		if (line.indexOf(`#`) != -1) {
+			line = line.substring(0, line.indexOf('#'));
+		}
+		each(line);
 	}
 }
 
