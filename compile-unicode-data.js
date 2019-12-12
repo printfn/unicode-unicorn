@@ -21,7 +21,7 @@ function out(varname, typestr, variable) {
 	})
 }
 
-function iterateOverFile(path, before, each, after) {
+function iterateOverFile(path, before, each) {
 	const lines = fs.readFileSync(path, `utf8`).split('\n');
 	if (before)
 		before(lines);
