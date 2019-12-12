@@ -15,7 +15,6 @@ cat node_modules/chosen-js/chosen.jquery.min.js >> docs/build/libs.js
 cat node_modules/he/he.js >> docs/build/libs.js
 echo "window.module = {};" >> docs/build/libs.js
 cat node_modules/punycode/punycode.js >> docs/build/libs.js
-cat node_modules/randomcolor/randomColor.js >> docs/build/libs.js
 cat node_modules/utf8/utf8.js >> docs/build/libs.js
 
 cp node_modules/bootstrap/dist/css/bootstrap.min.css docs/build/

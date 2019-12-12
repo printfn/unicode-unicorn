@@ -1,4 +1,11 @@
-declare function randomColor(desc: { luminosity?: string; }): string;
+function getRandomColor() {
+	const letters = '0123456789abcdef';
+	let color = '#';
+	for (let i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+}
 
 let global_colorMap: { [key: string]: string; } = {
 	'C': `#f97e77`,
@@ -13,7 +20,5 @@ function randomColorForKey(key: string): string {
 	if (global_colorMap[key]) {
 		return global_colorMap[key];
 	}
-	return global_colorMap[key] = randomColor({ // format: "#a0ff9b"
-		luminosity: `light`
-	});
+	return global_colorMap[key] = getRandomColor();
 }
