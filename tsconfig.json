@@ -9,7 +9,6 @@
 		"lib": ["dom", "es6", "es2015"]
 	},
 	"include": [
-		"./docs/ts/**/*.ts",
-		"./docs/build/compiled-data-declarations.ts"
+		"./docs/ts/**/*.ts"
 	]
 }
