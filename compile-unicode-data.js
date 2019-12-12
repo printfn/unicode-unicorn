@@ -13,7 +13,7 @@ Array.prototype.sortByProperty = function(prop) {
 
 let finalOutputObject = {};
 let lengths = [];
-function out(varname, typestr, variable) {
+function out(varname, variable) {
 	finalOutputObject[varname] = variable;
 	lengths.push({
 		name: varname,
@@ -78,8 +78,6 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_mandarin_readings = {};
 	let global_kun_readings = {};
 	let global_on_readings = {};
-
-	//let global_search_strings = {};
 
 	let startCodepoint = 0;
 
@@ -158,52 +156,19 @@ function iterateOverFileWithRanges(path, globalArray) {
 		return a.alias > b.alias ? 1 : 0;
 	});
 
-	/*const getSearchString = function(codepoint) {
-		let res = `${ctos([codepoint])
-		}|U+${itos(codepoint, 16, 4)
-		}|cp:${codepoint
-		}|name:${getName(codepoint, true)
-		}|script:${getScriptForCodepoint(codepoint).replace(/_/g, ` `)
-		}|category:${getCharacterCategoryName(codepoint)}`;
-		for (let i = 0; i < global_aliases.length; ++i) {
-			if (global_aliases[i].codepoint == codepoint) {
-				res += `|name:${global_aliases[i].alias}`;
-			}
-		}
-		if (global_han_meanings[codepoint])
-			res += global_han_meanings[codepoint];
-		if (global_kun_readings[codepoint])
-			res += `|kun:${global_kun_readings[codepoint].split(`, `).join(`|kun:`)}`;
-		if (global_on_readings[codepoint])
-			res += `|on:${global_on_readings[codepoint].split(`, `).join(`|on:`)}`;
-		if (global_mandarin_readings[codepoint])
-			res += `|mandarin:${global_mandarin_readings[codepoint].split(`, `).join(`|mandarin:`)}`;
-		return res.toUpperCase();
-	}
+	out(`global_data`, global_data);
+	out(`global_ranges`, global_ranges);
+	out(`global_all_assigned_ranges`, global_all_assigned_ranges);
+	out(`global_category`, global_category);
+	out(`global_categoryRanges`, global_categoryRanges);
 
-	for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
-		const range = global_all_assigned_ranges[i];
-		const end = range.endCodepoint;
-		for (let c = range.startCodepoint; c <= end; ++c) {
-			global_search_strings[c] = getSearchString(c);
-		}
-	}*/
+	out(`global_generalCategoryNames`, global_generalCategoryNames);
+	out(`global_aliases`, global_aliases);
 
-	out(`global_data`, `{ [codepoint: number]: string; }`, global_data);
-	out(`global_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_ranges);
-	out(`global_all_assigned_ranges`, `{ startCodepoint: number; endCodepoint: number; rangeName: string }[]`, global_all_assigned_ranges);
-	out(`global_category`, `{ [codepoint: number]: string; }`, global_category);
-	out(`global_categoryRanges`, `{ startCodepoint: number; endCodepoint: number; categoryCode: string }[]`, global_categoryRanges);
-
-	out(`global_generalCategoryNames`, `{ [categoryCode: string]: string; }`, global_generalCategoryNames);
-	out(`global_aliases`, `{ codepoint: number; alias: string; type: string; }[]`, global_aliases);
-
-	out(`global_han_meanings`, `{ [codepoint: number]: string; }`, global_han_meanings);
-	out(`global_mandarin_readings`, `{ [codepoint: number]: string; }`, global_mandarin_readings);
-	out(`global_kun_readings`, `{ [codepoint: number]: string; }`, global_kun_readings);
-	out(`global_on_readings`, `{ [codepoint: number]: string; }`, global_on_readings);
-
-	//out(`global_search_strings`, `{ [codepoint: number]: string; }`, global_search_strings);
+	out(`global_han_meanings`, global_han_meanings);
+	out(`global_mandarin_readings`, global_mandarin_readings);
+	out(`global_kun_readings`, global_kun_readings);
+	out(`global_on_readings`, global_on_readings);
 })();
 
 // Variation sequences
@@ -248,9 +213,9 @@ function iterateOverFileWithRanges(path, globalArray) {
 		});
 	});
 
-	out(`global_variationSequences`, `VariationSequence[]`, global_variationSequences);
-	out(`global_ideographicVariationSequences`, `IdeographicVariationSequence[]`, global_ideographicVariationSequences);
-	out(`global_ideographicVariationCollections`, `VariationCollection[]`, global_ideographicVariationCollections);
+	out(`global_variationSequences`, global_variationSequences);
+	out(`global_ideographicVariationSequences`, global_ideographicVariationSequences);
+	out(`global_ideographicVariationCollections`, global_ideographicVariationCollections);
 })();
 
 // Encodings
@@ -271,8 +236,8 @@ function iterateOverFileWithRanges(path, globalArray) {
 		});
 	});
 
-	out(`global_encodingNames`, `string[]`, global_encodingNames);
-	out(`global_encodingData`, `{ name: string, type: string, data: string }[]`, global_encodingData);
+	out(`global_encodingNames`, global_encodingNames);
+	out(`global_encodingData`, global_encodingData);
 })();
 
 // Graphemes & Emoji
@@ -348,8 +313,8 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	out(`global_graphemeBreakData`, `{ [codepoint: number]: string; }`, global_graphemeBreakData);
-	out(`global_extendedPictograph`, `number[]`, global_extendedPictograph);
+	out(`global_graphemeBreakData`, global_graphemeBreakData);
+	out(`global_extendedPictograph`, global_extendedPictograph);
 })();
 
 // Blocks
@@ -382,10 +347,10 @@ function iterateOverFileWithRanges(path, globalArray) {
 
 	iterateOverFileWithRanges(`data/Unicode/UCD/Scripts.txt`, global_scriptRanges);
 
-	out(`global_blockRanges`, `{ startCodepoint: number; endCodepoint: number; blockName: string; }[]`, global_blockRanges);
-	out(`global_syllableRanges`, `{ s: number; e: number; v: string; }[]`, global_syllableRanges);
-	out(`global_shortJamoNames`, `{ [codepoint: number]: string; }`, global_shortJamoNames);
-	out(`global_scriptRanges`, `{ s: number; e: number; v: string; }[]`, global_scriptRanges);
+	out(`global_blockRanges`, global_blockRanges);
+	out(`global_syllableRanges`, global_syllableRanges);
+	out(`global_shortJamoNames`, global_shortJamoNames);
+	out(`global_scriptRanges`, global_scriptRanges);
 
 })();
 
@@ -438,8 +403,8 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 		return htmls;
 	}
-	out(`global_allLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(allLanguageTags));
-	out(`global_commonLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(commonLanguageTags));
+	out(`global_allLanguageTagsHTML`, tagsToHTMLStrings(allLanguageTags));
+	out(`global_commonLanguageTagsHTML`, tagsToHTMLStrings(commonLanguageTags));
 })();
 
 lengths.sortByProperty('length');
