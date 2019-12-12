@@ -5,12 +5,9 @@
 const fs = require('fs');
 const { exec } = require('child_process');
 
-Array.prototype.sortByProperty = function(prop, reverse) {
+Array.prototype.sortByProperty = function(prop) {
 	return this.sort(function(a, b) {
-		if (reverse)
-			return a[prop] < b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
-		else
-			return a[prop] > b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
+		return a[prop] > b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
 	});
 }
 
@@ -443,7 +440,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 	out(`global_commonLanguageTagsHTML`, `{ [key: string]: string; }`, tagsToHTMLStrings(commonLanguageTags));
 })();
 
-lengths.sortByProperty('length', true);
+lengths.sortByProperty('length');
 
 const finalOutputString = JSON.stringify(finalOutputObject);
 console.log(`Total length: ${finalOutputString.length}`);
