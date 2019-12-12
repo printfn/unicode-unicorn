@@ -6,7 +6,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 
 Array.prototype.sortByProperty = function(prop) {
-	return this.sort(function(a, b) {
+	this.sort(function(a, b) {
 		return a[prop] > b[prop] ? 1 : a[prop] == b[prop] ? 0 : -1;
 	});
 }
