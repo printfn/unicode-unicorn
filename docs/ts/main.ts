@@ -182,6 +182,8 @@ $(document).ready(function() {
 					setStr(arg[1].split(`,`).map((str) => parseInt(str)));
 				} else if (arg[0] == `info`) {
 					showCodepageDetail(parseInt(arg[1]));
+				} else if (arg[0] == `str`) {
+					setStr(stoc(arg[1]));
 				}
 			}
 		};
