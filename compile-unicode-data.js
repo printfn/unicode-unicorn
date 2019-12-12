@@ -1,6 +1,5 @@
 // This script parses data from various files in the 'data' directory,
-//  and builds a single JS file in docs/build/compiled-data.js, and
-//  a TS file in docs/build/compiled-data-declarations.ts.
+//  and builds a single JSON file docs/build/compiled-data.json.
 
 const fs = require('fs');
 const { exec } = require('child_process');
