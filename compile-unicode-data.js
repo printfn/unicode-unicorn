@@ -416,18 +416,16 @@ function iterateOverFileWithRanges(path, globalArray) {
 		if (!fields[`Subtag`] || !fields[`Description`])
 			throw `Invalid Format`;
 
-		allLanguageTags.push({
+		const languageTag = {
 			code: fields[`Subtag`],
 			name: fields[`Description`],
 			type: fields[`Type`]
-		});
+		};
+
+		allLanguageTags.push(languageTag);
 
 		if (fields[`Type`] != `language` || fields[`Subtag`].length <= 2){
-			commonLanguageTags.push({
-				code: fields[`Subtag`],
-				name: fields[`Description`],
-				type: fields[`Type`]
-			});
+			commonLanguageTags.push(languageTag);
 		}
 	}
 	commonLanguageTags.sortByProperty('name');
