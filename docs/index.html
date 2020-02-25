@@ -77,10 +77,8 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="search">
 				<div id="advanced-search-div">
-					<table style="width: 100%">
-						<tr><td colspan="2"><b>Search for a codepoint:</b></td></tr>
-						<tr><td colspan="2"><input type="text" id="input" class="lang-attr"></td></tr>
-					</table>
+					<label for="input">Search for a codepoint:</label>
+					<input type="text" id="input" class="lang-attr">
 				</div>
 				<table class="table table-striped" id="searchResults">
 				</table>
@@ -121,19 +119,19 @@
 						<option>Hexadecimal (lowercase)</option>
 					</select>
 					<br>
-					Code Unit Padding: <input type="number" value="0" min="0" id="minCodeUnitLength"> digits (0 for automatic padding based on encoding and format)
+					<label for="minCodeUnitLength">Code Unit Padding:</label> <input type="number" value="0" min="0" id="minCodeUnitLength"> digits (0 for automatic padding based on encoding and format)
 					<br>
-					Code Unit Prefix: <input type="text" value="\u" id="codeUnitPrefix" style="width: unset;">
+					<label for="codeUnitPrefix">Code Unit Prefix:</label> <input type="text" value="\u" id="codeUnitPrefix" style="width: unset;">
 					<br>
-					Code Unit Suffix: <input type="text" id="codeUnitSuffix" style="width: unset;">
+					<label for="codeUnitSuffix">Code Unit Suffix:</label> <input type="text" id="codeUnitSuffix" style="width: unset;">
 					<br>
-					Grouping: <input type="number" value="8" id="groupingCount"> code units
+					<label for="groupingCount">Grouping:</label> <input type="number" value="8" id="groupingCount"> code units
 					<br>
-					Group Prefix: <input type="text" id="groupPrefix" style="width: unset;" value="&quot;">
+					<label for="groupPrefix">Group Prefix:</label> <input type="text" id="groupPrefix" style="width: unset;" value="&quot;">
 					<br>
-					Group Suffix: <input type="text" id="groupSuffix" style="width: unset;" value="&quot;">
+					<label for="groupSuffix">Group Suffix:</label> <input type="text" id="groupSuffix" style="width: unset;" value="&quot;">
 					<br>
-					Group Separator:
+					<label for="outputJoinerText">Group Separator:</label>
 					<br>
 					<textarea id="outputJoinerText" class="lang-attr"> + 
 </textarea>
@@ -143,7 +141,7 @@
 				<table class="table table-striped" id="decodedCodepoints"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="mojibake">
-				<p>Please select two or more encodings from the list:</p>
+				<label for="mojibakeEncodings">Please select two or more encodings from the list:</label>
 				<select id="mojibakeEncodings" multiple style="height: 200px;"></select>
 				<br><br>
 				<pre id="mojibakeOutput" style="width: 100%"></pre>
@@ -190,26 +188,25 @@
 				<table class="table" id="codepage"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="settings">
-				<b>Internal String:</b>
 				<p>
-					<input type="checkbox" id="useInternalString"> Use internal string<br>
-					Use internal memory instead of above textarea for storing the Unicode string. This prevents browsers from automatically converting line endings.
+					<label for="useInternalString">Use internal string:</label> <input type="checkbox" id="useInternalString"><br>
+					Use internal memory instead of the above textarea to store the Unicode string. This prevents browsers from automatically converting line endings.
 				</p>
 				<b>Language, Script and Region Settings:</b>
 				<p>
-					The shapes of some characters may change depending on your browser's language. For example, Han characters have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" rel="noopener" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
-					<input type="button" id="showRareLanguages" value="Show rare languages (slows down the browser)"><br>
-					Language: <select id="languageList"></select><br>
-					Script: <select id="scriptList"></select><br>
-					Region: <select id="regionList"></select><br>
-					Variant: <select id="variantList"></select><br>
-					Code: <input type="text" id="languageCode" placeholder="Language code (e.g. en, en-US, zh-Hant)">
+					The shapes of some glyphs may change depending on your browser's language. For example, Han glyphs have different shapes in Chinese and Japanese. You can overwrite your browser's language by choosing the correct language settings here. Alternatively, you can type a valid language code into the textbox below. See <a target="_blank" rel="noopener" href="https://www.w3.org/International/articles/language-tags/">here</a> for more information.<br>
+					<input type="button" id="showRareLanguages" value="Show rare languages (slows down the browser)"><br><br>
+					<label for="languageList">Language:</label> <select id="languageList"></select><br><br>
+					<label for="scriptList">Script:</label> <select id="scriptList"></select><br><br>
+					<label for="regionList">Region:</label> <select id="regionList"></select><br><br>
+					<label for="variantList">Variant:</label> <select id="variantList"></select><br><br>
+					<label for="languageCode">Language Code (e.g. en, en-US, zh-Hant):</label> <input type="text" id="languageCode">
 				</p>
 				<b>Search syntax:</b>
 				<p>
 					Use commas to separate multiple terms.<br>
 					All searches are case-insensitive.<br>
-					By default, all visible character properties are searched, but you can use this syntax to search for specific character properties:
+					By default, all visible codepoint properties are searched, but you can use this syntax to search for specific codepoint properties:
 					<!-- no indentation as this would be rendered in the DOM -->
 					<pre>U+0030
 cp:48
