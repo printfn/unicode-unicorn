@@ -76,7 +76,7 @@ function updateSuggestions() {
 	renderCodepointsInTable(
 		results,
 		`searchResults`,
-		[{displayName: `Insert`, functionName: `output`}]
+		[{displayName: `Insert`, functionName: `output`, require: () => true}]
 	);
 }
 

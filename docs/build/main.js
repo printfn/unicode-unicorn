@@ -335,7 +335,7 @@ function output(codepoint) {
 function updateSuggestions() {
     const input = $(`#input`).val();
     const results = searchCodepoints(input);
-    renderCodepointsInTable(results, `searchResults`, [{ displayName: `Insert`, functionName: `output` }]);
+    renderCodepointsInTable(results, `searchResults`, [{ displayName: `Insert`, functionName: `output`, require: () => true }]);
 }
 function normalizeString(form) {
     setStr(stoc(ctos(getStr()).normalize(form)));
@@ -1073,10 +1073,8 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
         for (const j in buttons) {
             const buttonDescription = buttons[j];
             let disabled = ``;
-            if (buttonDescription.require) {
-                if (!buttonDescription.require(i, codepoints.length)) {
-                    disabled = `disabled`;
-                }
+            if (!buttonDescription.require(i, codepoints.length)) {
+                disabled = `disabled`;
             }
             buttonStr += `<input
         type="button" ${disabled}
@@ -1105,15 +1103,16 @@ function updateCodepointList() {
     const codepoints = getStr();
     renderCodepointsInTable(codepoints, `codepointlist`, [{
             displayName: `Delete`,
-            functionName: `deleteAtIndex`
+            functionName: `deleteAtIndex`,
+            require: () => true
         }, {
             displayName: `Move up`,
             functionName: `moveUp`,
-            require: function (i, length) { return i != 0; }
+            require: (i, length) => i != 0
         }, {
             displayName: `Move down`,
             functionName: `moveDown`,
-            require: function (i, length) { return i != length - 1; }
+            require: (i, length) => i != length - 1
         }]);
 }
 function getRandomColor() {
@@ -1143,7 +1142,7 @@ function updateEncodedAndDecodedStrings() {
     $(`#encodedOutput`).html(encodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), codepoints));
     const decodedOutput = decodeOutput($(`#byteOrderMark option:selected`).text(), $(`#outputEncoding option:selected`).text(), $(`#outputFormat option:selected`).text(), $(`#encodedInput`).val());
     if (decodedOutput)
-        renderCodepointsInTable(decodedOutput, `decodedCodepoints`, [{ displayName: `Insert`, functionName: `output` }]);
+        renderCodepointsInTable(decodedOutput, `decodedCodepoints`, [{ displayName: `Insert`, functionName: `output`, require: () => true }]);
 }
 function saveToSlot(slotNumber) {
     try {

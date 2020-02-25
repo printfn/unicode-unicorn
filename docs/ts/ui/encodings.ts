@@ -17,5 +17,5 @@ function updateEncodedAndDecodedStrings() {
 		renderCodepointsInTable(
 			decodedOutput,
 			`decodedCodepoints`,
-			[{displayName: `Insert`, functionName: `output`}]);
+			[{displayName: `Insert`, functionName: `output`, require: () => true}]);
 }

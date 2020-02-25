@@ -3,7 +3,7 @@ interface ButtonInfo {
   functionName: string; // name of global function called on click
 
   // if provided, if it returns false for row i and row count length, button will be disabled
-  require?: (idx: number, length: number) => boolean;
+  require: (idx: number, length: number) => boolean;
 }
 
 function renderCodepointsInTable(codepoints: number[], tableId: string, buttons: ButtonInfo[]) {
@@ -32,10 +32,8 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
     for (const j in buttons) {
       const buttonDescription = buttons[j];
       let disabled = ``;
-      if (buttonDescription.require) {
-        if (!buttonDescription.require(i, codepoints.length)) {
-          disabled = `disabled`;
-        }
+      if (!buttonDescription.require(i, codepoints.length)) {
+        disabled = `disabled`;
       }
       buttonStr += `<input
         type="button" ${disabled}
@@ -67,14 +65,15 @@ function updateCodepointList() {
   const codepoints = getStr();
   renderCodepointsInTable(codepoints, `codepointlist`, [{
     displayName: `Delete`,
-    functionName: `deleteAtIndex`
+    functionName: `deleteAtIndex`,
+    require: () => true
   }, {
     displayName: `Move up`,
     functionName: `moveUp`,
-    require: function(i, length) { return i != 0; }
+    require: (i, length) => i != 0
   }, {
     displayName: `Move down`,
     functionName: `moveDown`,
-    require: function(i, length) { return i != length - 1; }
+    require: (i, length) => i != length - 1
   }]);
 }
