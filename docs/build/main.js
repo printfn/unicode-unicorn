@@ -436,7 +436,7 @@ $(document).ready(function () {
                 else if (arg[0] == `str`) {
                     // search queries via the omnibox are URL-escaped, and spaces
                     // are converted to '+'.
-                    setStr(utf8.decode(unescape(arg[1].replace(/\+/g, ' '))));
+                    setStr(stoc(utf8.decode(unescape(arg[1].replace(/\+/g, ' ')))));
                 }
             }
         };
