@@ -1084,7 +1084,7 @@ function renderCodepointsInTable(codepoints, tableId, buttons) {
         value="${buttonDescription.displayName}">`;
         }
         html += `
-    <tr>
+    <tr class="char-row-category-${getCharacterCategoryCode(codepoint)[0].toLowerCase()}">
       <td>${buttonStr}</td>
       <td>U+${itos(codepoint, 16, 4)}</td>
       <td>${codepoint}</td>
