@@ -152,6 +152,12 @@ function initGlobalVariables(data: any) {
 	global_commonLanguageTagsHTML = data["global_commonLanguageTagsHTML"];
 }
 
+declare let wasm_bindgen: any;
+
+function initWasm(completion: () => void) {
+	wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm').then(completion);
+}
+
 function initData(completion: () => void) {
 	const req = new XMLHttpRequest();
 	req.open('GET', 'build/compiled-data.json', true);
@@ -160,7 +166,8 @@ function initData(completion: () => void) {
 		callMultipleAsync([
 			initializeMappings,
 			initBlockData,
-			initLanguageData], completion);
+			initLanguageData,
+			initWasm], completion);
 	};
 	req.send(null);
 }

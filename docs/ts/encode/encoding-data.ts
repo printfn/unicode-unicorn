@@ -22,12 +22,12 @@ function stoc(string: string): number[] {
 	return punycode.ucs2.decode(string);
 }
 
-function nextCodepoint(codepoint: number) {
-	return codepoint != 0x10FFFF ? itos(codepoint + 1, 10) : itos(0, 10);
+function nextCodepoint(codepoint: number): number {
+	return wasm_bindgen.next_codepoint(codepoint);
 }
 
-function previousCodepoint(codepoint: number) {
-	return codepoint != 0 ? itos(codepoint - 1, 10) : itos(0x10FFFF, 10);
+function previousCodepoint(codepoint: number): number {
+	return wasm_bindgen.previous_codepoint(codepoint);
 }
 
 function ctou8(codepoints: number[]): number[] {

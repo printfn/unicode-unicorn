@@ -411,6 +411,9 @@ function initGlobalVariables(data) {
     global_allLanguageTagsHTML = data["global_allLanguageTagsHTML"];
     global_commonLanguageTagsHTML = data["global_commonLanguageTagsHTML"];
 }
+function initWasm(completion) {
+    wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm').then(completion);
+}
 function initData(completion) {
     const req = new XMLHttpRequest();
     req.open('GET', 'build/compiled-data.json', true);
@@ -419,7 +422,8 @@ function initData(completion) {
         callMultipleAsync([
             initializeMappings,
             initBlockData,
-            initLanguageData
+            initLanguageData,
+            initWasm
         ], completion);
     };
     req.send(null);
@@ -764,10 +768,10 @@ function stoc(string) {
     return punycode.ucs2.decode(string);
 }
 function nextCodepoint(codepoint) {
-    return codepoint != 0x10FFFF ? itos(codepoint + 1, 10) : itos(0, 10);
+    return wasm_bindgen.next_codepoint(codepoint);
 }
 function previousCodepoint(codepoint) {
-    return codepoint != 0 ? itos(codepoint - 1, 10) : itos(0x10FFFF, 10);
+    return wasm_bindgen.previous_codepoint(codepoint);
 }
 function ctou8(codepoints) {
     const u8str = utf8.encode(ctos(codepoints));
@@ -1047,8 +1051,8 @@ function showCodepageDetail(codepoint) {
         encodingsString += `${encoding}: ${html}\n`;
     });
     $(`#detail-encoding-outputs`).html(encodingsString);
-    $(`#detail-previous-cp`).attr(`data-cp`, previousCodepoint(codepoint));
-    $(`#detail-next-cp`).attr(`data-cp`, nextCodepoint(codepoint));
+    $(`#detail-previous-cp`).attr(`data-cp`, itos(previousCodepoint(codepoint), 10));
+    $(`#detail-next-cp`).attr(`data-cp`, itos(nextCodepoint(codepoint), 10));
     jQueryModal(`#codepoint-detail`, `show`);
 }
 // called from button in modal dialog to navigate to a different codepoint

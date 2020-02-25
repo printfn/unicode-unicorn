@@ -67,8 +67,8 @@ function showCodepageDetail(codepoint: number) {
 
   $(`#detail-encoding-outputs`).html(encodingsString);
 
-  $(`#detail-previous-cp`).attr(`data-cp`, previousCodepoint(codepoint));
-  $(`#detail-next-cp`).attr(`data-cp`, nextCodepoint(codepoint));
+  $(`#detail-previous-cp`).attr(`data-cp`, itos(previousCodepoint(codepoint), 10));
+  $(`#detail-next-cp`).attr(`data-cp`, itos(nextCodepoint(codepoint), 10));
   
   jQueryModal(`#codepoint-detail`, `show`);
 }
