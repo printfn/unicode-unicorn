@@ -138,7 +138,6 @@ function initGlobalVariables(data: any) {
 	global_kun_readings = data["global_kun_readings"];
 	global_on_readings = data["global_on_readings"];
 	global_variationSequences = data["global_variationSequences"];
-	global_ideographicVariationSequences = data["global_ideographicVariationSequences"];
 	global_ideographicVariationCollections = data["global_ideographicVariationCollections"];
 	global_encodingNames = data["global_encodingNames"];
 	global_encodingData = data["global_encodingData"];

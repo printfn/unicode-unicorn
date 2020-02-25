@@ -10,7 +10,6 @@ declare var global_mandarin_readings: { [codepoint: number]: string; }
 declare var global_kun_readings: { [codepoint: number]: string; }
 declare var global_on_readings: { [codepoint: number]: string; }
 declare var global_variationSequences: VariationSequence[]
-declare var global_ideographicVariationSequences: IdeographicVariationSequence[]
 declare var global_ideographicVariationCollections: VariationCollection[]
 declare var global_encodingNames: string[]
 declare var global_encodingData: { name: string, type: string, data: string }[]

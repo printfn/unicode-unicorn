@@ -13,6 +13,11 @@ export function next_codepoint(codepoint: number): number;
 * @returns {number} 
 */
 export function previous_codepoint(codepoint: number): number;
+/**
+* @param {number} codepoint 
+* @returns {string} 
+*/
+export function variation_sequences_for_codepoint(codepoint: number): string;
 
 /**
 * If `module_or_path` is {RequestInfo}, makes a request and

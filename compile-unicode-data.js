@@ -199,21 +199,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		});
 	});
 
-	iterateOverFile(`data/Unicode/IVD/IVD_Sequences.txt`, function(line) {
-		const fields = line.split(`;`);
-		const codepoints = fields[0].split(` `).map((str) => parseInt(str, 16));
-		const collection = fields[1].trim();
-		const item = fields[2].trim();
-		global_ideographicVariationSequences.push({
-			b: codepoints[0], // base codepoint
-			v: codepoints[1], // variation selector
-			c: collection, // collection
-			i: item // item, i.e. index into collection
-		});
-	});
-
 	out(`global_variationSequences`, global_variationSequences);
-	out(`global_ideographicVariationSequences`, global_ideographicVariationSequences);
 	out(`global_ideographicVariationCollections`, global_ideographicVariationCollections);
 })();
 

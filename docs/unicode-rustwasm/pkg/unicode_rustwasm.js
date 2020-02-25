@@ -41,6 +41,28 @@
         return ret >>> 0;
     };
 
+    let cachegetInt32Memory0 = null;
+    function getInt32Memory0() {
+        if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
+            cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
+        }
+        return cachegetInt32Memory0;
+    }
+    /**
+    * @param {number} codepoint
+    * @returns {string}
+    */
+    __exports.variation_sequences_for_codepoint = function(codepoint) {
+        try {
+            wasm.variation_sequences_for_codepoint(8, codepoint);
+            var r0 = getInt32Memory0()[8 / 4 + 0];
+            var r1 = getInt32Memory0()[8 / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_free(r0, r1);
+        }
+    };
+
     function init(module) {
         if (typeof module === 'undefined') {
             let src;

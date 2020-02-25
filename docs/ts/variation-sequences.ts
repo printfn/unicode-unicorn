@@ -37,15 +37,14 @@ function urlForIdeographicCollection(name: string) {
 
 function ideographicVariationSequencesForCodepoint(codepoint: number) {
 	const results: VariationSequence[] = [];
-	for (let i = 0; i < global_ideographicVariationSequences.length; ++i) {
-		if (global_ideographicVariationSequences[i].b == codepoint) {
-			var ivs = global_ideographicVariationSequences[i];
-			results.push({
-				baseCodepoint: ivs.b,
-				variationSelector: ivs.v,
-				description: `ideographic (entry ${ivs.i} in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(ivs.c)}">${ivs.c}</a>)`
-			});
-		}
+	const seqs_from_wasm = JSON.parse(wasm_bindgen.variation_sequences_for_codepoint(codepoint));
+	for (let i = 0; i < seqs_from_wasm.length; ++i) {
+		var ivs = seqs_from_wasm[i];
+		results.push({
+			baseCodepoint: ivs.base_codepoint,
+			variationSelector: ivs.variation_selector,
+			description: `ideographic (entry ${ivs.item} in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(ivs.collection)}">${ivs.collection}</a>)`
+		});
 	}
 	return results;
 }

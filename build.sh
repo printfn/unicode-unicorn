@@ -28,5 +28,5 @@ cp node_modules/chosen-js/chosen.min.css docs/build/
 cp node_modules/chosen-js/chosen-sprite.png docs/build/
 cp node_modules/chosen-js/chosen-sprite@2x.png docs/build/
 
-wasm-pack build --target no-modules docs/unicode-rustwasm
+DATA_DIR="$(pwd)/data" wasm-pack build --target no-modules docs/unicode-rustwasm
 rm docs/unicode-rustwasm/pkg/.gitignore
