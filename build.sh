@@ -20,6 +20,7 @@ tsc
 } > docs/build/libs.js
 
 cp node_modules/bootstrap/dist/css/bootstrap.min.css docs/build/
+cp node_modules/bootstrap/dist/css/bootstrap.min.css.map docs/build/
 cp node_modules/chosen-js/chosen.min.css docs/build/
 
 cp node_modules/chosen-js/chosen-sprite.png docs/build/
