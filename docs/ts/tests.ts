@@ -27,12 +27,12 @@ function testBlocks() {
 }
 
 function testGraphemeCount() {
-	assertEqual(countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], true), 1);
+	assertEqual(countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], 'extended'), 1);
 	assertEqual(countGraphemesForCodepoints([
 		128104, 8205, 10084, 65039, 8205, 128104,
 		128104, 8205, 10084, 65039, 8205, 128104,
-		128104, 8205, 10084, 65039, 8205, 128104], true), 3);
-	assertEqual(countGraphemesForCodepoints([127464, 127467, 127470, 127464, 127463, 127481, 127464], true), 4);
+		128104, 8205, 10084, 65039, 8205, 128104], 'extended'), 3);
+	assertEqual(countGraphemesForCodepoints([127464, 127467, 127470, 127464, 127463, 127481, 127464], 'extended'), 4);
 }
 
 const tests = [ testBlocks, testGraphemeCount ];

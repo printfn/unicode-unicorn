@@ -8,8 +8,8 @@ function hexadecimalPaddingFromEncoding(encoding: string) {
 
 function updateEncodedLengths() {
 	const codepoints = getStr();
-	$(`#extendedGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, true));
-	$(`#legacyGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, false));
+	$(`#extendedGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'extended'));
+	$(`#legacyGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'legacy'));
 	$(`#numCodepoints`).text(codepoints.length);
 	let encodingLengthsStr =
 		`<thead><tr>` +

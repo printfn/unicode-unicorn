@@ -198,9 +198,19 @@ function graphemeBreakValueForCodepoint(codepoint) {
     return `Other`;
 }
 // Updated for revision 33
-function countGraphemesForCodepoints(codepoints, useExtended) {
+function countGraphemesForCodepoints(codepoints, type) {
     if (codepoints.length === 0)
         return 0;
+    let useExtended;
+    switch (type) {
+        case 'extended':
+            useExtended = true;
+            break;
+        case 'legacy':
+            useExtended = false;
+            break;
+        default: throw "You need to specify whether to use extended or legacy grapheme clusters";
+    }
     // for GB12 and GB13
     let numberOfContinuousRegionalIndicatorSymbols = 0;
     let value1OfGB11 = false; // true if and only if LHS matches \p{Extended_Pictographic} Extend*
@@ -587,13 +597,13 @@ function testBlocks() {
     }
 }
 function testGraphemeCount() {
-    assertEqual(countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], true), 1);
+    assertEqual(countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], 'extended'), 1);
     assertEqual(countGraphemesForCodepoints([
         128104, 8205, 10084, 65039, 8205, 128104,
         128104, 8205, 10084, 65039, 8205, 128104,
         128104, 8205, 10084, 65039, 8205, 128104
-    ], true), 3);
-    assertEqual(countGraphemesForCodepoints([127464, 127467, 127470, 127464, 127463, 127481, 127464], true), 4);
+    ], 'extended'), 3);
+    assertEqual(countGraphemesForCodepoints([127464, 127467, 127470, 127464, 127463, 127481, 127464], 'extended'), 4);
 }
 const tests = [testBlocks, testGraphemeCount];
 function runTests() {
@@ -1175,8 +1185,8 @@ function hexadecimalPaddingFromEncoding(encoding) {
 }
 function updateEncodedLengths() {
     const codepoints = getStr();
-    $(`#extendedGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, true));
-    $(`#legacyGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, false));
+    $(`#extendedGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'extended'));
+    $(`#legacyGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'legacy'));
     $(`#numCodepoints`).text(codepoints.length);
     let encodingLengthsStr = `<thead><tr>` +
         `<th>Encoding</th>` +

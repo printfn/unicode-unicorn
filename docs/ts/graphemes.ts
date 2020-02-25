@@ -14,9 +14,16 @@ function graphemeBreakValueForCodepoint(codepoint: number): string {
 }
 
 // Updated for revision 33
-function countGraphemesForCodepoints(codepoints: number[], useExtended: boolean) {
+function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'extended') {
 	if (codepoints.length === 0)
 		return 0;
+
+	let useExtended: boolean;
+	switch (type) {
+		case 'extended': useExtended = true; break;
+		case 'legacy': useExtended = false; break;
+		default: throw "You need to specify whether to use extended or legacy grapheme clusters";
+	}
 
 	// for GB12 and GB13
 	let numberOfContinuousRegionalIndicatorSymbols = 0;
