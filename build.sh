@@ -7,7 +7,7 @@ mkdir -p docs/build
 
 node compile-unicode-data.js
 
-tsc
+./node_modules/.bin/tsc
 
 {
 	cat node_modules/jquery/dist/jquery.min.js
