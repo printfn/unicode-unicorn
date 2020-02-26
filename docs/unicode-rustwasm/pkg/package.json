@@ -3,11 +3,19 @@
   "collaborators": [
     "printfn <printfn@users.noreply.github.com>"
   ],
+  "description": "Rust Web Assembly module for Unicode Unicorn",
   "version": "0.1.0",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/printfn/unicode-unicorn"
+  },
   "files": [
     "unicode_rustwasm_bg.wasm",
     "unicode_rustwasm.js",
-    "unicode_rustwasm.d.ts"
+    "unicode_rustwasm.d.ts",
+    "LICENSE_APACHE",
+    "LICENSE_MIT"
   ],
   "browser": "unicode_rustwasm.js",
   "types": "unicode_rustwasm.d.ts"
