@@ -1,4 +1,5 @@
 node_modules/
+docs/build/
 cloudflare/upload.sh
 
 #---------- OS X gitignore ----------
