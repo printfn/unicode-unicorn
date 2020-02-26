@@ -57,5 +57,5 @@ body:not(.modal-open){
 	background-color: hsla(235, 92%, 90%, 1);
 }
 .char-row-category-z {
-	background-color: hsla(0, 0%, 90%, 1);
+	background-color: white;
 }
