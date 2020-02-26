@@ -15,7 +15,6 @@ node compile-unicode-data.js
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path docs/unicode-rustwasm/Cargo.toml
 DATA_DIR="$(pwd)/data" wasm-pack build --target no-modules docs/unicode-rustwasm
-rm docs/unicode-rustwasm/pkg/.gitignore
 
 # depends on cargo/wasm build
 {
