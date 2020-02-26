@@ -11,9 +11,7 @@ jobs:
       uses: actions/cache@v1.0.1
       with:
         path: docs/unicode-rustwasm/target
-        key: ${{ runner.OS }}-build-${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.OS }}-build-
+        key: ${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
     - name: Install dependencies
       run: npm install
     - name: Install wasm-pack
