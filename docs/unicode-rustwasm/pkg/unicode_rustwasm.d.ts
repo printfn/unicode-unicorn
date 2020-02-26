@@ -4,6 +4,9 @@
 */
 export function greet(): void;
 /**
+*/
+export function init(): void;
+/**
 * @param {number} codepoint 
 * @returns {number} 
 */

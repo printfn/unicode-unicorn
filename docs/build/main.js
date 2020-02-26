@@ -411,7 +411,9 @@ function initGlobalVariables(data) {
     global_commonLanguageTagsHTML = data["global_commonLanguageTagsHTML"];
 }
 function initWasm(completion) {
-    wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm').then(completion);
+    wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm')
+        .then(() => wasm_bindgen.init())
+        .then(completion);
 }
 function initData(completion) {
     const req = new XMLHttpRequest();

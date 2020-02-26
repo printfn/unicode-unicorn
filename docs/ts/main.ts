@@ -154,7 +154,9 @@ function initGlobalVariables(data: any) {
 declare let wasm_bindgen: any;
 
 function initWasm(completion: () => void) {
-	wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm').then(completion);
+	wasm_bindgen('unicode-rustwasm/pkg/unicode_rustwasm_bg.wasm')
+		.then(() => wasm_bindgen.init())
+		.then(completion);
 }
 
 function initData(completion: () => void) {

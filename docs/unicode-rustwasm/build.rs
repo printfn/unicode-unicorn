@@ -1,12 +1,15 @@
 use std::env;
+use std::ffi::OsString;
 use std::fs;
 use std::path::Path;
-use std::ffi::OsString;
 
 fn ivd_sequences(data_dir: &OsString) -> String {
-    let ivd_seqs_path = Path::new(&data_dir).join("Unicode").join("IVD").join("IVD_Sequences.txt");
-    let ivd_seqs_file_contents = fs::read_to_string(ivd_seqs_path)
-        .expect("Something went wrong reading the file");
+    let ivd_seqs_path = Path::new(&data_dir)
+        .join("Unicode")
+        .join("IVD")
+        .join("IVD_Sequences.txt");
+    let ivd_seqs_file_contents =
+        fs::read_to_string(ivd_seqs_path).expect("Something went wrong reading the file");
     let mut result = String::new();
     result.push_str("const IVD_SEQUENCES: [IdeographicVariationSequence; 39169] = [");
     for line in ivd_seqs_file_contents.split('\n') {
@@ -19,13 +22,18 @@ fn ivd_sequences(data_dir: &OsString) -> String {
         let variation_selector = codepoint_parts[1].trim();
         let collection = parts[1].trim();
         let item = parts[2].trim();
-        result.push_str(format!(
-            r#"IdeographicVariationSequence {{
+        result.push_str(
+            format!(
+                r#"IdeographicVariationSequence {{
                 base_codepoint: 0x{},
                 variation_selector: 0x{},
                 collection: "{}",
                 item: "{}",
-            }},"#, base_codepoint, variation_selector, collection, item).as_str());
+            }},"#,
+                base_codepoint, variation_selector, collection, item
+            )
+            .as_str(),
+        );
     }
     result.push_str("];");
     result
