@@ -3,7 +3,7 @@
 # This is the main build script.
 # Make sure to only run this from the project root!
 
-set -e # stop on error
+set -euo pipefail
 
 mkdir -p docs/build
 
