@@ -6,13 +6,11 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "chosen-js": "^1.8.7",
-    "he": "^1.2.0",
     "jquery": "^3.4.1",
     "punycode": "^2.1.1",
     "typescript": "^3.8.2"
   },
   "devDependencies": {
-    "@types/he": "^0.5.29",
     "@types/jquery": "^2.0.54"
   },
   "scripts": {

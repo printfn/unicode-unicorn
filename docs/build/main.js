@@ -762,8 +762,13 @@ function encodeOutput(byteOrderMark, encoding, format, codepoints) {
     return escapeHtml(groups.join(groupSeparator));
 }
 let global_encodings = {};
-function escapeHtml(string) {
-    return he.encode(string);
+function escapeHtml(unsafeString) {
+    return unsafeString
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 function ctos(codepoints) {
     return punycode.ucs2.encode(codepoints);

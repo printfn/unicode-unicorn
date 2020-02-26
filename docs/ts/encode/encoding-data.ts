@@ -10,8 +10,13 @@ let global_encodings: { [encodingName: string]: Encoding; } = {};
 declare let punycode: any;
 declare let utf8: any;
 
-function escapeHtml(string: string): string {
-	return he.encode(string);
+function escapeHtml(unsafeString: string): string {
+	return unsafeString
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
 }
 
 function ctos(codepoints: any): string {

@@ -23,7 +23,6 @@ rm docs/unicode-rustwasm/pkg/.gitignore
 	cat node_modules/jquery/dist/jquery.min.js
 	cat node_modules/bootstrap/dist/js/bootstrap.min.js
 	cat node_modules/chosen-js/chosen.jquery.min.js
-	cat node_modules/he/he.js
 	echo "window.module = {};"
 	cat node_modules/punycode/punycode.js
 } > docs/build/libs.js
