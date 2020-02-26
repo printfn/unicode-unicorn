@@ -2,6 +2,9 @@ node_modules/
 docs/build/
 cloudflare/upload.sh
 
+docs/sw.js*
+docs/workbox*
+
 #---------- OS X gitignore ----------
 
 # General

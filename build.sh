@@ -35,3 +35,6 @@ cp node_modules/chosen-js/chosen.min.css docs/build/
 # independent
 cp node_modules/chosen-js/chosen-sprite.png docs/build/
 cp node_modules/chosen-js/chosen-sprite@2x.png docs/build/
+
+rm docs/workbox-*
+./node_modules/.bin/workbox generateSW workbox-config.js

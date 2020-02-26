@@ -2,7 +2,7 @@ interface ModalJQuery {
 	modal(operation: string): void;
 }
 function jQueryModal(sel: string, operation: string) {
-	(<ModalJQuery> <any> $(sel)).modal(operation);
+	(<ModalJQuery><any>$(sel)).modal(operation);
 }
 
 let global_useInternalString = false;
@@ -76,7 +76,7 @@ function updateSuggestions() {
 	renderCodepointsInTable(
 		results,
 		`searchResults`,
-		[{displayName: `Insert`, functionName: `output`, require: () => true}]
+		[{ displayName: `Insert`, functionName: `output`, require: () => true }]
 	);
 }
 
@@ -110,8 +110,8 @@ function deleteAtIndex(codepoint: number, index: number) {
 function moveUp(codepoint: number, index: number) {
 	const codepoints = getStr();
 	const c = codepoints[index];
-	codepoints[index] = codepoints[index-1];
-	codepoints[index-1] = c;
+	codepoints[index] = codepoints[index - 1];
+	codepoints[index - 1] = c;
 	setStr(codepoints);
 	updateInfo();
 }
@@ -119,8 +119,8 @@ function moveUp(codepoint: number, index: number) {
 function moveDown(codepoint: number, index: number) {
 	const codepoints = getStr();
 	const c = codepoints[index];
-	codepoints[index] = codepoints[index+1];
-	codepoints[index+1] = c;
+	codepoints[index] = codepoints[index + 1];
+	codepoints[index + 1] = c;
 	setStr(codepoints);
 	updateInfo();
 }
@@ -174,15 +174,15 @@ function initData(completion: () => void) {
 }
 
 let loaded = false;
-$(document).ready(function() {
+$(document).ready(function () {
 	if (loaded)
 		return;
 	loaded = true;
-	(<any> $(`select`)).chosen({ disable_search_threshold: 10, width: `100%` });
+	(<any>$(`select`)).chosen({ disable_search_threshold: 10, width: `100%` });
 	const startTime = new Date();
-	initData(function() {
+	initData(function () {
 		initializeSearchStrings();
-		window.onpopstate = function() {
+		window.onpopstate = function () {
 			const args = location.search.substring(1).split(`&`);
 			for (let i = 0; i < args.length; ++i) {
 				const arg = args[i].split(`=`);
@@ -202,15 +202,15 @@ $(document).ready(function() {
 			}
 		};
 		window.onpopstate(new PopStateEvent(``));
-		const loadDuration = <any> new Date() - <any> startTime; // in ms
+		const loadDuration = <any>new Date() - <any>startTime; // in ms
 		updateInfo();
 		updateSuggestions();
-		$(`#input`).on(`keyup`, function(e) {
+		$(`#input`).on(`keyup`, function (e) {
 			if (e.keyCode == 13) {
 				const input = $(`#input`).val();
 				if (isNaN(parseInt(input.replace(`U+`, ``), 16))) {
 					document.body.style.backgroundColor = `#fdd`;
-					setTimeout(function() {
+					setTimeout(function () {
 						document.body.style.backgroundColor = `#fff`;
 					}, 1000);
 				} else {
@@ -219,30 +219,36 @@ $(document).ready(function() {
 				}
 			}
 		});
-		$(`#input`).on(`input`, function(e) {
+		$(`#input`).on(`input`, function (e) {
 			updateSuggestions();
 		});
-		$(`#output, #encodedInput`).on(`input`, function() {
+		$(`#output, #encodedInput`).on(`input`, function () {
 			updateInfo();
 		});
-		$(`#minCodeUnitLength, #codeUnitPrefix, #codeUnitSuffix, #groupingCount, #groupPrefix, #groupSuffix, #outputJoinerText`).on(`input`, function() {
+		$(`#minCodeUnitLength, #codeUnitPrefix, #codeUnitSuffix, #groupingCount, #groupPrefix, #groupSuffix, #outputJoinerText`).on(`input`, function () {
 			updateInfo();
 		});
-		$(`select`).on(`change`, function() {
+		$(`select`).on(`change`, function () {
 			updateInfo();
 		});
-		$(`a[data-toggle="tab"]`).on(`shown.bs.tab`, function(e) {
+		$(`a[data-toggle="tab"]`).on(`shown.bs.tab`, function (e) {
 			callEventListenersForElemId(`output`);
 		});
 		// This should be on `input` instead, but this doesn't fire on
 		//  Safari. See https://caniuse.com/#feat=input-event (#4)
 		//  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
-		$(`#useInternalString`).on(`change`, function() {
+		$(`#useInternalString`).on(`change`, function () {
 			updateUseInternalString();
 		});
-		$(`#languageCode`).on(`input`, function() {
+		$(`#languageCode`).on(`input`, function () {
 			updateLanguage();
 		});
 		console.log(`Loaded in ${loadDuration}ms`);
+		// if ('serviceWorker' in navigator) {
+		// 	navigator.serviceWorker.register('/sw.js').then(registration => {
+		// 	}).catch(registrationError => {
+		// 		console.log('SW registration failed: ', registrationError);
+		// 	});
+		// }
 	});
 });
