@@ -7,11 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Cache Rust dependencies
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: cargo-registry-${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: cargo-index-${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
+    - name: Cache rust build
       uses: actions/cache@v1.0.1
       with:
         path: docs/unicode-rustwasm/target
-        key: ${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
+        key: build-${{ hashFiles('docs/unicode-rustwasm/Cargo.lock') }}
     - name: Install dependencies
       run: npm install
     - name: Install wasm-pack
