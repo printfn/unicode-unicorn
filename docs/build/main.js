@@ -451,7 +451,11 @@ $(document).ready(function () {
                 else if (arg[0] == `str`) {
                     // search queries via the omnibox are URL-escaped, and spaces
                     // are converted to '+'.
-                    setStr(stoc(utf8.decode(unescape(arg[1].replace(/\+/g, ' ')))));
+                    const utf8CodeUnits = stoc(unescape(arg[1].replace(/\+/g, ' ')));
+                    const codepoints = u8toc(new Uint8Array(utf8CodeUnits));
+                    if (typeof codepoints != 'undefined') {
+                        setStr(Array.from(codepoints));
+                    }
                 }
             }
         };
@@ -774,17 +778,10 @@ function previousCodepoint(codepoint) {
     return wasm_bindgen.previous_codepoint(codepoint);
 }
 function ctou8(codepoints) {
-    const u8str = utf8.encode(ctos(codepoints));
-    const res = [];
-    for (let i = 0; i < u8str.length; ++i)
-        res.push(u8str.charCodeAt(i));
-    return res;
+    return wasm_bindgen.ctou8(codepoints);
 }
 function u8toc(bytes) {
-    let u8str = ``;
-    for (let i = 0; i < bytes.length; ++i)
-        u8str += String.fromCharCode(bytes[i]);
-    return stoc(utf8.decode(u8str));
+    return wasm_bindgen.u8toc(bytes);
 }
 function itos(int, base, padding = 0) {
     let res = int.toString(base).toUpperCase();

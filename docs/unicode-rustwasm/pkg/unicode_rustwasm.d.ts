@@ -21,6 +21,16 @@ export function previous_codepoint(codepoint: number): number;
 * @returns {string} 
 */
 export function variation_sequences_for_codepoint(codepoint: number): string;
+/**
+* @param {Uint8Array} utf8_bytes 
+* @returns {Uint32Array | undefined} 
+*/
+export function u8toc(utf8_bytes: Uint8Array): Uint32Array | undefined;
+/**
+* @param {Uint32Array} codepoints 
+* @returns {Uint8Array | undefined} 
+*/
+export function ctou8(codepoints: Uint32Array): Uint8Array | undefined;
 
 /**
 * If `module_or_path` is {RequestInfo}, makes a request and

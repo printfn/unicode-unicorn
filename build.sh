@@ -18,7 +18,6 @@ node compile-unicode-data.js
 	cat node_modules/he/he.js
 	echo "window.module = {};"
 	cat node_modules/punycode/punycode.js
-	cat node_modules/utf8/utf8.js
 } > docs/build/libs.js
 
 cp node_modules/bootstrap/dist/css/bootstrap.min.css docs/build/

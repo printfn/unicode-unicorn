@@ -4,6 +4,7 @@ mod utils;
 
 use crate::utils::set_panic_hook;
 use serde::Serialize;
+use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -62,4 +63,24 @@ pub fn variation_sequences_for_codepoint(codepoint: u32) -> String {
         }
     }
     serde_json::to_string(&result).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn u8toc(utf8_bytes: Vec<u8>) -> Option<Vec<u32>> {
+    match std::str::from_utf8(utf8_bytes.as_slice()) {
+        Err(_) => None,
+        Ok(s) => Some(s.chars().map(|ch| u32::from(ch)).collect()),
+    }
+}
+
+#[wasm_bindgen]
+pub fn ctou8(codepoints: Vec<u32>) -> Option<Vec<u8>> {
+    let maybe_a_string = codepoints
+        .iter()
+        .map(|num| char::try_from(*num))
+        .collect::<Result<String, _>>();
+    match maybe_a_string {
+        Err(_) => None,
+        Ok(s) => Some(s.bytes().collect()),
+    }
 }

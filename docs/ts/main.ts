@@ -193,7 +193,11 @@ $(document).ready(function() {
 				} else if (arg[0] == `str`) {
 					// search queries via the omnibox are URL-escaped, and spaces
 					// are converted to '+'.
-					setStr(stoc(utf8.decode(unescape(arg[1].replace(/\+/g, ' ')))));
+					const utf8CodeUnits = stoc(unescape(arg[1].replace(/\+/g, ' ')));
+					const codepoints = u8toc(new Uint8Array(utf8CodeUnits));
+					if (typeof codepoints != 'undefined') {
+						setStr(Array.from(codepoints));
+					}
 				}
 			}
 		};

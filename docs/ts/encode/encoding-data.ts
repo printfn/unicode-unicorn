@@ -30,19 +30,12 @@ function previousCodepoint(codepoint: number): number {
 	return wasm_bindgen.previous_codepoint(codepoint);
 }
 
-function ctou8(codepoints: number[]): number[] {
-	const u8str = utf8.encode(ctos(codepoints));
-	const res: number[] = [];
-	for (let i = 0; i < u8str.length; ++i)
-		res.push(u8str.charCodeAt(i));
-	return res;
+function ctou8(codepoints: Uint32Array): Uint8Array | undefined {
+	return wasm_bindgen.ctou8(codepoints);
 }
 
-function u8toc(bytes: number[]): number[] {
-	let u8str = ``;
-	for (let i = 0; i < bytes.length; ++i)
-		u8str += String.fromCharCode(bytes[i]);
-	return stoc(utf8.decode(u8str));
+function u8toc(bytes: Uint8Array): Uint32Array | undefined {
+	return wasm_bindgen.u8toc(bytes);
 }
 
 function itos(int: number, base: number, padding: number = 0) {
