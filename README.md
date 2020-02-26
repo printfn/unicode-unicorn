@@ -20,7 +20,7 @@ Execute `$ npm run server` to start a Python webserver from `docs/`.
 
 `$ npm run clean` deletes the `build` directory.
 
-### Sources
+### Sources (obsolete)
 
 This tool uses the Unicode Character Database. It can be downloaded from `http://www.unicode.org/Public/UCD/latest/ucd/`. Move all text files into `UCD/`, extract `Unihan.zip` and move the `Unihan` folder contents into `Unihan/`.
 
@@ -34,11 +34,7 @@ Download the latest production (i.e. compressed) jQuery from `https://jquery.com
 
 Download the latest bootstrap from `https://getbootstrap.com/getting-started/` and extract the zip file. Rename the folder to `bootstrap` and place it in `libs/`.
 
-Download `randomColor.js` from `https://github.com/davidmerfield/randomColor` and place it in `libs/`.
-
 Download `punycode.js` from `https://github.com/bestiejs/punycode.js` and place it in `libs/`.
 
 Download `he.js` from `https://github.com/mathiasbynens/he` and place it in `libs/`.
-
-Download `utf8.js` from `https://github.com/mathiasbynens/utf8.js` and place it in `libs/`.
 
