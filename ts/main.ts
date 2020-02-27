@@ -164,23 +164,21 @@ function initGlobalVariables(data: any) {
 
 declare let wasm_bindgen: any;
 
-function initWasm(completion: () => void) {
-  wasm_bindgen("wasm/unicode_rustwasm_bg.wasm")
-    .then(() => wasm_bindgen.init())
-    .then(completion);
+async function initWasm() {
+  await wasm_bindgen("wasm/unicode_rustwasm_bg.wasm");
+  await wasm_bindgen.init();
 }
 
-function initData(completion: () => void) {
-  const req = new XMLHttpRequest();
-  req.open("GET", "compiled-data.json", true);
-  req.onload = function() {
-    initGlobalVariables(JSON.parse(req.response as string));
-    callMultipleAsync(
-      [initializeMappings, initBlockData, initLanguageData, initWasm],
-      completion
-    );
-  };
-  req.send(null);
+async function initData() {
+  const res = await fetch("compiled-data.json");
+  const compiledData = await res.json();
+  initGlobalVariables(compiledData);
+  await Promise.all([
+    initializeMappings(),
+    initBlockData(),
+    initLanguageData(),
+    initWasm()
+  ]);
 }
 
 function ready(fn: () => void) {
@@ -193,7 +191,7 @@ function ready(fn: () => void) {
 ready(function() {
   (<any>$(`select`)).chosen({ disable_search_threshold: 10, width: `100%` });
   const startTime = new Date();
-  initData(function() {
+  initData().then(function() {
     initializeSearchStrings();
     window.onpopstate = function() {
       const args = location.search.substring(1).split(`&`);

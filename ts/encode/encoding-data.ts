@@ -51,7 +51,7 @@ function itos(int: number, base: number, padding: number = 0) {
   return res;
 }
 
-function initializeMappings(completion: () => void) {
+async function initializeMappings() {
   for (let i in global_encodingData) {
     let encodingData = global_encodingData[i];
     loadEncodingFromData(
@@ -80,7 +80,6 @@ function initializeMappings(completion: () => void) {
   updateSelectOptions(`codepageEncoding`, codepageOptionStrings);
   updateSelectOptions(`outputEncoding`, outputEncodingOptionStrings);
   updateSelectOptions(`mojibakeEncodings`, mojibakeOptionStrings);
-  completion();
 }
 
 function encodeWithTable(

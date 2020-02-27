@@ -1,8 +1,7 @@
-function initBlockData(completion: () => void) {
+async function initBlockData() {
   for (let i = 0; i < global_blockRanges.length; ++i) {
     const b = global_blockRanges[i];
   }
-  completion();
 }
 
 function getBlockForCodepoint(codepoint: number): string {

@@ -1,4 +1,4 @@
-function initLanguageData(completion: () => void) {
+function initLanguageData() {
   const showAllLanguages = $(`#showRareLanguages`)[0].hasAttribute(`disabled`);
   const htmls = showAllLanguages
     ? global_allLanguageTagsHTML
@@ -9,7 +9,6 @@ function initLanguageData(completion: () => void) {
   updateSelectOptions(`variantList`, htmls[`variant`]);
   $(`#showRareLanguages`).on(`click`, function() {
     $(`#showRareLanguages`).attr(`disabled`, `disabled`);
-    initLanguageData(() => {});
+    initLanguageData();
   });
-  completion();
 }
