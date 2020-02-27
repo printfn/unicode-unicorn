@@ -7,6 +7,19 @@ set -euo pipefail
 
 mkdir -p build
 
+# independent
+cp -R css build/ # copy dir
+cp -R ts build/
+cp -R favicon/* build/ # copy contents of dir
+cp -R html/* build/
+
+cp node_modules/bootstrap/dist/css/bootstrap.min.css build/css/
+cp node_modules/bootstrap/dist/css/bootstrap.min.css.map build/css/
+cp node_modules/chosen-js/chosen.min.css build/css/
+
+cp node_modules/chosen-js/chosen-sprite.png build/css/
+cp node_modules/chosen-js/chosen-sprite@2x.png build/css/
+
 node compile-unicode-data.js
 
 # this depends on compile-unicode-data
@@ -25,16 +38,3 @@ cp -R wasm/pkg/* build/wasm/
 	cat node_modules/bootstrap/dist/js/bootstrap.min.js
 	cat node_modules/chosen-js/chosen.jquery.min.js
 } > build/libs.js
-
-# independent
-cp -R css build/ # copy dir
-cp -R ts build/
-cp -R favicon/* build/ # copy contents of dir
-cp -R html/* build/
-
-cp node_modules/bootstrap/dist/css/bootstrap.min.css build/css/
-cp node_modules/bootstrap/dist/css/bootstrap.min.css.map build/css/
-cp node_modules/chosen-js/chosen.min.css build/css/
-
-cp node_modules/chosen-js/chosen-sprite.png build/css/
-cp node_modules/chosen-js/chosen-sprite@2x.png build/css/
