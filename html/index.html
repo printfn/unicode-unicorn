@@ -39,7 +39,7 @@
 		</div>
 
 		<p>
-			<textarea id="output" class="lang-attr"></textarea>
+			<textarea id="output" class="form-control lang-attr"></textarea>
 		</p>
 
 		<!-- Nav tabs -->
@@ -78,7 +78,7 @@
 			<div role="tabpanel" class="tab-pane active" id="search">
 				<div id="advanced-search-div">
 					<label for="input">Search for a codepoint:</label>
-					<input type="text" id="input" class="lang-attr">
+					<input type="text" id="input" class="form-control lang-attr">
 				</div>
 				<table class="table" id="searchResults">
 				</table>
@@ -236,14 +236,14 @@ mandarin:shuǐ</pre>
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h4 class="modal-title">Info for codepoint U+<span id="detail-codepoint-hex">0000</span> (Decimal: <span id="detail-codepoint-decimal"></span>)</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<p>Name: <span id="detail-name"></span></p>
 					<p>Character: <span id="detail-character"></span></p>
 					<p>Raw Character: <span id="detail-character-raw"></span></p>
-					<p>Textfield: <input type="text" style="width: inherit;" id="detail-character-textbox"></p>
+					<p>Textfield: <input type="text" style="width: inherit;" class="form-control" id="detail-character-textbox"></p>
 					<p>General Character Category: <span id="detail-category"></span></p>
 					<p>Block: <span id="detail-block"></span></p>
 					<p>Script: <span id="detail-script"></span></p>
@@ -253,12 +253,12 @@ mandarin:shuǐ</pre>
 					<p id="detail-kun">Kun: <span id="detail-kun-content"></span></p>
 					<p id="detail-on">On: <span id="detail-on-content"></span></p>
 					<p id="detail-variation-sequences">Variation sequences:<br><span id="detail-variation-sequences-content"></span></p>
-					<pre id="detail-encoding-outputs" style="max-height: 200px;"></pre>
+					<pre id="detail-encoding-outputs" style="max-height: 200px; background-color: #ddd;"></pre>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" onclick="changeDetail(this)" id="detail-previous-cp">Previous Codepoint</button>
-					<button type="button" class="btn btn-default" onclick="changeDetail(this)" id="detail-next-cp">Next Codepoint</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" onclick="changeDetail(this)" id="detail-previous-cp">Previous Codepoint</button>
+					<button type="button" class="btn btn-secondary" onclick="changeDetail(this)" id="detail-next-cp">Next Codepoint</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
