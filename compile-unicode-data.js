@@ -1,5 +1,5 @@
 // This script parses data from various files in the 'data' directory,
-//  and builds a single JSON file docs/build/compiled-data.json.
+//  and builds a single JSON file build/compiled-data.json.
 
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -402,4 +402,4 @@ for (let i = 0; i < lengths.length; ++i) {
 	console.log(`${x.name}: ${x.length} (${(lengths[i].length / finalOutputString.length * 100).toFixed(2)}%)`);
 }
 
-fs.writeFileSync('docs/build/compiled-data.json', finalOutputString);
+fs.writeFileSync('build/compiled-data.json', finalOutputString);

@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outFile":"./docs/build/main.js",
+		"outFile":"./build/main.js",
 		"noImplicitAny": true,
 		"allowJs": false,
 		"target": "es6",
@@ -9,6 +9,6 @@
 		"lib": ["dom", "es6", "es2015"]
 	},
 	"include": [
-		"./docs/ts/**/*.ts"
+		"./ts/**/*.ts"
 	]
 }

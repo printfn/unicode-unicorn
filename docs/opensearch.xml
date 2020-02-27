@@ -1,9 +1,0 @@
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
-	<ShortName>Unicode Unicorn</ShortName>
-	<Description>Online IDE for Unicode</Description>
-	<InputEncoding>UTF-8</InputEncoding>
-	<Image width="16" height="16" type="image/x-icon">favicon.ico</Image>
-	<Url type="text/html" method="get" template="https://unicode.website?str={searchTerms}" />
-	<Url type="application/x-suggestions+json" method="GET" template="https://suggestqueries.google.com/complete/search?output=firefox&amp;q={searchTerms}" />
-	<SearchForm>https://unicode.website/</SearchForm>
-</OpenSearchDescription>
