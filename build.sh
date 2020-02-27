@@ -28,8 +28,8 @@ cp -R wasm/pkg/ build/wasm/
 # independent
 cp -R css build/ # copy dir
 cp -R ts build/
-cp -R favicon/ build/ # copy contents of dir
-cp -R html/ build/
+cp -R favicon/* build/ # copy contents of dir
+cp -R html/* build/
 
 cp node_modules/bootstrap/dist/css/bootstrap.min.css build/css/
 cp node_modules/bootstrap/dist/css/bootstrap.min.css.map build/css/
