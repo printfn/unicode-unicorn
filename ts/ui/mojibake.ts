@@ -21,7 +21,7 @@ function updateMojibake() {
     );
     if (encodedString.startsWith(`<`)) continue;
     for (const j in mojibakeEncodings) {
-      const f = mojibakeEncodings[i];
+      const f = mojibakeEncodings[j];
       if (i == j) continue;
       if (!f.selected) continue;
       const encoding2Name = f.textContent!;
