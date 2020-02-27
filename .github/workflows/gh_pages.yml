@@ -21,5 +21,4 @@ jobs:
         github_token: ${{ secrets.MY_TOKEN }}
         publish_dir: ./build
         external_repository: printfn/unicode-unicorn-website
-        publish_branch: master
         force_orphan: true
