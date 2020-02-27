@@ -119,25 +119,25 @@
 						<option>Hexadecimal (lowercase)</option>
 					</select>
 					<br>
-					<label for="minCodeUnitLength">Code Unit Padding:</label> <input type="number" value="0" min="0" id="minCodeUnitLength"> digits (0 for automatic padding based on encoding and format)
+					<label for="minCodeUnitLength">Code Unit Padding (number of digits, or 0 for automatic padding based on encoding and format):</label> <input class="form-control" type="number" value="0" min="0" id="minCodeUnitLength">
 					<br>
-					<label for="codeUnitPrefix">Code Unit Prefix:</label> <input type="text" value="\u" id="codeUnitPrefix" style="width: unset;">
+					<label for="codeUnitPrefix">Code Unit Prefix:</label> <input class="form-control" type="text" value="\u" id="codeUnitPrefix" style="width: unset;">
 					<br>
-					<label for="codeUnitSuffix">Code Unit Suffix:</label> <input type="text" id="codeUnitSuffix" style="width: unset;">
+					<label for="codeUnitSuffix">Code Unit Suffix:</label> <input class="form-control" type="text" id="codeUnitSuffix" style="width: unset;">
 					<br>
-					<label for="groupingCount">Grouping:</label> <input type="number" value="8" id="groupingCount"> code units
+					<label for="groupingCount">Grouping (in code units):</label> <input class="form-control" type="number" value="8" id="groupingCount">
 					<br>
-					<label for="groupPrefix">Group Prefix:</label> <input type="text" id="groupPrefix" style="width: unset;" value="&quot;">
+					<label for="groupPrefix">Group Prefix:</label> <input class="form-control" type="text" id="groupPrefix" style="width: unset;" value="&quot;">
 					<br>
-					<label for="groupSuffix">Group Suffix:</label> <input type="text" id="groupSuffix" style="width: unset;" value="&quot;">
+					<label for="groupSuffix">Group Suffix:</label> <input class="form-control" type="text" id="groupSuffix" style="width: unset;" value="&quot;">
 					<br>
 					<label for="outputJoinerText">Group Separator:</label>
 					<br>
-					<textarea id="outputJoinerText" class="lang-attr"> + 
+					<textarea id="outputJoinerText" class="form-control" class="lang-attr"> + 
 </textarea>
 				</p>
-				<pre id="encodedOutput"></pre>
-				<textarea id="encodedInput" class="lang-attr" placeholder="Input to decode using above settings"></textarea>
+				<pre id="encodedOutput" style="background-color: #ccc;"></pre>
+				<textarea id="encodedInput" class="form-control" class="lang-attr" placeholder="Input to decode using above settings"></textarea>
 				<table class="table" id="decodedCodepoints"></table>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="mojibake">
