@@ -33,12 +33,16 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
       const buttonDescription = buttons[j];
       let disabled = ``;
       if (!buttonDescription.require(i, codepoints.length)) {
-        disabled = `disabled`;
+        disabled = `disabled style="visibility:hidden;"`;
       }
-      buttonStr += `<input
-        type="button" ${disabled}
-        onclick="${buttonDescription.functionName}(${codepoint}, ${i})"
-        value="${buttonDescription.displayName}">`;
+      buttonStr += `
+      <div class="btn-group" role="group">
+        <input
+          type="button" ${disabled}
+          onclick="${buttonDescription.functionName}(${codepoint}, ${i})"
+          value="${buttonDescription.displayName}"
+          class="btn btn-sm btn-outline-secondary">
+      </div>`;
     }
     html += `
     <tr class="char-row-category-${getCharacterCategoryCode(codepoint)[0].toLowerCase()}">
