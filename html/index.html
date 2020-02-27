@@ -47,6 +47,7 @@
       href="/opensearch.xml"
     />
   </head>
+
   <body>
     <script src="libs.js"></script>
 
@@ -407,9 +408,17 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="settings">
           <b>Internal String Usage:</b>
+          <div class="form-group form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="useInternalString"
+            />
+            <label class="form-check-label" for="useInternalString"
+              >Use internal string</label
+            >
+          </div>
           <p>
-            <label for="useInternalString">Use internal string:</label>
-            <input type="checkbox" id="useInternalString" /><br />
             Use internal memory instead of the above textarea to store the
             Unicode string. This prevents browsers from automatically converting
             line endings.
