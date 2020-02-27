@@ -12,7 +12,7 @@ jobs:
     - name: Install node dependencies
       run: npm install
     - name: Install wasm-pack
-      run: https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      run: cargo install wasm-pack
     - name: Build
       run: npm run build
     - name: Deploy to GitHub Pages
