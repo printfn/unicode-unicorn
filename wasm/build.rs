@@ -1,8 +1,7 @@
-use proc_macro2::{TokenStream, TokenTree};
+use proc_macro2::TokenStream;
 use quote::quote;
 use std::env;
-use std::ffi::OsString;
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::{prelude::*, BufReader, BufWriter};
 use std::path::Path;
 
@@ -15,13 +14,13 @@ fn get_data_file(path_fragment: &str) -> BufReader<File> {
 }
 
 fn ivd_sequences() -> TokenStream {
-    let mut result = String::new();
     let ivd_seqs_file = get_data_file("Unicode/IVD/IVD_Sequences.txt");
 
     let lines: Vec<_> = ivd_seqs_file
         .lines()
         .map(Result::unwrap)
-        .filter(|line| line.len() > 0 && !line.starts_with('#')).collect();
+        .filter(|line| line.len() > 0 && !line.starts_with('#'))
+        .collect();
     let array_size = lines.len();
 
     let structs: TokenStream = lines
@@ -60,5 +59,6 @@ fn main() {
         BufWriter::new(File::create(dest_path).unwrap()),
         "{}",
         ivd_sequences()
-    );
+    )
+    .unwrap();
 }
