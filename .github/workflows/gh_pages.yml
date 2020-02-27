@@ -1,0 +1,25 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install node dependencies
+      run: npm install
+    - name: Install wasm-pack
+      run: https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    - name: Build
+      run: npm run build
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3.4.0
+      with:
+        github_token: ${{ secrets.MY_TOKEN }}
+        publish_dir: ./build
+        external_repository: printfn/unicode-unicorn-website
+        publish_branch: master
+        force_orphan: true
