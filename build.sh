@@ -15,7 +15,8 @@ node compile-unicode-data.js
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml
 DATA_DIR="$(pwd)/data" wasm-pack build --target no-modules wasm
-cp -R wasm/pkg/ build/wasm/
+mkdir -p build/wasm
+cp -R wasm/pkg/* build/wasm/
 
 # depends on cargo/wasm build
 {
