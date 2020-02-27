@@ -5,7 +5,7 @@ authors = ["printfn <printfn@users.noreply.github.com>"]
 edition = "2018"
 description = "Rust Web Assembly module for Unicode Unicorn"
 repository = "https://github.com/printfn/unicode-unicorn"
-license = "MIT OR Apache-2.0"
+license = "AGPL-3.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
