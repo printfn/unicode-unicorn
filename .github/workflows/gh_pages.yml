@@ -11,14 +11,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install node dependencies
       run: npm install
-    - name: Install wasm-pack
-      run: cargo install wasm-pack
-    - name: Build
-      run: npm run build
+    #- name: Install wasm-pack
+    #  run: cargo install wasm-pack
+    #- name: Build
+    #  run: npm run build
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3.4.0
       with:
-        github_token: ${{ secrets.MY_TOKEN }}
+        personal_token: ${{ secrets.MY_TOKEN }}
         publish_dir: ./build
         external_repository: printfn/unicode-unicorn-website
         force_orphan: true
