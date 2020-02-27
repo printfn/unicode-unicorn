@@ -69,9 +69,9 @@ function initializeMappings(completion: () => void) {
 		outputEncodingOptionStrings += `<option>${encodingName}</option>`;
 		mojibakeOptionStrings += `<option>${encodingName}</option>`;
 	});
-	updateSelectOptions(`#codepageEncoding`, codepageOptionStrings);
-	updateSelectOptions(`#outputEncoding`, outputEncodingOptionStrings);
-	updateSelectOptions(`#mojibakeEncodings`, mojibakeOptionStrings);
+	updateSelectOptions(`codepageEncoding`, codepageOptionStrings);
+	updateSelectOptions(`outputEncoding`, outputEncodingOptionStrings);
+	updateSelectOptions(`mojibakeEncodings`, mojibakeOptionStrings);
 	completion();
 }
 

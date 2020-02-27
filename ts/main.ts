@@ -49,7 +49,7 @@ function callEventListenersForElemId(elemId: string) {
 		if (listener.elementId != elemId)
 			continue;
 		if (listener.tabId) {
-			if (!$(`#${listener.tabId}`).hasClass(`active`))
+			if (!getElementById(listener.tabId).classList.contains('active'))
 				continue;
 		}
 		listener.f();
@@ -57,12 +57,16 @@ function callEventListenersForElemId(elemId: string) {
 }
 
 function getStr() {
-	return global_useInternalString ? global_internalString : stoc($(`#output`).val());
+	if (global_useInternalString) {
+		return global_internalString;
+	} else {
+		return stoc((getElementById('output') as HTMLInputElement).value);
+	}
 }
 
 function setStr(str: number[]) {
 	global_internalString = str;
-	$(`#output`).val(ctos(str));
+	(getElementById('output') as HTMLInputElement).value = ctos(str);
 }
 
 function output(codepoint: number) {
@@ -71,7 +75,7 @@ function output(codepoint: number) {
 }
 
 function updateSuggestions() {
-	const input = $(`#input`).val();
+	const input = (getElementById('input') as HTMLInputElement).value;
 	const results = searchCodepoints(input);
 	renderCodepointsInTable(
 		results,
@@ -173,11 +177,14 @@ function initData(completion: () => void) {
 	req.send(null);
 }
 
-let loaded = false;
-$(document).ready(function() {
-	if (loaded)
-		return;
-	loaded = true;
+function ready(fn: () => void) {
+  if (document.readyState != 'loading') {
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+}
+ready(function() {
 	(<any> $(`select`)).chosen({ disable_search_threshold: 10, width: `100%` });
 	const startTime = new Date();
 	initData(function() {
@@ -205,9 +212,9 @@ $(document).ready(function() {
 		const loadDuration = <any> new Date() - <any> startTime; // in ms
 		updateInfo();
 		updateSuggestions();
-		$(`#input`).on(`keyup`, function(e) {
+		getElementById('input').addEventListener('keyup', function(e) {
 			if (e.keyCode == 13) {
-				const input = $(`#input`).val();
+				const input = (getElementById('input') as HTMLInputElement).value;
 				if (isNaN(parseInt(input.replace(`U+`, ``), 16))) {
 					document.body.style.backgroundColor = `#fdd`;
 					setTimeout(function() {
@@ -215,32 +222,46 @@ $(document).ready(function() {
 					}, 1000);
 				} else {
 					output(parseInt(input.replace(`U+`, ``), 16));
-					$(`#input`).val(``);
+					(getElementById('input') as HTMLInputElement).value = '';
 				}
 			}
 		});
-		$(`#input`).on(`input`, function(e) {
+		getElementById('input').addEventListener('input', function(e) {
 			updateSuggestions();
 		});
-		$(`#output, #encodedInput`).on(`input`, function() {
-			updateInfo();
-		});
-		$(`#minCodeUnitLength, #codeUnitPrefix, #codeUnitSuffix, #groupingCount, #groupPrefix, #groupSuffix, #outputJoinerText`).on(`input`, function() {
-			updateInfo();
-		});
+		for (let id of [
+			'output',
+			'encodedInput',
+			'minCodeUnitLength',
+			'codeUnitPrefix',
+			'codeUnitSuffix',
+			'groupingCount',
+			'groupPrefix',
+			'groupSuffix',
+			'outputJoinerText']) {
+			
+			let elem = getElementById(id);
+			elem.addEventListener('input', () => updateInfo());
+		}
+		// This doesn't work at all, the handler doesn't get called.
+		// for (let sel of Array.from(document.getElementsByTagName('select'))) {
+		// 	sel.addEventListener('change', function() {
+		// 		updateInfo();
+		// 	});
+		// }
 		$(`select`).on(`change`, function() {
 			updateInfo();
 		});
 		$(`a[data-toggle="tab"]`).on(`shown.bs.tab`, function(e) {
-			callEventListenersForElemId(`output`);
+			callEventListenersForElemId('output');
 		});
 		// This should be on `input` instead, but this doesn't fire on
 		//  Safari. See https://caniuse.com/#feat=input-event (#4)
 		//  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
-		$(`#useInternalString`).on(`change`, function() {
+		getElementById('useInternalString').addEventListener('change', function(e) {
 			updateUseInternalString();
 		});
-		$(`#languageCode`).on(`input`, function() {
+		getElementById('languageCode').addEventListener('input', function(e) {
 			updateLanguage();
 		});
 		console.log(`Loaded in ${loadDuration}ms`);

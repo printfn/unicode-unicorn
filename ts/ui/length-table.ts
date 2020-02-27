@@ -8,9 +8,9 @@ function hexadecimalPaddingFromEncoding(encoding: string) {
 
 function updateEncodedLengths() {
 	const codepoints = getStr();
-	$(`#extendedGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'extended'));
-	$(`#legacyGraphemeClusters`).text(countGraphemesForCodepoints(codepoints, 'legacy'));
-	$(`#numCodepoints`).text(codepoints.length);
+	getElementById('extendedGraphemeClusters').textContent = countGraphemesForCodepoints(codepoints, 'extended').toString();
+	getElementById('legacyGraphemeClusters').textContent = countGraphemesForCodepoints(codepoints, 'legacy').toString();
+	getElementById('numCodepoints').textContent = codepoints.length.toString();
 	let encodingLengthsStr =
 		`<thead><tr>` +
 		`<th>Encoding</th>` +
@@ -43,6 +43,6 @@ function updateEncodedLengths() {
 		}
 		encodingLengthsStr += `<tr><td>${name}</td><td>${cellEntries.join(`</td><td>`)}</td></tr>`;
 	}
-	$(`#encodingLengths`).html(encodingLengthsStr + `</tbody>`);
-	$(`#string`).html(escapeHtml(ctos(getStr())).replace(/\n/g, `<br>`));
+	getElementById('encodingLengths').innerHTML = encodingLengthsStr + `</tbody>`;
+	getElementById('string').innerHTML = escapeHtml(ctos(getStr())).replace(/\n/g, `<br>`);
 }

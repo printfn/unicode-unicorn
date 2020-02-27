@@ -7,12 +7,12 @@ interface ButtonInfo {
 }
 
 function renderCodepointsInTable(codepoints: number[], tableId: string, buttons: ButtonInfo[]) {
-  const table = $(`#${tableId}`);
+  const table = getElementById(tableId);
   if (codepoints.length === 0) {
-    table.html(``);
+    table.innerHTML = '';
     return;
   }
-  let langAttr = global_lang ? `lang="${global_lang}"` : ``;
+  let langAttr = global_lang ? 'lang="${global_lang}"' : '';
   let html = `
   <thead>
     <tr>
@@ -56,9 +56,9 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
     html += `<tr><td colspan="6">Showing only the first 256 rows.</td></tr>`;
   }
   html += `</tbody>`;
-  table.hide();
-  table.html(html);
-  table.show();
+  table.style.display = 'none';
+  table.innerHTML = html;
+  table.style.display = '';
 }
 
 function updateCodepointList() {

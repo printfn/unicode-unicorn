@@ -2,13 +2,14 @@ let global_lang: string = '';
 
 function updateLanguage() {
 	let lang = ``;
-	const textboxCode = $(`#languageCode`).val();
+	const languageCodeElem = getElementById('languageCode') as HTMLInputElement;
+	let textboxCode = languageCodeElem.value;
 	let dropdownCode = ``;
 	const langComponentStrings = [
-		$(`#languageList option:selected`).attr(`data-code`),
-		$(`#scriptList option:selected`).attr(`data-code`),
-		$(`#regionList option:selected`).attr(`data-code`),
-		$(`#variantList option:selected`).attr(`data-code`)
+		selectedOption('languageList').getAttribute('data-code'),
+		selectedOption('scriptList').getAttribute('data-code'),
+		selectedOption('regionList').getAttribute('data-code'),
+		selectedOption('variantList').getAttribute('data-code')
 	];
 	for (let i = 0; i < langComponentStrings.length; ++i) {
 		const component = langComponentStrings[i];
@@ -23,40 +24,46 @@ function updateLanguage() {
 	//   dropdownCode non-empty: textboxCode set to dropdownCode, textbox disabled
 	//   dropdownCode empty: dropdown disabled
 
-	if ($(`#languageCode`)[0].hasAttribute(`disabled`)) {
-		$(`#languageCode`).val(``); // occurs when dropdownCode is reset to blank
+	if (languageCodeElem.hasAttribute('disabled')) {
+		languageCodeElem.value = ''; // occurs when dropdownCode is reset to blank
+		textboxCode = languageCodeElem.value;
 	}
 		
 	if (textboxCode == `` && dropdownCode == ``) {
-		$(`#languageCode`).removeAttr(`disabled`);
-		$(`#languageList`).removeAttr(`disabled`);
-		$(`#scriptList`).removeAttr(`disabled`);
-		$(`#regionList`).removeAttr(`disabled`);
-		$(`#variantList`).removeAttr(`disabled`);
+		languageCodeElem.removeAttribute('disabled');
+		getElementById('languageList').removeAttribute('disabled');
+		getElementById('scriptList').removeAttribute('disabled');
+		getElementById('regionList').removeAttribute('disabled');
+		getElementById('variantList').removeAttribute('disabled');
 		lang = ``;
 	} else if (textboxCode == `` && dropdownCode != ``) {
-		$(`#languageCode`).attr(`disabled`, `disabled`);
-		$(`#languageList`).removeAttr(`disabled`);
-		$(`#scriptList`).removeAttr(`disabled`);
-		$(`#regionList`).removeAttr(`disabled`);
-		$(`#variantList`).removeAttr(`disabled`);
+		languageCodeElem.setAttribute('disabled', 'disabled');
+		getElementById('languageList').removeAttribute('disabled');
+		getElementById('scriptList').removeAttribute('disabled');
+		getElementById('regionList').removeAttribute('disabled');
+		getElementById('variantList').removeAttribute('disabled');
 		lang = dropdownCode;
-		$(`#languageCode`).val(lang);
+		languageCodeElem.value = lang;
 	} else if (textboxCode != `` && dropdownCode == ``) {
-		$(`#languageCode`).removeAttr(`disabled`);
-		$(`#languageList`).attr(`disabled`, `disabled`);
-		$(`#scriptList`).attr(`disabled`, `disabled`);
-		$(`#regionList`).attr(`disabled`, `disabled`);
-		$(`#variantList`).attr(`disabled`, `disabled`);
+		languageCodeElem.removeAttribute('disabled');
+		getElementById('languageList').setAttribute('disabled', 'disabled');
+		getElementById('scriptList').setAttribute('disabled', 'disabled');
+		getElementById('regionList').setAttribute('disabled', 'disabled');
+		getElementById('variantList').setAttribute('disabled', 'disabled');
 		lang = textboxCode;
 	} else {
-		if ($(`#languageCode`)[0].hasAttribute(`disabled`)) {
+		if (languageCodeElem.hasAttribute('disabled')) {
 			lang = dropdownCode;
-			$(`#languageCode`).val(lang);
+			languageCodeElem.value = lang;
 		} else {
 			lang = textboxCode;
 		}
 	}
+	
+	triggerChosenUpdate('languageList');
+	triggerChosenUpdate('scriptList');
+	triggerChosenUpdate('regionList');
+	triggerChosenUpdate('variantList');
 
 	let elems = document.getElementsByClassName('lang-attr');
 	for (let i = 0; i < elems.length; ++i) {
@@ -70,5 +77,5 @@ function updateLanguage() {
 }
 
 function updateUseInternalString() {
-	global_useInternalString = $(`#useInternalString`).is(`:checked`);
+	global_useInternalString = (getElementById('useInternalString') as HTMLInputElement).checked;
 }

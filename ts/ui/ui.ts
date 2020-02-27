@@ -11,7 +11,14 @@ function displayCodepoint(codepoint?: number): string {
 	return escapeHtml(ctos(codepoints));
 }
 
-function updateSelectOptions(selector: string, html: string) {
-	$(selector).html(html);
-	$(selector).trigger(`chosen:updated`);
+function triggerChosenUpdate(id: string) {
+	let elem = getElementById(id);
+	let event = new CustomEvent('chosen:updated');
+	elem.dispatchEvent(event);
+}
+
+function updateSelectOptions(id: string, html: string) {
+	let elem = getElementById(id);
+	elem.innerHTML = html;
+	triggerChosenUpdate(id);
 }

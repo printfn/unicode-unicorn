@@ -1,41 +1,44 @@
 function updateMojibake() {
   const codepoints = getStr();
   const mojibakeOutputs: { encoding1Name: string, encoding2Name: string, text: string }[] = [];
-  $(`#mojibakeEncodings option`).each(function(i: number, e: Element & { selected: boolean; }) {
+  const mojibakeEncodings = Array.from((getElementById('mojibakeEncodings') as HTMLSelectElement).options);
+  for (const i in mojibakeEncodings) {
+    const e = mojibakeEncodings[i];
     if (!e.selected)
-      return;
-    const encoding1Name = $(e).text();
+      continue;
+    const encoding1Name = e.textContent!;
     if (global_encodings[encoding1Name].type == `text function`)
-      return;
+      continue;
     const encodedString = encodeOutput(
       `Don't use a byte order mark`,
       encoding1Name,
       `Decimal`,
       codepoints);
     if (encodedString.startsWith(`<`))
-      return;
-    $(`#mojibakeEncodings option`).each(function(j: number, f: Element & { selected: boolean; }) {
+      continue;
+    for (const j in mojibakeEncodings) {
+      const f = mojibakeEncodings[i];
       if (i == j)
-        return;
+        continue;
       if (!f.selected)
-        return;
-      const encoding2Name = $(f).text();
+        continue;
+      const encoding2Name = f.textContent!;
       if (global_encodings[encoding2Name].type == `text function`)
-        return;
+        continue;
       const decodedString = decodeOutput(
         `Don't use a byte order mark`,
         encoding2Name,
         `Decimal`,
         encodedString);
       if (!decodedString)
-        return;
+        continue;
       mojibakeOutputs.push({
         encoding1Name: encoding1Name,
         encoding2Name: encoding2Name,
         text: ctos(decodedString)
       });
-    });
-  });
+    };
+  };
   let mojibakeOutputStr = ``;
   let lastEncoding1 = ``;
   for (let i = 0; i < mojibakeOutputs.length; ++i) {
@@ -46,5 +49,5 @@ function updateMojibake() {
     }
     mojibakeOutputStr += `    If the original encoding was ${o.encoding2Name}:<br>        ${mojibakeOutputs[i].text}<br>`;
   }
-  $(`#mojibakeOutput`).html(mojibakeOutputStr);
+  getElementById('mojibakeOutput').innerHTML = mojibakeOutputStr;
 }

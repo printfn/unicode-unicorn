@@ -1,5 +1,5 @@
 function updateRenderedCodepage() {
-  const encodingName = $(`#codepageEncoding option:selected`).text();
+  const encodingName = selectedOption('codepageEncoding').textContent!;
   const encoding = global_encodings[encodingName];
   const isAscii = encoding.type == `7-bit mapping`;
   let html = `<thead><th></th>`;
@@ -26,5 +26,5 @@ function updateRenderedCodepage() {
     html += `</tr>`;
   }
   html += `</tbody>`;
-  $(`#codepage`).html(html);
+  getElementById('codepage').innerHTML = html;
 }

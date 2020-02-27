@@ -1,17 +1,17 @@
 function updateEncodedAndDecodedStrings() {
 	const codepoints = getStr();
-	$(`#encodedOutput`).html(encodeOutput(
-		$(`#byteOrderMark option:selected`).text(),
-		$(`#outputEncoding option:selected`).text(),
-		$(`#outputFormat option:selected`).text(),
+	getElementById('encodedOutput').innerHTML = encodeOutput(
+		selectedOption('byteOrderMark').textContent!,
+		selectedOption('outputEncoding').textContent!,
+		selectedOption('outputFormat').textContent!,
 		codepoints
-	));
+	);
 
 	const decodedOutput = decodeOutput(
-		$(`#byteOrderMark option:selected`).text(),
-		$(`#outputEncoding option:selected`).text(),
-		$(`#outputFormat option:selected`).text(),
-		$(`#encodedInput`).val()
+		selectedOption('byteOrderMark').textContent!,
+		selectedOption('outputEncoding').textContent!,
+		selectedOption('outputFormat').textContent!,
+		(getElementById('encodedInput') as HTMLInputElement).value
 	);
 	if (decodedOutput)
 		renderCodepointsInTable(
