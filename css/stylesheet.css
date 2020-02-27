@@ -1,61 +1,61 @@
 .modal-open {
-	/* needed for iOS to not zoom in when modals are opened */
-	overflow-y: auto;
+  /* needed for iOS to not zoom in when modals are opened */
+  overflow-y: auto;
 }
-input[type=text] {
-	width: 100%;
+input[type="text"] {
+  width: 100%;
 }
 textarea {
-	width: 100%;
-	height: 100px;
+  width: 100%;
+  height: 100px;
 }
 #encodedInput {
-	font-family: monospace;
+  font-family: monospace;
 }
 pre {
-	white-space: all;
-	word-break: normal;
+  white-space: all;
+  word-break: normal;
 }
 #codepage td {
-	text-align: center;   
+  text-align: center;
 }
 #codepage th {
-	text-align: center;   
+  text-align: center;
 }
 .modal-xl {
-	width: 700px;
+  width: 700px;
 }
 .table {
-	margin-bottom: 0px !important; /* override bootstrap */
+  margin-bottom: 0px !important; /* override bootstrap */
 }
 #advanced-search-div {
-    width: 70%;
-    border: 1px solid black;
-    margin: 10px auto;
-    padding: 10px;
+  width: 70%;
+  border: 1px solid black;
+  margin: 10px auto;
+  padding: 10px;
 }
 #advanced-search-div td {
-	padding: 2px;
+  padding: 2px;
 }
 /* Fix bug in Bootstrap, see https://stackoverflow.com/a/47924156 */
-body:not(.modal-open){
+body:not(.modal-open) {
   padding-right: 0px !important;
 }
 .char-row-category-c {
-	background-color: hsla(3, 16%, 90%, 1);
+  background-color: hsla(3, 16%, 90%, 1);
 }
 .char-row-category-l {
-	background-color: hsla(52, 92%, 90%, 1);
+  background-color: hsla(52, 92%, 90%, 1);
 }
 .char-row-category-n {
-	background-color: hsla(90, 92%, 90%, 1);
+  background-color: hsla(90, 92%, 90%, 1);
 }
 .char-row-category-p {
-	background-color: hsla(175, 92%, 90%, 1);
+  background-color: hsla(175, 92%, 90%, 1);
 }
 .char-row-category-s {
-	background-color: hsla(235, 92%, 90%, 1);
+  background-color: hsla(235, 92%, 90%, 1);
 }
 .char-row-category-z {
-	background-color: white;
+  background-color: white;
 }
