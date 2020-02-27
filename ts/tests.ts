@@ -7,6 +7,18 @@ function assertEqual(actual: any, expected: any, otherInfo?: string) {
     throw `Expected ${actual} to be equal to ${expected}: ${otherInfo}`;
 }
 
+function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
+  if (actual.length == expected.length) {
+    for (let i = 0; i < actual.length; ++i) {
+      if (actual[i] != expected[i]) {
+        return `Expected ${actual} to be equal to ${expected}: ${otherInfo}`;
+      }
+    }
+    return true;
+  }
+  throw `Expected ${actual} to be equal to ${expected}: ${otherInfo}`;
+}
+
 function testBlocks() {
   for (let cp = 0; cp < 0x300; ++cp) {
     const block = getBlockForCodepoint(cp);
@@ -72,7 +84,22 @@ function testGraphemeCount() {
   );
 }
 
-const tests = [testBlocks, testGraphemeCount];
+function testAsciiQuotes() {
+  assertEqualArrays(
+    codeUnitsToCodepoints("ASCII with typographical quotes", [0x60]),
+    [8216]
+  );
+  assertEqualArrays(
+    codeUnitsToCodepoints("ASCII with typographical quotes", [0x80]),
+    []
+  );
+  assertEqualArrays(
+    codeUnitsToCodepoints("ASCII with typographical quotes", [0x00]),
+    [0x00]
+  );
+}
+
+const tests = [testBlocks, testGraphemeCount, testAsciiQuotes];
 
 function runTests() {
   for (let i = 0; i < tests.length; ++i) {

@@ -24,7 +24,7 @@ byte function	Unicode UTF-32 BE (8-bit code units)	data/utf32-8bitBE.js
 byte function	Unicode UTF-32 LE (8-bit code units)	data/utf32-8bitLE.js
 
 7-bit mapping	ASCII	data/ascii.txt
-7-bit mapping	ASCII with typographical quotes	data/Unicode/Mappings/VENDORS/MISC/US-ASCII-QUOTES.TXT
+7-bit wasm	ASCII with typographical quotes
 
 #text function	Punycode (Text)
 #byte function	Punycode (ASCII encoded)

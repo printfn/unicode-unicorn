@@ -66,7 +66,9 @@ async function initializeMappings() {
   $.each(global_encodingNames, function(i, encodingName) {
     if (
       global_encodings[encodingName].type == `7-bit mapping` ||
-      global_encodings[encodingName].type == `8-bit mapping`
+      global_encodings[encodingName].type == `8-bit mapping` ||
+      global_encodings[encodingName].type == `7-bit wasm` ||
+      global_encodings[encodingName].type == `8-bit wasm`
     ) {
       codepageOptionStrings += `<option${
         encodingName == `ISO-8859-1 (Latin-1 Western European)`
@@ -166,11 +168,24 @@ function loadEncodingFromData(type: string, name: string, data: string) {
     encode: undefined,
     decode: undefined
   };
-  let lines = data.split("\n");
-  if (type.includes(`function`)) {
+  if (type.includes("wasm")) {
+    encoding.encode = function(codepoints) {
+      let res = JSON.parse(wasm_bindgen.encode_str(name, codepoints));
+      if (res.success) {
+        return res.encoded_code_units;
+      } else {
+        return res.first_invalid_codepoint;
+      }
+    };
+    encoding.decode = function(bytes) {
+      return wasm_bindgen.decode_str(name, bytes) || [];
+    };
+  } else if (type.includes(`function`)) {
+    let lines = data.split("\n");
     encoding = eval(lines.join(`\n`));
     encoding.type = type;
   } else {
+    let lines = data.split("\n");
     encoding.table = parseTableFromLines(lines, name);
     encoding.encode = function(codepoints) {
       return encodeWithTable(codepoints, encoding.table!);

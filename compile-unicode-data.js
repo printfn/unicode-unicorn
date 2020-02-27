@@ -217,7 +217,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		global_encodingData.push({
 			name: name,
 			type: type,
-			data: fs.readFileSync(url, 'utf8')
+			data: type.includes('wasm') ? null : fs.readFileSync(url, 'utf8')
 		});
 	});
 

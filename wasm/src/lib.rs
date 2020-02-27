@@ -3,7 +3,10 @@ include!(concat!(env!("OUT_DIR"), "/compiled-data.rs"));
 mod utils;
 
 use crate::utils::set_panic_hook;
+#[macro_use]
+extern crate lazy_static;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 
@@ -93,4 +96,95 @@ pub fn ctos(codepoints: Vec<u32>) -> Option<String> {
 #[wasm_bindgen]
 pub fn stoc(str: &str) -> Vec<u32> {
     str.chars().map(|ch| ch as u32).collect()
+}
+
+#[derive(Clone, Serialize)]
+pub struct EncodingResult {
+    pub success: bool,
+    pub encoded_code_units: Option<Vec<u32>>,
+    pub first_invalid_codepoint: Option<u32>,
+}
+
+// map codepoints -> code units
+pub type EncodingTable = HashMap<u32, u32>;
+
+// lazy_static! {
+//     static ref ENCODING_TABLES: HashMap<&'static str, EncodingTable> = {
+//         let mut encoding_table = HashMap::new();
+//         encoding_table.insert("ASCII", [(0, 0), (1, 1)]);
+//         encoding_table
+//     };
+// }
+
+fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingResult {
+    let encoding = match ENCODING_TABLES.get(encoding_name) {
+        Some(encoding) => encoding,
+        None => {
+            return EncodingResult {
+                success: false,
+                encoded_code_units: None,
+                first_invalid_codepoint: None,
+            }
+        }
+    };
+    let code_units: Result<Vec<_>, _> = codepoints
+        .iter()
+        .map(|codepoint| {
+            encoding
+                .get(codepoint)
+                .ok_or(codepoint)
+                .map(|code_unit| *code_unit)
+        })
+        .collect();
+    match code_units {
+        Ok(code_units) => EncodingResult {
+            success: true,
+            encoded_code_units: Some(code_units.iter().copied().collect()),
+            first_invalid_codepoint: None,
+        },
+        Err(&codepoint) => EncodingResult {
+            success: false,
+            encoded_code_units: None,
+            first_invalid_codepoint: Some(codepoint),
+        },
+    }
+}
+
+#[wasm_bindgen]
+pub fn encode_str(encoding_name: &str, codepoints: Vec<u32>) -> String {
+    let result = encode_str_internal(encoding_name, codepoints);
+    serde_json::to_string(&result).unwrap()
+}
+
+fn lookup_code_unit(table: &EncodingTable, code_unit: u32) -> Option<u32> {
+    for (&k, &v) in table {
+        if v == code_unit {
+            return Some(k);
+        }
+    }
+    None
+}
+
+#[wasm_bindgen]
+pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>> {
+    let table = ENCODING_TABLES.get(encoding_name)?;
+    let mut res: Vec<u32> = vec![];
+    let mut try_combined = false;
+    for (i, cu) in code_units.iter().enumerate() {
+        if try_combined {
+            match lookup_code_unit(table, code_units[i - 1] << 8 | cu) {
+                Some(cp) => {
+                    res.push(cp);
+                    try_combined = false;
+                }
+                None => return None,
+            }
+        } else {
+            match lookup_code_unit(table, *cu) {
+                Some(cp) => res.push(cp),
+                None => try_combined = true,
+            }
+        }
+    }
+    return Some(res);
 }

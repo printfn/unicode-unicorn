@@ -1,7 +1,8 @@
 function updateRenderedCodepage() {
   const encodingName = selectedOption("codepageEncoding").textContent!;
   const encoding = global_encodings[encodingName];
-  const isAscii = encoding.type == `7-bit mapping`;
+  const isAscii =
+    encoding.type == `7-bit mapping` || encoding.type == "7-bit wasm";
   let html = `<thead><th></th>`;
   for (let i = 0; i < 16; ++i) {
     html += `<th>_${i.toString(16).toUpperCase()}</th>`;

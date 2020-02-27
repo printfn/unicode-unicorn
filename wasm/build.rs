@@ -51,14 +51,67 @@ fn ivd_sequences() -> TokenStream {
     }
 }
 
+fn build_encoding_table(name: &str, data_file: &str) -> TokenStream {
+    let encoding_table_file = get_data_file(data_file);
+
+    let lines: Vec<_> = encoding_table_file
+        .lines()
+        .map(Result::unwrap)
+        // remove text after first '#'
+        .map(|line| line.split('#').nth(0).unwrap().to_string())
+        .filter(|line| line.len() > 0)
+        // weird format found in CP857 (and others)
+        .filter(|line| !(line.len() == 1 && line.chars().nth(0).unwrap() == '\x1a'))
+        .collect();
+
+    let mappings: TokenStream = lines
+        .iter()
+        .map(|line| line.split('\t').collect::<Vec<_>>())
+        .filter(|components| components[1].trim().len() != 0)
+        .map(|components| {
+            let coded_byte = u32::from_str_radix(&components[0][2..], 16).unwrap();
+            let codepoint = u32::from_str_radix(&components[1][2..], 16).unwrap();
+
+            quote! {
+                (#codepoint, #coded_byte),
+            }
+        })
+        .collect();
+
+    quote! {
+        encoding_table.insert(#name, [#mappings].iter().cloned().collect());
+    }
+}
+
+fn build_encodings() -> TokenStream {
+    let tables: TokenStream = [build_encoding_table(
+        "ASCII with typographical quotes",
+        "Unicode/Mappings/VENDORS/MISC/US-ASCII-QUOTES.TXT",
+    )]
+    .iter()
+    .cloned()
+    .collect();
+
+    quote! {
+        lazy_static! {
+            static ref ENCODING_TABLES: HashMap<&'static str, EncodingTable> = {
+                let mut encoding_table = HashMap::new();
+                #tables
+                encoding_table
+            };
+        }
+    }
+}
+
 fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("compiled-data.rs");
 
     write!(
         BufWriter::new(File::create(dest_path).unwrap()),
-        "{}",
-        ivd_sequences()
+        "{}{}",
+        ivd_sequences(),
+        build_encodings()
     )
     .unwrap();
 }
