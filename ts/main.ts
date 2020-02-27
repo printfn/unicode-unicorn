@@ -202,13 +202,9 @@ ready(function() {
         } else if (arg[0] == `info`) {
           showCodepageDetail(parseInt(arg[1]));
         } else if (arg[0] == `str`) {
-          // search queries via the omnibox are URL-escaped, and spaces
-          // are converted to '+'.
-          const utf8CodeUnits = stoc(decodeURIComponent(arg[1].replace(/\+/g, " ")));
-          const codepoints = u8toc(new Uint8Array(utf8CodeUnits));
-          if (typeof codepoints != "undefined") {
-            setStr(Array.from(codepoints));
-          }
+          // search queries via the omnibox are URL-escaped (with UTF-8 encoding),
+          // and spaces are converted to '+'.
+          setStr(stoc(decodeURIComponent(arg[1].replace(/\+/g, " "))));
         }
       }
     };
