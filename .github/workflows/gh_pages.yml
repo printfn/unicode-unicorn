@@ -38,3 +38,4 @@ jobs:
         publish_dir: ./build
         external_repository: printfn/unicode-unicorn-website
         force_orphan: true
+        cname: unicode.website
