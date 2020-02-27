@@ -10,7 +10,8 @@
     "typescript": "^3.8.2"
   },
   "devDependencies": {
-    "@types/jquery": "^2.0.54"
+    "@types/jquery": "^2.0.54",
+    "prettier": "1.19.1"
   },
   "scripts": {
     "clean": "rm -rf docs/build",
