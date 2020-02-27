@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # This is the main build script.
-# Make sure to only run this from the project root!
 
 set -euo pipefail
+
+cd "$(dirname "$0")"
 
 mkdir -p build
 
