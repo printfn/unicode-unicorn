@@ -202,6 +202,8 @@ name = "unicode-rustwasm"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
+ "proc-macro2 1.0.9",
+ "quote 1.0.2",
  "serde",
  "serde_json",
  "wasm-bindgen",

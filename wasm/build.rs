@@ -1,48 +1,64 @@
+use proc_macro2::{TokenStream, TokenTree};
+use quote::quote;
 use std::env;
 use std::ffi::OsString;
-use std::fs;
+use std::fs::{self, File};
+use std::io::{prelude::*, BufReader, BufWriter};
 use std::path::Path;
 
-fn ivd_sequences(data_dir: &OsString) -> String {
-    let ivd_seqs_path = Path::new(&data_dir)
-        .join("Unicode")
-        .join("IVD")
-        .join("IVD_Sequences.txt");
-    let ivd_seqs_file_contents =
-        fs::read_to_string(ivd_seqs_path).expect("Something went wrong reading the file");
+fn get_data_file(path_fragment: &str) -> BufReader<File> {
+    println!("cargo:rerun-if-changed=../data/{}", path_fragment);
+
+    let path = Path::new("../data").join(path_fragment);
+
+    BufReader::new(File::open(path).expect("Something went wrong reading the file"))
+}
+
+fn ivd_sequences() -> TokenStream {
     let mut result = String::new();
-    result.push_str("const IVD_SEQUENCES: [IdeographicVariationSequence; 39169] = [");
-    for line in ivd_seqs_file_contents.split('\n') {
-        if line.len() == 0 || line.chars().nth(0) == Some('#') {
-            continue;
-        }
-        let parts: Vec<_> = line.split(';').map(|s| s.trim()).collect();
-        let codepoint_parts: Vec<_> = parts[0].split(' ').collect();
-        let base_codepoint = codepoint_parts[0].trim();
-        let variation_selector = codepoint_parts[1].trim();
-        let collection = parts[1].trim();
-        let item = parts[2].trim();
-        result.push_str(
-            format!(
-                r#"IdeographicVariationSequence {{
-                base_codepoint: 0x{},
-                variation_selector: 0x{},
-                collection: "{}",
-                item: "{}",
-            }},"#,
-                base_codepoint, variation_selector, collection, item
-            )
-            .as_str(),
-        );
+    let ivd_seqs_file = get_data_file("Unicode/IVD/IVD_Sequences.txt");
+
+    let lines: Vec<_> = ivd_seqs_file
+        .lines()
+        .map(Result::unwrap)
+        .filter(|line| line.len() > 0 && !line.starts_with('#')).collect();
+    let array_size = lines.len();
+
+    let structs: TokenStream = lines
+        .iter()
+        .map(|line| {
+            let parts: Vec<_> = line.split(';').map(|s| s.trim()).collect();
+            let codepoint_parts: Vec<_> = parts[0].split(' ').collect();
+            let base_codepoint = u32::from_str_radix(codepoint_parts[0].trim(), 16).unwrap();
+            let variation_selector = u32::from_str_radix(codepoint_parts[1].trim(), 16).unwrap();
+            let collection = parts[1].trim();
+            let item = parts[2].trim();
+
+            quote! {
+                IdeographicVariationSequence {
+                    base_codepoint: #base_codepoint,
+                    variation_selector: #variation_selector,
+                    collection: #collection,
+                    item: #item
+                },
+            }
+        })
+        .collect();
+
+    quote! {
+        const IVD_SEQUENCES: [IdeographicVariationSequence; #array_size] = [
+            #structs
+        ];
     }
-    result.push_str("];");
-    result
 }
 
 fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("compiled-data.rs");
-    let data_dir = env::var_os("DATA_DIR").unwrap();
-    fs::write(&dest_path, ivd_sequences(&data_dir)).unwrap();
-    println!("cargo:rerun-if-changed=build.rs");
+
+    write!(
+        BufWriter::new(File::create(dest_path).unwrap()),
+        "{}",
+        ivd_sequences()
+    );
 }
