@@ -13,7 +13,6 @@ node_modules/.bin/prettier --write "ts/**/*.ts" "css/**/*.css" "html/**/*.html"
 
 # independent
 cp -R css build/ # copy dir
-cp -R ts build/
 cp -R favicon/* build/ # copy contents of dir
 cp -R html/* build/
 

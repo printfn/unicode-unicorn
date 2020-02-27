@@ -6,6 +6,7 @@
 		"target": "es6",
 		"strictNullChecks": true,
 		"sourceMap": true,
+		"inlineSources": true,
 		"lib": ["dom", "es6", "es2015"]
 	},
 	"include": [
