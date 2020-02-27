@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 mkdir -p build
 
 # Format javascript and css
-node_modules/.bin/prettier --write "ts/**/*.ts" "css/**/*.css"
+node_modules/.bin/prettier --write "ts/**/*.ts" "css/**/*.css" "html/**/*.html"
 
 # independent
 cp -R css build/ # copy dir
