@@ -4,7 +4,7 @@
   "description": "A JavaScript Unicode IDE",
   "main": "index.js",
   "dependencies": {
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^4.4.1",
     "chosen-js": "^1.8.7",
     "jquery": "^3.4.1",
     "typescript": "^3.8.2"
