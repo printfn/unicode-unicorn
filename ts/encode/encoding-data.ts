@@ -2,7 +2,6 @@ interface Encoding {
   type: string;
   encode?: (codepoints: number[]) => number[] | number;
   decode?: (codeUnits: number[]) => number[];
-  table?: { [codepoint: number]: number };
 }
 
 let global_encodings: { [encodingName: string]: Encoding } = {};
@@ -65,8 +64,6 @@ async function initializeMappings() {
   let mojibakeOptionStrings = ``;
   $.each(global_encodingNames, function(i, encodingName) {
     if (
-      global_encodings[encodingName].type == `7-bit mapping` ||
-      global_encodings[encodingName].type == `8-bit mapping` ||
       global_encodings[encodingName].type == `7-bit wasm` ||
       global_encodings[encodingName].type == `8-bit wasm`
     ) {
@@ -82,84 +79,6 @@ async function initializeMappings() {
   updateSelectOptions(`codepageEncoding`, codepageOptionStrings);
   updateSelectOptions(`outputEncoding`, outputEncodingOptionStrings);
   updateSelectOptions(`mojibakeEncodings`, mojibakeOptionStrings);
-}
-
-function encodeWithTable(
-  codepoints: number[],
-  table: { [codepoint: number]: number }
-) {
-  let bytes: number[] = [];
-  for (let i = 0; i < codepoints.length; ++i) {
-    let codepoint = codepoints[i];
-    if (typeof codepoint == `string`) {
-      codepoint = parseInt(codepoint);
-    }
-    const number = table[codepoint];
-    if (typeof number == `undefined`) {
-      // if (codepoint <= 0xFF)
-      // 	bytes.push(codepoint);
-      // else
-      return codepoint;
-    }
-    if (number <= 0xff) {
-      bytes.push(number);
-    } else {
-      bytes.push(number >> 8);
-      bytes.push(number & 0xff);
-    }
-  }
-  return bytes;
-}
-
-function decodeWithTable(
-  bytes: number[],
-  table: { [codepoint: number]: number }
-) {
-  const codepointForByteUsingMapping = function(byte: number | string) {
-    if (typeof byte == `string`) {
-      byte = parseInt(byte);
-    }
-    for (let codepoint in table) {
-      if (byte == table[codepoint]) return parseInt(codepoint);
-    }
-  };
-  const codepoints: number[] = [];
-  for (let i = 0; i < bytes.length; ++i) {
-    let cp = codepointForByteUsingMapping(bytes[i]);
-    if (typeof cp != `undefined`) {
-      codepoints.push(cp);
-      continue;
-    }
-    cp = codepointForByteUsingMapping((bytes[i] << 8) + bytes[i + 1]);
-    if (typeof cp == `undefined`) {
-      return [];
-    }
-    codepoints.push(cp);
-    ++i;
-  }
-  return codepoints;
-}
-
-function parseTableFromLines(lines: string[], name: string) {
-  let table: { [codepoint: number]: number } = [];
-  for (let i = 0; i < lines.length; ++i) {
-    let line = lines[i];
-    if (line.length === 0 || line[0] == `#`) {
-      continue;
-    }
-    if (line.indexOf(`#`) != -1) {
-      line = line.substring(0, line.indexOf(`#`));
-    }
-    if (line.length == 1 && line.charCodeAt(0) == 26)
-      // weird format found in CP857 (and others)
-      continue;
-    const components = line.split(`\t`);
-    if (components[1].trim() === ``) continue;
-    if (isNaN(parseInt(components[0])) || isNaN(parseInt(components[1])))
-      throw new Error(`Invalid line detected in encoding ${name}`);
-    table[parseInt(components[1])] = parseInt(components[0]);
-  }
-  return table;
 }
 
 function loadEncodingFromData(type: string, name: string, data: string) {
@@ -181,18 +100,10 @@ function loadEncodingFromData(type: string, name: string, data: string) {
       return wasm_bindgen.decode_str(name, bytes) || [];
     };
   } else if (type.includes(`function`)) {
-    let lines = data.split("\n");
-    encoding = eval(lines.join(`\n`));
+    encoding = eval(data);
     encoding.type = type;
   } else {
-    let lines = data.split("\n");
-    encoding.table = parseTableFromLines(lines, name);
-    encoding.encode = function(codepoints) {
-      return encodeWithTable(codepoints, encoding.table!);
-    };
-    encoding.decode = function(bytes) {
-      return decodeWithTable(bytes, encoding.table!);
-    };
+    throw `Unknown encoding type: ${type}`;
   }
   global_encodings[name] = encoding;
 }

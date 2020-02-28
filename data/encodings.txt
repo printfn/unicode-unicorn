@@ -1,16 +1,9 @@
 # Types of encodings:
 # 
-# 7-bit mapping
-# 8-bit mapping
-# other mapping
-# byte function
-# text function
-#
-# Format: type\tname\turl
-# For mappings, the file must be in the format [byte(s)]\t[codepoint]
-# Byte must be in range 0 to 0x7F for 7-bit mappings,
-#   0 to 0xFF for 8-bit mappings,
-#   or 0 to 0xFFFF for other mappings
+# 7-bit wasm # shown on "codepage" tab with bytes \x00 to \x7f
+# 8-bit wasm # shown on "codepage" tab with bytes \x00 to \xff
+# other wasm # not shown on "codepage" tab
+# byte function # implemented in JS code
 #
 
 byte function	Unicode UTF-8	data/utf8.js
