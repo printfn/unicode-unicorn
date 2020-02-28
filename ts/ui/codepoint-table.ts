@@ -80,12 +80,12 @@ function updateCodepointList() {
       require: () => true
     },
     {
-      displayName: `Move up`,
+      displayName: `&#x2191;`,
       functionName: `moveUp`,
       require: (i, length) => i != 0
     },
     {
-      displayName: `Move down`,
+      displayName: `&#x2193;`,
       functionName: `moveDown`,
       require: (i, length) => i != length - 1
     }
