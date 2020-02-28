@@ -10,6 +10,7 @@ function getRandomColor() {
 let global_colorMap: { [key: string]: string } = {
   C: `#f97e77`,
   L: `#f9e776`,
+  M: `#fdb568`,
   N: `#b7f976`,
   P: `#76f9ee`,
   S: `#7680f9`,

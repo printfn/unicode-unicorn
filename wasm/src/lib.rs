@@ -139,7 +139,19 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
     match code_units {
         Ok(code_units) => EncodingResult {
             success: true,
-            encoded_code_units: Some(code_units.iter().copied().collect()),
+            encoded_code_units: Some(
+                code_units
+                    .iter()
+                    .copied()
+                    .flat_map(|cu| {
+                        if cu <= 0xff {
+                            vec![cu]
+                        } else {
+                            vec![cu >> 8, cu & 0xff]
+                        }
+                    })
+                    .collect(),
+            ),
             first_invalid_codepoint: None,
         },
         Err(&codepoint) => EncodingResult {

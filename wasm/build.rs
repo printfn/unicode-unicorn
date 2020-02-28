@@ -84,10 +84,32 @@ fn build_encoding_table(name: &str, data_file: &str) -> TokenStream {
 }
 
 fn build_encodings() -> TokenStream {
-    let tables: TokenStream = [build_encoding_table(
-        "ASCII with typographical quotes",
-        "Unicode/Mappings/VENDORS/MISC/US-ASCII-QUOTES.TXT",
-    )]
+    let tables: TokenStream = [
+        build_encoding_table(
+            "ASCII with typographical quotes",
+            "Unicode/Mappings/VENDORS/MISC/US-ASCII-QUOTES.TXT",
+        ),
+        build_encoding_table(
+            "Code page 874 (Thai)",
+            "Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP874.TXT",
+        ),
+        build_encoding_table(
+            "Code page 932 (Japanese; Shift-JIS extension)",
+            "Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP932.TXT",
+        ),
+        build_encoding_table(
+            "Code page 936 (Simplified Chinese)",
+            "Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP936.TXT",
+        ),
+        build_encoding_table(
+            "Code page 949 (Korean)",
+            "Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP949.TXT",
+        ),
+        build_encoding_table(
+            "Code page 950 (Traditional Chinese)",
+            "Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP950.TXT",
+        ),
+    ]
     .iter()
     .cloned()
     .collect();

@@ -70,11 +70,11 @@ byte function	UCS-2 LE (8-bit code units)	data/ucs2-8bitLE.js
 8-bit mapping	Code page 866 (MS-DOS Cyrillic CIS 1)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP866.TXT
 8-bit mapping	Code page 869 (MS-DOS Greek 2)	data/Unicode/Mappings/VENDORS/MICSFT/PC/CP869.TXT
 
-other mapping	Code page 874 (Thai)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP874.TXT
-other mapping	Code page 932 (Japanese; Shift-JIS extension)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP932.TXT
-other mapping	Code page 936 (Simplified Chinese)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP936.TXT
-other mapping	Code page 949 (Korean)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP949.TXT
-other mapping	Code page 950 (Traditional Chinese)	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP950.TXT
+8-bit wasm	Code page 874 (Thai)
+8-bit wasm	Code page 932 (Japanese; Shift-JIS extension)
+other wasm	Code page 936 (Simplified Chinese)
+other wasm	Code page 949 (Korean)
+other wasm	Code page 950 (Traditional Chinese)
 
 8-bit mapping	Code page 1250 (Windows Latin 2 (Central Europe))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1250.TXT
 8-bit mapping	Code page 1251 (Windows Cyrillic (Slavic))	data/Unicode/Mappings/VENDORS/MICSFT/WINDOWS/CP1251.TXT

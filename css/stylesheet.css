@@ -47,6 +47,9 @@ body:not(.modal-open) {
 .char-row-category-l {
   background-color: hsla(52, 92%, 90%, 1);
 }
+.char-row-category-m {
+  background-color: hsla(31, 97%, 70%, 1);
+}
 .char-row-category-n {
   background-color: hsla(90, 92%, 90%, 1);
 }
