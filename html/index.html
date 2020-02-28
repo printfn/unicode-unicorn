@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>Unicode Unicorn</title>
     <!-- Favicon generated with https://favicon.io/favicon-generator/
-	Text: U+, Background: Rounded, Font: Leckerli One, Font Size: 110,
-	Font Color: #FFFFFF, Background Color: #80F -->
+      Text: U+, Background: Rounded, Font: Leckerli One, Font Size: 110,
+      Font Color: #FFFFFF, Background Color: #80F -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -28,6 +28,12 @@
     <link
       rel="preload"
       href="compiled-data.json"
+      as="fetch"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="wasm/unicode_rustwasm_bg.wasm"
       as="fetch"
       crossorigin="anonymous"
     />
