@@ -12,7 +12,7 @@ function getCharacterCategoryCode(codepoint: number): string {
       }
     }
   }
-  return categoryCode;
+  return categoryCode || 'Cn'; // Cn = unassigned
 }
 
 function getCharacterCategoryName(codepoint: number): string {
