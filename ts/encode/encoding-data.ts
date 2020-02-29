@@ -45,7 +45,7 @@ function u8toc(bytes: Uint8Array): Uint32Array | undefined {
 function itos(int: number, base: number, padding: number = 0) {
   let res = int.toString(base).toUpperCase();
   while (res.length < padding) {
-    res = `0` + res;
+    res = "0" + res;
   }
   return res;
 }
@@ -59,26 +59,26 @@ async function initializeMappings() {
       encodingData.data
     );
   }
-  let codepageOptionStrings = ``;
-  let outputEncodingOptionStrings = ``;
-  let mojibakeOptionStrings = ``;
+  let codepageOptionStrings = "";
+  let outputEncodingOptionStrings = "";
+  let mojibakeOptionStrings = "";
   $.each(global_encodingNames, function(i, encodingName) {
     if (
-      global_encodings[encodingName].type == `7-bit wasm` ||
-      global_encodings[encodingName].type == `8-bit wasm`
+      global_encodings[encodingName].type == "7-bit wasm" ||
+      global_encodings[encodingName].type == "8-bit wasm"
     ) {
       codepageOptionStrings += `<option${
-        encodingName == `ISO-8859-1 (Latin-1 Western European)`
-          ? ` selected`
-          : ``
+        encodingName == "ISO-8859-1 (Latin-1 Western European)"
+          ? " selected"
+          : ""
       }>${encodingName}</option>`;
     }
     outputEncodingOptionStrings += `<option>${encodingName}</option>`;
     mojibakeOptionStrings += `<option>${encodingName}</option>`;
   });
-  updateSelectOptions(`codepageEncoding`, codepageOptionStrings);
-  updateSelectOptions(`outputEncoding`, outputEncodingOptionStrings);
-  updateSelectOptions(`mojibakeEncodings`, mojibakeOptionStrings);
+  updateSelectOptions("codepageEncoding", codepageOptionStrings);
+  updateSelectOptions("outputEncoding", outputEncodingOptionStrings);
+  updateSelectOptions("mojibakeEncodings", mojibakeOptionStrings);
 }
 
 function loadEncodingFromData(type: string, name: string, data: string) {
@@ -99,7 +99,7 @@ function loadEncodingFromData(type: string, name: string, data: string) {
     encoding.decode = function(bytes) {
       return wasm_bindgen.decode_str(name, bytes) || [];
     };
-  } else if (type.includes(`function`)) {
+  } else if (type.includes("function")) {
     encoding = eval(data);
     encoding.type = type;
   } else {
@@ -121,15 +121,15 @@ function codeUnitsToCodepoints(
 
 function bytesToText(format: string, bytes: number[], minLength?: number) {
   const chars: string[] = [];
-  if (typeof minLength === `undefined`) minLength = 0;
+  if (typeof minLength === "undefined") minLength = 0;
   for (let i = 0; i < bytes.length; ++i) {
     const b = bytes[i];
     let str = numberToStringWithFormat(b, format);
-    while (str.length < minLength) str = `0` + str;
+    while (str.length < minLength) str = "0" + str;
     str =
-      ((document.getElementById("codeUnitPrefix")! as any).value || ``) + str;
+      ((document.getElementById("codeUnitPrefix")! as any).value || "") + str;
     str =
-      str + ((document.getElementById("codeUnitSuffix")! as any).value || ``);
+      str + ((document.getElementById("codeUnitSuffix")! as any).value || "");
     chars.push(str);
   }
   return chars;

@@ -1,14 +1,14 @@
 function numberForFormat(format: string) {
   switch (format) {
-    case `Binary`:
+    case "Binary":
       return 2;
-    case `Octal`:
+    case "Octal":
       return 8;
-    case `Decimal`:
+    case "Decimal":
       return 10;
-    case `Hexadecimal (uppercase)`:
+    case "Hexadecimal (uppercase)":
       return 16;
-    case `Hexadecimal (lowercase)`:
+    case "Hexadecimal (lowercase)":
       return 16;
     default:
       throw `Invalid format: ${format}`;
@@ -17,7 +17,7 @@ function numberForFormat(format: string) {
 
 function numberToStringWithFormat(n: number, format: string) {
   let str = n.toString(numberForFormat(format));
-  if (format == `Hexadecimal (uppercase)`) str = str.toUpperCase();
+  if (format == "Hexadecimal (uppercase)") str = str.toUpperCase();
   return str;
 }
 

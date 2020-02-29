@@ -4,7 +4,7 @@ function encodeOutput(
   format: string,
   codepoints: number[]
 ) {
-  const useBOM = byteOrderMark.startsWith(`Use`);
+  const useBOM = byteOrderMark.startsWith("Use");
   if (useBOM) {
     codepoints.unshift(0xfeff);
   }
@@ -15,7 +15,7 @@ function encodeOutput(
     bytes = undefined;
   }
   // TODO: bytes should never be undefined if encodings (specifically utf-8/16) are written properly
-  if (typeof bytes == `number` || typeof bytes == "undefined") {
+  if (typeof bytes == "number" || typeof bytes == "undefined") {
     // input contains codepoints incompatible with the selected encoding
     const invalidCodepoint = bytes || 0;
     return `<span style="color: red">Text cannot be encoded in ${encoding} because it contains incompatible characters.\nThe first such incompatible character is U+${itos(
@@ -25,7 +25,7 @@ function encodeOutput(
     )} - ${getHtmlNameDescription(invalidCodepoint)} (${displayCodepoint(
       invalidCodepoint
     )}).</span>`;
-  } else if (typeof bytes == `string`) {
+  } else if (typeof bytes == "string") {
     const outputString = bytes;
     return escapeHtml(outputString);
   }
@@ -41,15 +41,15 @@ function encodeOutput(
     } else if (encoding.includes("16-bit code units")) {
       bytesPerCodeUnit = 2;
     }
-    if (format == `Binary`) {
+    if (format == "Binary") {
       minLength = bytesPerCodeUnit * 8; // 8, 16, or 32
-    } else if (format == `Octal`) {
+    } else if (format == "Octal") {
       minLength = bytesPerCodeUnit * 3; // 3, 6, or 12
-    } else if (format == `Decimal`) {
+    } else if (format == "Decimal") {
       minLength = 0;
     } else if (
-      format == `Hexadecimal (uppercase)` ||
-      format == `Hexadecimal (lowercase)`
+      format == "Hexadecimal (uppercase)" ||
+      format == "Hexadecimal (lowercase)"
     ) {
       minLength = bytesPerCodeUnit * 2; // 2, 4 or 8
     }
@@ -69,13 +69,13 @@ function encodeOutput(
     }
   }
   const groupPrefix =
-    (document.getElementById("groupPrefix")! as any).value || ``;
+    (document.getElementById("groupPrefix")! as any).value || "";
   const groupSuffix =
-    (document.getElementById("groupSuffix")! as any).value || ``;
+    (document.getElementById("groupSuffix")! as any).value || "";
   for (let i = 0; i < groups.length; ++i) {
     groups[i] = groupPrefix + groups[i] + groupSuffix;
   }
   const groupSeparator =
-    (document.getElementById("outputJoinerText")! as any).value || ``;
+    (document.getElementById("outputJoinerText")! as any).value || "";
   return escapeHtml(groups.join(groupSeparator));
 }

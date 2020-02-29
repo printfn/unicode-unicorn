@@ -2,12 +2,12 @@ function updateRenderedCodepage() {
   const encodingName = selectedOption("codepageEncoding").textContent!;
   const encoding = global_encodings[encodingName];
   const isAscii =
-    encoding.type == `7-bit mapping` || encoding.type == "7-bit wasm";
-  let html = `<thead><th></th>`;
+    encoding.type == "7-bit mapping" || encoding.type == "7-bit wasm";
+  let html = "<thead><th></th>";
   for (let i = 0; i < 16; ++i) {
     html += `<th>_${i.toString(16).toUpperCase()}</th>`;
   }
-  html += `</thead><tbody>`;
+  html += "</thead><tbody>";
   for (let i = 0; i < (isAscii ? 8 : 16); ++i) {
     html += `<tr><td style="font-weight:bold">${i
       .toString(16)
@@ -30,8 +30,8 @@ function updateRenderedCodepage() {
           .toUpperCase()}${j.toString(16).toUpperCase()}<br>&nbsp;</td>`;
       }
     }
-    html += `</tr>`;
+    html += "</tr>";
   }
-  html += `</tbody>`;
+  html += "</tbody>";
   getElementById("codepage").innerHTML = html;
 }
