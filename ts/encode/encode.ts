@@ -15,7 +15,7 @@ function encodeOutput(
         bytes = undefined;
     }
     // TODO: bytes should never be undefined if encodings (specifically utf-8/16) are written properly
-    if (typeof bytes == 'number' || typeof bytes == 'undefined') {
+    if (typeof bytes == 'number' || !bytes) {
         // input contains codepoints incompatible with the selected encoding
         const invalidCodepoint = bytes || 0;
         return `<span style="color: red">Text cannot be encoded in ${encoding} because it contains incompatible characters.\nThe first such incompatible character is U+${itos(
