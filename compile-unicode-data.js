@@ -70,7 +70,6 @@ function iterateOverFileWithRanges(path, globalArray) {
 	let global_all_assigned_ranges = [{startCodepoint: 0, endCodepoint: 0}];
 	let global_category = {};
 	let global_categoryRanges = [];
-	let global_generalCategoryNames = {};
 	let global_aliases = [];
 
 	let global_han_meanings = {};
@@ -128,17 +127,6 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	iterateOverFile(`data/Unicode/UCD/PropertyValueAliases.txt`, function(line) {
-		let splitLine = line.split(`#`);
-		splitLine = splitLine[0];
-		splitLine = splitLine.split(`;`);
-		if (splitLine[0].trim() != `gc`)
-			return;
-		const gc = splitLine[1].trim();
-		const gcAlias = splitLine[2].trim();
-		global_generalCategoryNames[gc] = gcAlias.replace(/_/g, ` `);
-	});
-
 	iterateOverFile(`data/Unicode/UCD/NameAliases.txt`, function(line) {
 		const splitLine = line.split(`;`);
 		const codepoint = parseInt(splitLine[0], 16);
@@ -161,7 +149,6 @@ function iterateOverFileWithRanges(path, globalArray) {
 	out(`global_category`, global_category);
 	out(`global_categoryRanges`, global_categoryRanges);
 
-	out(`global_generalCategoryNames`, global_generalCategoryNames);
 	out(`global_aliases`, global_aliases);
 
 	out(`global_han_meanings`, global_han_meanings);

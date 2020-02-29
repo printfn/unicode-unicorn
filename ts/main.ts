@@ -141,7 +141,6 @@ function initGlobalVariables(data: any) {
     global_all_assigned_ranges = data['global_all_assigned_ranges'];
     global_category = data['global_category'];
     global_categoryRanges = data['global_categoryRanges'];
-    global_generalCategoryNames = data['global_generalCategoryNames'];
     global_aliases = data['global_aliases'];
     global_han_meanings = data['global_han_meanings'];
     global_mandarin_readings = data['global_mandarin_readings'];

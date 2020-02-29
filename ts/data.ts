@@ -17,7 +17,12 @@ function getCharacterCategoryCode(codepoint: number): string {
 
 function getCharacterCategoryName(codepoint: number): string {
     const categoryCode = getCharacterCategoryCode(codepoint);
-    return global_generalCategoryNames[categoryCode] || `Unknown`;
+    const name:
+        | string
+        | undefined = wasm_bindgen.long_category_name_for_short_name(
+        categoryCode
+    );
+    return name || 'Unknown';
 }
 
 function getCodepointDescription(
