@@ -1,25 +1,25 @@
 declare var global_data: { [codepoint: number]: string };
 declare var global_ranges: {
-  startCodepoint: number;
-  endCodepoint: number;
-  rangeName: string;
+    startCodepoint: number;
+    endCodepoint: number;
+    rangeName: string;
 }[];
 declare var global_all_assigned_ranges: {
-  startCodepoint: number;
-  endCodepoint: number;
-  rangeName: string;
+    startCodepoint: number;
+    endCodepoint: number;
+    rangeName: string;
 }[];
 declare var global_category: { [codepoint: number]: string };
 declare var global_categoryRanges: {
-  startCodepoint: number;
-  endCodepoint: number;
-  categoryCode: string;
+    startCodepoint: number;
+    endCodepoint: number;
+    categoryCode: string;
 }[];
 declare var global_generalCategoryNames: { [categoryCode: string]: string };
 declare var global_aliases: {
-  codepoint: number;
-  alias: string;
-  type: string;
+    codepoint: number;
+    alias: string;
+    type: string;
 }[];
 declare var global_han_meanings: { [codepoint: number]: string };
 declare var global_mandarin_readings: { [codepoint: number]: string };
@@ -32,9 +32,9 @@ declare var global_encodingData: { name: string; type: string; data: string }[];
 declare var global_graphemeBreakData: { [codepoint: number]: string };
 declare var global_extendedPictograph: number[];
 declare var global_blockRanges: {
-  startCodepoint: number;
-  endCodepoint: number;
-  blockName: string;
+    startCodepoint: number;
+    endCodepoint: number;
+    blockName: string;
 }[];
 declare var global_syllableRanges: { s: number; e: number; v: string }[];
 declare var global_shortJamoNames: { [codepoint: number]: string };

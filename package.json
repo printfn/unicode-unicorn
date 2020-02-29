@@ -1,31 +1,35 @@
 {
-  "name": "unicode-unicorn",
-  "version": "1.0.0",
-  "description": "A JavaScript Unicode IDE",
-  "main": "index.js",
-  "dependencies": {
-    "bootstrap": "^4.4.1",
-    "chosen-js": "^1.8.7",
-    "jquery": "^3.4.1",
-    "typescript": "^3.8.2"
-  },
-  "devDependencies": {
-    "@types/jquery": "^2.0.54",
-    "prettier": "1.19.1"
-  },
-  "scripts": {
-    "clean": "rm -rf docs/build",
-    "build": "./build.sh",
-    "start": "cd docs&&python3 -m http.server"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/printfn/unicode-unicorn.git"
-  },
-  "author": "printfn",
-  "license": "AGPL-3.0",
-  "bugs": {
-    "url": "https://github.com/printfn/unicode-unicorn/issues"
-  },
-  "homepage": "https://github.com/printfn/unicode-unicorn#readme"
+    "name": "unicode-unicorn",
+    "version": "1.0.0",
+    "description": "A JavaScript Unicode IDE",
+    "main": "index.js",
+    "dependencies": {
+        "bootstrap": "^4.4.1",
+        "chosen-js": "^1.8.7",
+        "jquery": "^3.4.1",
+        "typescript": "^3.8.2"
+    },
+    "devDependencies": {
+        "@types/jquery": "^2.0.54",
+        "prettier": "1.19.1"
+    },
+    "scripts": {
+        "clean": "rm -rf docs/build",
+        "build": "./build.sh",
+        "start": "cd docs&&python3 -m http.server"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/printfn/unicode-unicorn.git"
+    },
+    "author": "printfn",
+    "license": "AGPL-3.0",
+    "bugs": {
+        "url": "https://github.com/printfn/unicode-unicorn/issues"
+    },
+    "homepage": "https://github.com/printfn/unicode-unicorn#readme",
+    "prettier": {
+        "tabWidth": 4,
+        "singleQuote": true
+    }
 }
