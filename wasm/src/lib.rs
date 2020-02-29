@@ -117,6 +117,20 @@ pub type EncodingTable = HashMap<u32, u32>;
 // }
 
 fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingResult {
+    if encoding_name == "Unicode UTF-8" {
+        return match ctou8(codepoints) {
+            Some(str) => EncodingResult {
+                success: true,
+                encoded_code_units: Some(str.iter().map(|u| *u as u32).collect()),
+                first_invalid_codepoint: None,
+            },
+            None => EncodingResult {
+                success: false,
+                encoded_code_units: None,
+                first_invalid_codepoint: None,
+            },
+        };
+    }
     let encoding = match ENCODING_TABLES.get(encoding_name) {
         Some(encoding) => encoding,
         None => {
@@ -179,6 +193,14 @@ fn lookup_code_unit(table: &EncodingTable, code_unit: u32) -> Option<u32> {
 
 #[wasm_bindgen]
 pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>> {
+    if encoding_name == "Unicode UTF-8" {
+        return u8toc(
+            code_units
+                .iter()
+                .map(|u| if *u <= 0xff { Some(*u as u8) } else { None })
+                .collect::<Option<Vec<u8>>>()?,
+        );
+    }
     let table = ENCODING_TABLES.get(encoding_name)?;
     let mut res: Vec<u32> = vec![];
     let mut try_combined = false;
