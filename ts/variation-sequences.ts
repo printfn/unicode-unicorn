@@ -36,9 +36,7 @@ function urlForIdeographicCollection(name: string) {
 
 function ideographicVariationSequencesForCodepoint(codepoint: number) {
     const results: VariationSequence[] = [];
-    const seqs_from_wasm = JSON.parse(
-        wasm_bindgen.variation_sequences_for_codepoint(codepoint)
-    );
+    const seqs_from_wasm = JSON.parse(wasm_bindgen.variation_sequences_for_codepoint(codepoint));
     for (let i = 0; i < seqs_from_wasm.length; ++i) {
         var ivs = seqs_from_wasm[i];
         results.push({

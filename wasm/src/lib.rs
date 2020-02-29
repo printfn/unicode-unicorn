@@ -213,3 +213,19 @@ pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
             .to_string(),
     )
 }
+
+#[wasm_bindgen]
+pub fn basic_type_for_codepoint(
+    short_general_category_name: &str,
+    codepoint: u32,
+) -> Option<String> {
+    use std::str::FromStr;
+    use unicode_rs::general_category::GeneralCategory;
+
+    Some(
+        GeneralCategory::from_str(short_general_category_name)
+            .ok()?
+            .codepoint_type(codepoint)
+            .to_string(),
+    )
+}

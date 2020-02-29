@@ -6,11 +6,7 @@ interface ButtonInfo {
     require: (idx: number, length: number) => boolean;
 }
 
-function renderCodepointsInTable(
-    codepoints: number[],
-    tableId: string,
-    buttons: ButtonInfo[]
-) {
+function renderCodepointsInTable(codepoints: number[], tableId: string, buttons: ButtonInfo[]) {
     const table = getElementById(tableId);
     if (codepoints.length === 0) {
         table.innerHTML = '';
@@ -49,9 +45,7 @@ function renderCodepointsInTable(
       </div>`;
         }
         html += `
-    <tr class="char-row-category-${getCharacterCategoryCode(
-        codepoint
-    )[0].toLowerCase()}">
+    <tr class="char-row-category-${getCharacterCategoryCode(codepoint)[0].toLowerCase()}">
       <td>${buttonStr}</td>
       <td>U+${itos(codepoint, 16, 4)}</td>
       <td>${codepoint}</td>

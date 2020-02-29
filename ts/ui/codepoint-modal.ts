@@ -26,28 +26,23 @@ function tryFillElement(id: string, value: string) {
 
 function showCodepageDetail(codepoint: number) {
     getElementById('detail-codepoint-hex').textContent = itos(codepoint, 16, 4);
-    getElementById(
-        'detail-codepoint-decimal'
-    ).textContent = codepoint.toString();
+    getElementById('detail-codepoint-decimal').textContent = codepoint.toString();
     getElementById('detail-name').innerHTML = `"${getName(codepoint)}"`;
     getElementById('detail-character').innerHTML = displayCodepoint(codepoint);
     getElementById('detail-character-raw').textContent = ctos([codepoint]);
-    (getElementById(
-        'detail-character-textbox'
-    ) as HTMLInputElement).value = ctos([codepoint]);
+    (getElementById('detail-character-textbox') as HTMLInputElement).value = ctos([codepoint]);
     getElementById('detail-category').textContent = `${getCharacterCategoryCode(
         codepoint
     )} (${getCharacterCategoryName(codepoint)})`;
-    getElementById('detail-block').textContent = getBlockForCodepoint(
-        codepoint
-    ).replace(/_/g, ` `);
-    getElementById('detail-script').textContent = getScriptForCodepoint(
-        codepoint
-    ).replace(/_/g, ` `);
+    getElementById('detail-basic-type').textContent = `${getCharacterBasicType(codepoint)}`;
+    getElementById('detail-block').textContent = getBlockForCodepoint(codepoint).replace(/_/g, ` `);
+    getElementById('detail-script').textContent = getScriptForCodepoint(codepoint).replace(
+        /_/g,
+        ` `
+    );
     const matchingAliases: string[] = [];
     for (let i = 0; i < global_aliases.length; ++i) {
-        if (global_aliases[i].codepoint == codepoint)
-            matchingAliases.push(global_aliases[i].alias);
+        if (global_aliases[i].codepoint == codepoint) matchingAliases.push(global_aliases[i].alias);
     }
     tryFillElement('detail-aliases', matchingAliases.join(', '));
     tryFillElement('detail-meaning', global_han_meanings[codepoint]);
@@ -70,26 +65,18 @@ function showCodepageDetail(codepoint: number) {
                 vs.variationSelector,
                 16,
                 4
-            )}: ${escapeHtml(
-                ctos([vs.baseCodepoint, vs.variationSelector])
-            )} <i>${vs.description}`;
+            )}: ${escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector]))} <i>${vs.description}`;
             if (vs.shapingEnvironments.length > 0) {
-                variationsString += ` (${vs.shapingEnvironments.join(
-                    `, `
-                )})</i>`;
+                variationsString += ` (${vs.shapingEnvironments.join(`, `)})</i>`;
             } else {
                 variationsString += `</i>`;
             }
         }
-        getElementById(
-            'detail-variation-sequences-content'
-        ).innerHTML = variationsString;
+        getElementById('detail-variation-sequences-content').innerHTML = variationsString;
     }
 
     let encodingsString = ``;
-    for (let elem of Array.from(
-        (getElementById('outputEncoding') as HTMLSelectElement).options
-    )) {
+    for (let elem of Array.from((getElementById('outputEncoding') as HTMLSelectElement).options)) {
         let encoding = elem.textContent;
         if (!encoding) {
             throw 'Unable to get encoding (via textContent) from element';
@@ -112,10 +99,7 @@ function showCodepageDetail(codepoint: number) {
         'data-cp',
         itos(previousCodepoint(codepoint), 10)
     );
-    getElementById('detail-next-cp').setAttribute(
-        'data-cp',
-        itos(nextCodepoint(codepoint), 10)
-    );
+    getElementById('detail-next-cp').setAttribute('data-cp', itos(nextCodepoint(codepoint), 10));
 
     jQueryModal(`#codepoint-detail`, `show`);
 }

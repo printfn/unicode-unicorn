@@ -30,6 +30,7 @@
     "homepage": "https://github.com/printfn/unicode-unicorn#readme",
     "prettier": {
         "tabWidth": 4,
-        "singleQuote": true
+        "singleQuote": true,
+        "printWidth": 100
     }
 }

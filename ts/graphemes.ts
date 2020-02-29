@@ -8,16 +8,12 @@ function isExtendedPictographic(codepoint: number): boolean {
 }
 
 function graphemeBreakValueForCodepoint(codepoint: number): string {
-    if (global_graphemeBreakData[codepoint])
-        return global_graphemeBreakData[codepoint];
+    if (global_graphemeBreakData[codepoint]) return global_graphemeBreakData[codepoint];
     return `Other`;
 }
 
 // Updated for revision 33
-function countGraphemesForCodepoints(
-    codepoints: number[],
-    type: 'legacy' | 'extended'
-) {
+function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'extended') {
     if (codepoints.length === 0) return 0;
 
     let useExtended: boolean;
@@ -67,16 +63,10 @@ function countGraphemesForCodepoints(
             ++breaks;
         } else if (
             value1 == `L` &&
-            (value2 == `L` ||
-                value2 == `V` ||
-                value2 == `LV` ||
-                value2 == `LVT`)
+            (value2 == `L` || value2 == `V` || value2 == `LV` || value2 == `LVT`)
         ) {
             // GB6
-        } else if (
-            (value1 == `LV` || value1 == `V`) &&
-            (value2 == `V` || value2 == `T`)
-        ) {
+        } else if ((value1 == `LV` || value1 == `V`) && (value2 == `V` || value2 == `T`)) {
             // GB7
         } else if ((value1 == `LVT` || value1 == `T`) && value2 == `T`) {
             // GB8
@@ -86,11 +76,7 @@ function countGraphemesForCodepoints(
             // GB9a
         } else if (useExtended && value1 == `Prepend`) {
             // GB9b
-        } else if (
-            value1OfGB11 &&
-            value1 == `ZWJ` &&
-            isExtendedPictographic(codepoints[i])
-        ) {
+        } else if (value1OfGB11 && value1 == `ZWJ` && isExtendedPictographic(codepoints[i])) {
             // GB11
         } else if (
             numberOfContinuousRegionalIndicatorSymbols % 2 == 1 &&

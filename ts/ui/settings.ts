@@ -75,7 +75,5 @@ function updateLanguage() {
 }
 
 function updateUseInternalString() {
-    global_useInternalString = (getElementById(
-        'useInternalString'
-    ) as HTMLInputElement).checked;
+    global_useInternalString = (getElementById('useInternalString') as HTMLInputElement).checked;
 }

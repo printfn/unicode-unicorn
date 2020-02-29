@@ -25,8 +25,7 @@ function updateMojibake() {
             if (i == j) continue;
             if (!f.selected) continue;
             const encoding2Name = f.textContent!;
-            if (global_encodings[encoding2Name].type == `text function`)
-                continue;
+            if (global_encodings[encoding2Name].type == `text function`) continue;
             const decodedString = decodeOutput(
                 `Don't use a byte order mark`,
                 encoding2Name,

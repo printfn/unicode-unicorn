@@ -56,8 +56,7 @@ function callEventListenersForElemId(elemId: string) {
         const listener = global_event_listeners[i];
         if (listener.elementId != elemId) continue;
         if (listener.tabId) {
-            if (!getElementById(listener.tabId).classList.contains('active'))
-                continue;
+            if (!getElementById(listener.tabId).classList.contains('active')) continue;
         }
         listener.f();
     }
@@ -147,8 +146,7 @@ function initGlobalVariables(data: any) {
     global_kun_readings = data['global_kun_readings'];
     global_on_readings = data['global_on_readings'];
     global_variationSequences = data['global_variationSequences'];
-    global_ideographicVariationCollections =
-        data['global_ideographicVariationCollections'];
+    global_ideographicVariationCollections = data['global_ideographicVariationCollections'];
     global_encodingNames = data['global_encodingNames'];
     global_encodingData = data['global_encodingData'];
     global_graphemeBreakData = data['global_graphemeBreakData'];
@@ -172,12 +170,7 @@ async function initData() {
     const res = await fetch('compiled-data.json');
     const compiledData = await res.json();
     initGlobalVariables(compiledData);
-    await Promise.all([
-        initializeMappings(),
-        initBlockData(),
-        initLanguageData(),
-        initWasm()
-    ]);
+    await Promise.all([initializeMappings(), initBlockData(), initLanguageData(), initWasm()]);
 }
 
 function ready(fn: () => void) {
@@ -203,9 +196,7 @@ ready(function() {
                 } else if (arg[0] == `str`) {
                     // search queries via the omnibox are URL-escaped (with UTF-8 encoding),
                     // and spaces are converted to '+'.
-                    setStr(
-                        stoc(decodeURIComponent(arg[1].replace(/\+/g, ' ')))
-                    );
+                    setStr(stoc(decodeURIComponent(arg[1].replace(/\+/g, ' '))));
                 }
             }
         };
@@ -215,8 +206,7 @@ ready(function() {
         updateSuggestions();
         getElementById('input').addEventListener('keyup', function(e) {
             if (e.keyCode == 13) {
-                const input = (getElementById('input') as HTMLInputElement)
-                    .value;
+                const input = (getElementById('input') as HTMLInputElement).value;
                 if (isNaN(parseInt(input.replace(`U+`, ``), 16))) {
                     document.body.style.backgroundColor = `#fdd`;
                     setTimeout(function() {
@@ -260,9 +250,7 @@ ready(function() {
         // This should be on `input` instead, but this doesn't fire on
         //  Safari. See https://caniuse.com/#feat=input-event (#4)
         //  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
-        getElementById('useInternalString').addEventListener('change', function(
-            e
-        ) {
+        getElementById('useInternalString').addEventListener('change', function(e) {
             updateUseInternalString();
         });
         getElementById('languageCode').addEventListener('input', function(e) {

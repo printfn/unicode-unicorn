@@ -3,10 +3,7 @@ function getCharacterCategoryCode(codepoint: number): string {
     if (!categoryCode) {
         for (let i = 0; i < global_categoryRanges.length; ++i) {
             const range = global_categoryRanges[i];
-            if (
-                codepoint >= range.startCodepoint &&
-                codepoint <= range.endCodepoint
-            ) {
+            if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
                 categoryCode = range.categoryCode;
                 break;
             }
@@ -17,18 +14,17 @@ function getCharacterCategoryCode(codepoint: number): string {
 
 function getCharacterCategoryName(codepoint: number): string {
     const categoryCode = getCharacterCategoryCode(codepoint);
-    const name:
-        | string
-        | undefined = wasm_bindgen.long_category_name_for_short_name(
-        categoryCode
-    );
-    return name || 'Unknown';
+    const name: string = wasm_bindgen.long_category_name_for_short_name(categoryCode);
+    return name;
 }
 
-function getCodepointDescription(
-    codepoint: number | string,
-    name: string
-): string {
+function getCharacterBasicType(codepoint: number): string {
+    const categoryCode = getCharacterCategoryCode(codepoint);
+    const basicType: string = wasm_bindgen.basic_type_for_codepoint(categoryCode, codepoint);
+    return basicType;
+}
+
+function getCodepointDescription(codepoint: number | string, name: string): string {
     if (typeof codepoint == `string`) {
         codepoint = parseInt(codepoint);
     }
@@ -87,10 +83,7 @@ function getName(codepoint: number, search: boolean = false): string {
     }
     for (let i = 0; i < global_ranges.length; ++i) {
         const range = global_ranges[i];
-        if (
-            codepoint >= range.startCodepoint &&
-            codepoint <= range.endCodepoint
-        ) {
+        if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
             if (range.rangeName.startsWith(`CJK Ideograph`)) {
                 if (search) return `CJK UNIFIED IDEOGRAPH`;
                 return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
@@ -106,8 +99,7 @@ function getHtmlNameDescription(codepoint: number): string {
         const name: string[] = [];
         for (let i = 0; i < global_aliases.length; ++i) {
             if (global_aliases[i].codepoint == codepoint) {
-                if (global_aliases[i].type != `control` && name.length > 0)
-                    break;
+                if (global_aliases[i].type != `control` && name.length > 0) break;
                 name.push(global_aliases[i].alias);
                 if (global_aliases[i].type != `control`) break;
             }
@@ -121,10 +113,7 @@ function getUnicodeDataTxtNameField(codepoint: number): string {
     if (global_data[codepoint]) return global_data[codepoint];
     for (let i = 0; i < global_ranges.length; ++i) {
         const range = global_ranges[i];
-        if (
-            codepoint >= range.startCodepoint &&
-            codepoint <= range.endCodepoint
-        )
+        if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint)
             return range.rangeName;
     }
     return `Unknown`;

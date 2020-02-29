@@ -7,8 +7,7 @@ function displayCodepoint(codepoint?: number): string {
         return '';
     }
     let codepoints = [codepoint];
-    if (graphemeBreakValueForCodepoint(codepoint) == 'Extend')
-        codepoints = [0x25cc, codepoint];
+    if (graphemeBreakValueForCodepoint(codepoint) == 'Extend') codepoints = [0x25cc, codepoint];
     return escapeHtml(ctos(codepoints));
 }
 

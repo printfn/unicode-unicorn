@@ -199,9 +199,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-rs"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10eca3ff3445017c92e62b57fb681eece382831d6b89b28a54b6a45b2ebeebce"
+checksum = "2a023f2e14e1128e201fc236a0588aae8c63f92a4b56517f3d06c46ffcdc2738"
 
 [[package]]
 name = "unicode-rustwasm"

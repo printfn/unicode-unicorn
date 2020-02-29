@@ -1,10 +1,6 @@
 function initLanguageData() {
-    const showAllLanguages = $(`#showRareLanguages`)[0].hasAttribute(
-        `disabled`
-    );
-    const htmls = showAllLanguages
-        ? global_allLanguageTagsHTML
-        : global_commonLanguageTagsHTML;
+    const showAllLanguages = $(`#showRareLanguages`)[0].hasAttribute(`disabled`);
+    const htmls = showAllLanguages ? global_allLanguageTagsHTML : global_commonLanguageTagsHTML;
     updateSelectOptions(`languageList`, htmls[`language`]);
     updateSelectOptions(`scriptList`, htmls[`script`]);
     updateSelectOptions(`regionList`, htmls[`region`]);

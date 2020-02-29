@@ -29,10 +29,7 @@ function encodeOutput(
         const outputString = bytes;
         return escapeHtml(outputString);
     }
-    let minLength = parseInt(
-        (document.getElementById('minCodeUnitLength')! as any).value,
-        10
-    );
+    let minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
     if (minLength == 0) {
         let bytesPerCodeUnit = 1;
         // set minLength automatically based on code unit size and base (hex, binary, etc.)
@@ -47,18 +44,12 @@ function encodeOutput(
             minLength = bytesPerCodeUnit * 3; // 3, 6, or 12
         } else if (format == 'Decimal') {
             minLength = 0;
-        } else if (
-            format == 'Hexadecimal (uppercase)' ||
-            format == 'Hexadecimal (lowercase)'
-        ) {
+        } else if (format == 'Hexadecimal (uppercase)' || format == 'Hexadecimal (lowercase)') {
             minLength = bytesPerCodeUnit * 2; // 2, 4 or 8
         }
     }
     const chars = bytesToText(format, bytes, minLength);
-    let grouping = parseInt(
-        (document.getElementById('groupingCount')! as any).value,
-        10
-    );
+    let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
     if (grouping == 0) grouping = 1;
     let groups: string[] = [];
     for (let i = 0; i < chars.length; ++i) {
@@ -68,14 +59,11 @@ function encodeOutput(
             groups[groups.length - 1] += chars[i];
         }
     }
-    const groupPrefix =
-        (document.getElementById('groupPrefix')! as any).value || '';
-    const groupSuffix =
-        (document.getElementById('groupSuffix')! as any).value || '';
+    const groupPrefix = (document.getElementById('groupPrefix')! as any).value || '';
+    const groupSuffix = (document.getElementById('groupSuffix')! as any).value || '';
     for (let i = 0; i < groups.length; ++i) {
         groups[i] = groupPrefix + groups[i] + groupSuffix;
     }
-    const groupSeparator =
-        (document.getElementById('outputJoinerText')! as any).value || '';
+    const groupSeparator = (document.getElementById('outputJoinerText')! as any).value || '';
     return escapeHtml(groups.join(groupSeparator));
 }

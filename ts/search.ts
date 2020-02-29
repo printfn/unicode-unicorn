@@ -26,16 +26,13 @@ function getAliasSearchStringForCodepoint(codepoint: number) {
 }
 
 function getSearchString(codepoint: number) {
-    let res = `${ctos([codepoint])}|U+${itos(
-        codepoint,
-        16,
-        4
-    )}|cp:${codepoint}|name:${getName(
+    let res = `${ctos([codepoint])}|U+${itos(codepoint, 16, 4)}|cp:${codepoint}|name:${getName(
         codepoint,
         true
-    )}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(
-        codepoint
-    ).replace(/_/g, ` `)}|category:${getCharacterCategoryName(codepoint)}`;
+    )}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(codepoint).replace(
+        /_/g,
+        ` `
+    )}|category:${getCharacterCategoryName(codepoint)}`;
 
     res += getAliasSearchStringForCodepoint(codepoint);
 
@@ -45,11 +42,7 @@ function getSearchString(codepoint: number) {
 
     res += getTermsForSearchString(global_kun_readings, codepoint, '|kun:');
     res += getTermsForSearchString(global_on_readings, codepoint, '|on:');
-    res += getTermsForSearchString(
-        global_mandarin_readings,
-        codepoint,
-        '|mandarin:'
-    );
+    res += getTermsForSearchString(global_mandarin_readings, codepoint, '|mandarin:');
 
     return res.toUpperCase();
 }

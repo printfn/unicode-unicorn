@@ -44,12 +44,7 @@ function splitByFormatDigits(str: string, format: string) {
     return strings;
 }
 
-function decodeOutput(
-    byteOrderMark: string,
-    encoding: string,
-    format: string,
-    str: string
-) {
+function decodeOutput(byteOrderMark: string, encoding: string, format: string, str: string) {
     if (!str) return;
     let strings = splitByFormatDigits(str, format);
     const codeUnits = textToBytes(format, strings);
