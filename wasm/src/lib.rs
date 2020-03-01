@@ -117,23 +117,12 @@ pub type EncodingTable = HashMap<u32, u32>;
 // }
 
 fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingResult {
-    if encoding_name == "Unicode UTF-8" {
-        return match ctou8(codepoints) {
-            Some(str) => EncodingResult {
-                success: true,
-                encoded_code_units: Some(str.iter().map(|u| *u as u32).collect()),
-                first_invalid_codepoint: None,
-            },
-            None => EncodingResult {
-                success: false,
-                encoded_code_units: None,
-                first_invalid_codepoint: None,
-            },
-        };
-    }
-    let code_units: Result<Vec<u32>, u32> = if encoding_name == "Unicode UTF-32 (32-bit code units)"
-    {
-        codepoints
+    let code_units: Result<Vec<u32>, u32> = match encoding_name {
+        "Unicode UTF-8" => codepoints
+            .iter()
+            .map(|&cp| char::try_from(cp).map_err(|_| cp).map(|c| c as u32))
+            .collect(),
+        "Unicode UTF-32 (32-bit code units)" => codepoints
             .iter()
             .map(|&cp| {
                 if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
@@ -142,27 +131,28 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                     Ok(cp)
                 }
             })
-            .collect()
-    } else {
-        let encoding = match ENCODING_TABLES.get(encoding_name) {
-            Some(encoding) => encoding,
-            None => {
-                return EncodingResult {
-                    success: false,
-                    encoded_code_units: None,
-                    first_invalid_codepoint: None,
+            .collect(),
+        _ => {
+            let encoding = match ENCODING_TABLES.get(encoding_name) {
+                Some(encoding) => encoding,
+                None => {
+                    return EncodingResult {
+                        success: false,
+                        encoded_code_units: None,
+                        first_invalid_codepoint: None,
+                    }
                 }
-            }
-        };
-        codepoints
-            .iter()
-            .map(|&codepoint| {
-                encoding
-                    .get(&codepoint)
-                    .ok_or(codepoint)
-                    .map(|code_unit| *code_unit)
-            })
-            .collect()
+            };
+            codepoints
+                .iter()
+                .map(|&codepoint| {
+                    encoding
+                        .get(&codepoint)
+                        .ok_or(codepoint)
+                        .map(|code_unit| *code_unit)
+                })
+                .collect()
+        }
     };
     match code_units {
         Ok(code_units) => EncodingResult {
@@ -214,6 +204,17 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
                 .map(|u| if *u <= 0xff { Some(*u as u8) } else { None })
                 .collect::<Option<Vec<u8>>>()?,
         );
+    } else if encoding_name == "Unicode UTF-32 (32-bit code units)" {
+        return code_units
+            .iter()
+            .map(|&u| {
+                if (u >= 0xd800 && u <= 0xdfff) || u > 0x10ffff {
+                    None
+                } else {
+                    Some(u)
+                }
+            })
+            .collect::<Option<Vec<u32>>>();
     }
     let table = ENCODING_TABLES.get(encoding_name)?;
     let mut res: Vec<u32> = vec![];
