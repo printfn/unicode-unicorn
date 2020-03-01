@@ -13,7 +13,7 @@ byte function	Unicode UTF-16 BE (8-bit code units)	data/utf16-8bitBE.js
 byte function	Unicode UTF-16 LE (8-bit code units)	data/utf16-8bitLE.js
 
 other wasm	Unicode UTF-32 (32-bit code units)
-byte function	Unicode UTF-32 BE (8-bit code units)	data/utf32-8bitBE.js
+other wasm	Unicode UTF-32 BE (8-bit code units)
 byte function	Unicode UTF-32 LE (8-bit code units)	data/utf32-8bitLE.js
 
 7-bit wasm	ASCII

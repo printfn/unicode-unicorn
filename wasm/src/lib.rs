@@ -132,6 +132,27 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                 }
             })
             .collect(),
+        "Unicode UTF-32 BE (8-bit code units)" => codepoints
+            .iter()
+            .map(|&cp| {
+                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                    Err(cp)
+                } else {
+                    Ok(cp)
+                }
+            })
+            .collect::<Result<Vec<u32>, u32>>()
+            .map(|v| {
+                v.into_iter()
+                    .flat_map(|cp| {
+                        cp.to_be_bytes()
+                            .iter()
+                            .copied()
+                            .map(|u| u as u32)
+                            .collect::<Vec<_>>()
+                    })
+                    .collect()
+            }),
         _ => {
             let encoding = match ENCODING_TABLES.get(encoding_name) {
                 Some(encoding) => encoding,
@@ -215,6 +236,20 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
                 }
             })
             .collect::<Option<Vec<u32>>>();
+    } else if encoding_name == "Unicode UTF-32 BE (8-bit code units)" {
+        if code_units.len() % 4 != 0 {
+            return None;
+        }
+        let mut v: Vec<u32> = vec![];
+        for c in code_units.chunks(4) {
+            // TODO: check if c[_] <= 0xff
+            let cp = u32::from_be_bytes([c[0] as u8, c[1] as u8, c[2] as u8, c[3] as u8]);
+            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                return None;
+            }
+            v.push(cp);
+        }
+        return Some(v);
     }
     let table = ENCODING_TABLES.get(encoding_name)?;
     let mut res: Vec<u32> = vec![];
