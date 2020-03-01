@@ -131,25 +131,39 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
             },
         };
     }
-    let encoding = match ENCODING_TABLES.get(encoding_name) {
-        Some(encoding) => encoding,
-        None => {
-            return EncodingResult {
-                success: false,
-                encoded_code_units: None,
-                first_invalid_codepoint: None,
+    let code_units: Result<Vec<u32>, u32> = if encoding_name == "Unicode UTF-32 (32-bit code units)"
+    {
+        codepoints
+            .iter()
+            .map(|&cp| {
+                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                    Err(cp)
+                } else {
+                    Ok(cp)
+                }
+            })
+            .collect()
+    } else {
+        let encoding = match ENCODING_TABLES.get(encoding_name) {
+            Some(encoding) => encoding,
+            None => {
+                return EncodingResult {
+                    success: false,
+                    encoded_code_units: None,
+                    first_invalid_codepoint: None,
+                }
             }
-        }
+        };
+        codepoints
+            .iter()
+            .map(|&codepoint| {
+                encoding
+                    .get(&codepoint)
+                    .ok_or(codepoint)
+                    .map(|code_unit| *code_unit)
+            })
+            .collect()
     };
-    let code_units: Result<Vec<_>, _> = codepoints
-        .iter()
-        .map(|codepoint| {
-            encoding
-                .get(codepoint)
-                .ok_or(codepoint)
-                .map(|code_unit| *code_unit)
-        })
-        .collect();
     match code_units {
         Ok(code_units) => EncodingResult {
             success: true,
@@ -168,7 +182,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
             ),
             first_invalid_codepoint: None,
         },
-        Err(&codepoint) => EncodingResult {
+        Err(codepoint) => EncodingResult {
             success: false,
             encoded_code_units: None,
             first_invalid_codepoint: Some(codepoint),
