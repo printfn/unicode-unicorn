@@ -14,9 +14,8 @@
         "prettier": "1.19.1"
     },
     "scripts": {
-        "clean": "rm -rf docs/build",
-        "build": "./build.sh",
-        "start": "cd docs&&python3 -m http.server"
+        "clean": "rm -r build wasm/pkg wasm/target",
+        "build": "./build.sh"
     },
     "repository": {
         "type": "git",
