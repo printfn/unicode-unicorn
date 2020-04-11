@@ -199,12 +199,10 @@ function iterateOverFileWithRanges(path, globalArray) {
 		const parts = line.split(`\t`);
 		const type = parts[0];
 		const name = parts[1];
-		const url = parts[2];
 		global_encodingNames.push(name);
 		global_encodingData.push({
 			name: name,
-			type: type,
-			data: type.includes('wasm') ? null : fs.readFileSync(url, 'utf8')
+			type: type
 		});
 	});
 

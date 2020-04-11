@@ -28,7 +28,7 @@ declare var global_on_readings: { [codepoint: number]: string };
 declare var global_variationSequences: VariationSequence[];
 declare var global_ideographicVariationCollections: VariationCollection[];
 declare var global_encodingNames: string[];
-declare var global_encodingData: { name: string; type: string; data: string }[];
+declare var global_encodingData: { name: string; type: string }[];
 declare var global_graphemeBreakData: { [codepoint: number]: string };
 declare var global_extendedPictograph: number[];
 declare var global_blockRanges: {

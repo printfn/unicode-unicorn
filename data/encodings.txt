@@ -3,7 +3,6 @@
 # 7-bit wasm # shown on "codepage" tab with bytes \x00 to \x7f
 # 8-bit wasm # shown on "codepage" tab with bytes \x00 to \xff
 # other wasm # not shown on "codepage" tab
-# byte function # implemented in JS code
 #
 
 other wasm	Unicode UTF-8

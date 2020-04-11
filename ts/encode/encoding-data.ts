@@ -53,7 +53,7 @@ function itos(int: number, base: number, padding: number = 0) {
 async function initializeMappings() {
     for (let i in global_encodingData) {
         let encodingData = global_encodingData[i];
-        loadEncodingFromData(encodingData.type, encodingData.name, encodingData.data);
+        loadEncodingFromData(encodingData.type, encodingData.name);
     }
     let codepageOptionStrings = '';
     let outputEncodingOptionStrings = '';
@@ -75,13 +75,13 @@ async function initializeMappings() {
     updateSelectOptions('mojibakeEncodings', mojibakeOptionStrings);
 }
 
-function loadEncodingFromData(type: string, name: string, data: string) {
+function loadEncodingFromData(type: string, name: string) {
     let encoding: Encoding = {
         type: type,
         encode: undefined,
         decode: undefined
     };
-    if (type.includes('wasm')) {
+    if (type == '7-bit wasm' || type == '8-bit wasm' || type == 'other wasm') {
         encoding.encode = function(codepoints) {
             let res = JSON.parse(wasm_bindgen.encode_str(name, codepoints));
             if (res.success) {
@@ -93,9 +93,6 @@ function loadEncodingFromData(type: string, name: string, data: string) {
         encoding.decode = function(bytes) {
             return wasm_bindgen.decode_str(name, bytes) || [];
         };
-    } else if (type.includes('function')) {
-        encoding = eval(data);
-        encoding.type = type;
     } else {
         throw `Unknown encoding type: ${type}`;
     }
