@@ -45,7 +45,7 @@ fn ivd_sequences() -> TokenStream {
         .collect();
 
     quote! {
-        const IVD_SEQUENCES: [IdeographicVariationSequence; #array_size] = [
+        pub(crate) const IVD_SEQUENCES: [IdeographicVariationSequence; #array_size] = [
             #structs
         ];
     }
@@ -313,7 +313,7 @@ fn build_encodings() -> TokenStream {
 
     quote! {
         lazy_static! {
-            static ref ENCODING_TABLES: HashMap<&'static str, EncodingTable> = {
+            pub(crate) static ref ENCODING_TABLES: HashMap<&'static str, EncodingTable> = {
                 let mut encoding_table = HashMap::new();
                 #tables
                 encoding_table

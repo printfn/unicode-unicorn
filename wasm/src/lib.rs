@@ -1,7 +1,8 @@
-include!(concat!(env!("OUT_DIR"), "/compiled-data.rs"));
-
+mod data;
 mod utf_encodings;
 mod utils;
+
+use data::IdeographicVariationSequence;
 
 use crate::utils::set_panic_hook;
 #[macro_use]
@@ -34,7 +35,7 @@ pub fn init() {
 
 #[wasm_bindgen]
 pub fn next_codepoint(codepoint: u32) -> u32 {
-    if codepoint != 0x10FFFF {
+    if codepoint != 0x10_ffff {
         codepoint + 1
     } else {
         0
@@ -46,22 +47,14 @@ pub fn previous_codepoint(codepoint: u32) -> u32 {
     if codepoint != 0 {
         codepoint - 1
     } else {
-        0x10FFFF
+        0x10_ffff
     }
-}
-
-#[derive(Copy, Clone, Serialize)]
-struct IdeographicVariationSequence {
-    base_codepoint: u32,      // base codepoint
-    variation_selector: u32,  // variation selector
-    collection: &'static str, // collection
-    item: &'static str,       // item, i.e. index into collection
 }
 
 #[wasm_bindgen]
 pub fn variation_sequences_for_codepoint(codepoint: u32) -> String {
     let mut result = Vec::<IdeographicVariationSequence>::new();
-    for ivd in IVD_SEQUENCES.iter() {
+    for ivd in data::IVD_SEQUENCES.iter() {
         if ivd.base_codepoint == codepoint {
             result.push(ivd.clone());
         }
@@ -73,7 +66,7 @@ pub fn variation_sequences_for_codepoint(codepoint: u32) -> String {
 pub fn u8toc(utf8_bytes: Vec<u8>) -> Option<Vec<u32>> {
     match std::str::from_utf8(utf8_bytes.as_slice()) {
         Err(_) => None,
-        Ok(s) => Some(s.chars().map(|ch| u32::from(ch)).collect()),
+        Ok(s) => Some(s.chars().map(u32::from).collect()),
     }
 }
 
@@ -126,7 +119,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
         "Unicode UTF-32 (32-bit code units)" => codepoints
             .iter()
             .map(|&cp| {
-                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
                     Err(cp)
                 } else {
                     Ok(cp)
@@ -149,7 +142,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
             codepoints
                 .iter()
                 .map(|&cp| {
-                    if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                    if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
                         Err(cp)
                     } else {
                         Ok(cp)
@@ -173,7 +166,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                 })
         }
         _ => {
-            let encoding = match ENCODING_TABLES.get(encoding_name) {
+            let encoding = match data::ENCODING_TABLES.get(encoding_name) {
                 Some(encoding) => encoding,
                 None => {
                     return EncodingResult {
@@ -260,7 +253,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
         return code_units
             .iter()
             .map(|&u| {
-                if (u >= 0xd800 && u <= 0xdfff) || u > 0x10ffff {
+                if (u >= 0xd800 && u <= 0xdfff) || u > 0x10_ffff {
                     None
                 } else {
                     Some(u)
@@ -298,14 +291,14 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
             } else {
                 u32::from_le_bytes(be_or_le_bytes)
             };
-            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
                 return None;
             }
             v.push(cp);
         }
         return Some(v);
     }
-    let table = ENCODING_TABLES.get(encoding_name)?;
+    let table = data::ENCODING_TABLES.get(encoding_name)?;
     let mut res: Vec<u32> = vec![];
     let mut try_combined = false;
     for (i, cu) in code_units.iter().enumerate() {
@@ -324,7 +317,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
             }
         }
     }
-    return Some(res);
+    Some(res)
 }
 
 #[wasm_bindgen]

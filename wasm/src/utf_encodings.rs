@@ -18,7 +18,7 @@ pub fn encode_ucs2_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Resul
 pub fn encode_utf16_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Result<Vec<u32>, u32> {
     Ok(codepoints
         .map(|&cp| {
-            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
                 Err(cp)
             } else {
                 Ok(cp)
@@ -37,7 +37,7 @@ pub fn encode_utf16_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Resu
         .collect())
 }
 
-fn encode_16bit_to_8bit<'a>(
+fn encode_16bit_to_8bit(
     code_units: Result<Vec<u32>, u32>,
     endianness: Endianness,
 ) -> Result<Vec<u32>, u32> {
@@ -74,7 +74,7 @@ pub fn encode_utf16_8bit_le<'a>(
     encode_16bit_to_8bit(encode_utf16_16bit(codepoints), Endianness::Little)
 }
 
-pub fn decode_ucs2_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
+pub fn decode_ucs2_16bit(code_units: Vec<u32>) -> Option<Vec<u32>> {
     code_units
         .iter()
         .map(|&u| {
@@ -87,7 +87,7 @@ pub fn decode_ucs2_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
         .collect()
 }
 
-pub fn decode_utf16_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
+pub fn decode_utf16_16bit(code_units: Vec<u32>) -> Option<Vec<u32>> {
     let string = String::from_utf16(
         code_units
             .iter()
