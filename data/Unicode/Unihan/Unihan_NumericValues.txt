@@ -1,13 +1,13 @@
 #
 # Unihan_NumericValues.txt
-# Date: 2018-11-09 21:36:19 GMT [JHJ]
-# Unicode version: 12.0.0
+# Date: 2020-02-18 18:27:33 GMT [JHJ]
+# Unicode version: 13.0.0
 #
 # Unicode Character Database
-# © 2018 Unicode®, Inc.
+# © 2020 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
-# For documentation, see http://www.unicode.org/reports/tr44/
+# For documentation, see http://www.unicode.org/reports/tr38/
 #
 # This file contains data on the following fields from the Unihan database:
 #	kAccountingNumeric

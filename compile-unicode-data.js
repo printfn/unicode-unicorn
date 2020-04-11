@@ -267,7 +267,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		}
 	});
 
-	iterateOverFile(`data/Unicode/emoji-data.txt`, function(line) {
+	iterateOverFile(`data/Unicode/UCD/emoji/emoji-data.txt`, function(line) {
 		const components = line.split(`;`);
 		if (components.length != 2) return;
 		if (components[1].trim() != `Extended_Pictographic`) return;

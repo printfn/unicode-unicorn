@@ -12,7 +12,7 @@ function graphemeBreakValueForCodepoint(codepoint: number): string {
     return `Other`;
 }
 
-// Updated for revision 33
+// Updated for revision 37
 function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'extended') {
     if (codepoints.length === 0) return 0;
 

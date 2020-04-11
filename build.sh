@@ -8,6 +8,11 @@ set -euo pipefail
 # This makes the script work even when invoked from elsewhere
 cd "$(dirname "$0")"
 
+if [[ "$1" == "--clean" ]]; then
+    echo "Doing a clean build..."
+    rm -r build wasm/pkg wasm/target
+fi
+
 mkdir -p build
 
 # Format javascript and css
