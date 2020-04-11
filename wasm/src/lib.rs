@@ -250,7 +250,11 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
         }
         let mut v: Vec<u32> = vec![];
         for c in code_units.chunks(4) {
-            // TODO: check if c[_] <= 0xff
+            for &code_unit in c {
+                if code_unit > 0xff {
+                    return None;
+                }
+            }
             let be_or_le_bytes = [c[0] as u8, c[1] as u8, c[2] as u8, c[3] as u8];
             let cp = if encoding_name == "Unicode UTF-32 BE (8-bit code units)" {
                 u32::from_be_bytes(be_or_le_bytes)

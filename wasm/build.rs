@@ -19,7 +19,7 @@ fn ivd_sequences() -> TokenStream {
     let lines: Vec<_> = ivd_seqs_file
         .lines()
         .map(Result::unwrap)
-        .filter(|line| line.len() > 0 && !line.starts_with('#'))
+        .filter(|line| !line.is_empty() && !line.starts_with('#'))
         .collect();
     let array_size = lines.len();
 
@@ -58,8 +58,8 @@ fn build_encoding_table(name: &str, data_file: &str) -> TokenStream {
         .lines()
         .map(Result::unwrap)
         // remove text after first '#'
-        .map(|line| line.split('#').nth(0).unwrap().to_string())
-        .filter(|line| line.len() > 0)
+        .map(|line| line.split('#').next().unwrap().to_string())
+        .filter(|line| !line.is_empty())
         // weird format found in CP857 (and others)
         .filter(|line| line != "\x1a")
         .collect();
@@ -67,7 +67,7 @@ fn build_encoding_table(name: &str, data_file: &str) -> TokenStream {
     let mappings: TokenStream = lines
         .iter()
         .map(|line| line.split('\t').collect::<Vec<_>>())
-        .filter(|components| components[1].trim().len() != 0)
+        .filter(|components| !components[1].trim().is_empty())
         .map(|components| {
             let coded_byte = u32::from_str_radix(&components[0][2..], 16).unwrap();
             let codepoint = u32::from_str_radix(&components[1][2..], 16).unwrap();
