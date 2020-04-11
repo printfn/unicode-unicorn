@@ -61,7 +61,7 @@ fn build_encoding_table(name: &str, data_file: &str) -> TokenStream {
         .map(|line| line.split('#').nth(0).unwrap().to_string())
         .filter(|line| line.len() > 0)
         // weird format found in CP857 (and others)
-        .filter(|line| !(line.len() == 1 && line.chars().nth(0).unwrap() == '\x1a'))
+        .filter(|line| line != "\x1a")
         .collect();
 
     let mappings: TokenStream = lines
