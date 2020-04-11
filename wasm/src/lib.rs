@@ -132,6 +132,16 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                 }
             })
             .collect(),
+        "UCS-2 (16-bit code units)" => codepoints
+            .iter()
+            .map(|&cp| {
+                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0xffff {
+                    Err(cp)
+                } else {
+                    Ok(cp)
+                }
+            })
+            .collect(),
         "Unicode UTF-32 BE (8-bit code units)" | "Unicode UTF-32 LE (8-bit code units)" => {
             codepoints
                 .iter()
@@ -228,7 +238,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
         return u8toc(
             code_units
                 .iter()
-                .map(|u| if *u <= 0xff { Some(*u as u8) } else { None })
+                .map(|&u| if u <= 0xff { Some(u as u8) } else { None })
                 .collect::<Option<Vec<u8>>>()?,
         );
     } else if encoding_name == "Unicode UTF-32 (32-bit code units)" {
@@ -236,6 +246,17 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
             .iter()
             .map(|&u| {
                 if (u >= 0xd800 && u <= 0xdfff) || u > 0x10ffff {
+                    None
+                } else {
+                    Some(u)
+                }
+            })
+            .collect::<Option<Vec<u32>>>();
+    } else if encoding_name == "UCS-2 (16-bit code units)" {
+        return code_units
+            .iter()
+            .map(|&u| {
+                if (u >= 0xd800 && u <= 0xdfff) || u > 0xffff {
                     None
                 } else {
                     Some(u)

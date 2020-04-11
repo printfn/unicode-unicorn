@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+# cd to the directory of this script
+# This makes the script work even when invoked from elsewhere
 cd "$(dirname "$0")"
 
 mkdir -p build
