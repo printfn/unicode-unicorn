@@ -136,6 +136,15 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
         "UCS-2 (16-bit code units)" => utf_encodings::encode_ucs2_16bit(codepoints.iter()),
         "UCS-2 BE (8-bit code units)" => utf_encodings::encode_ucs2_8bit_be(codepoints.iter()),
         "UCS-2 LE (8-bit code units)" => utf_encodings::encode_ucs2_8bit_le(codepoints.iter()),
+        "Unicode UTF-16 (16-bit code units)" => {
+            utf_encodings::encode_utf16_16bit(codepoints.iter())
+        }
+        "Unicode UTF-16 BE (8-bit code units)" => {
+            utf_encodings::encode_utf16_8bit_be(codepoints.iter())
+        }
+        "Unicode UTF-16 LE (8-bit code units)" => {
+            utf_encodings::encode_utf16_8bit_le(codepoints.iter())
+        }
         "Unicode UTF-32 BE (8-bit code units)" | "Unicode UTF-32 LE (8-bit code units)" => {
             codepoints
                 .iter()
@@ -174,7 +183,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                     }
                 }
             };
-            codepoints
+            let code_units: Result<Vec<u32>, u32> = codepoints
                 .iter()
                 .map(|&codepoint| {
                     encoding
@@ -182,25 +191,37 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                         .ok_or(codepoint)
                         .map(|code_unit| *code_unit)
                 })
-                .collect()
+                .collect();
+            return match code_units {
+                Ok(code_units) => EncodingResult {
+                    success: true,
+                    encoded_code_units: Some(
+                        code_units
+                            .iter()
+                            .copied()
+                            .flat_map(|cu| {
+                                if cu <= 0xff {
+                                    vec![cu]
+                                } else {
+                                    vec![cu >> 8, cu & 0xff]
+                                }
+                            })
+                            .collect(),
+                    ),
+                    first_invalid_codepoint: None,
+                },
+                Err(codepoint) => EncodingResult {
+                    success: false,
+                    encoded_code_units: None,
+                    first_invalid_codepoint: Some(codepoint),
+                },
+            };
         }
     };
     match code_units {
         Ok(code_units) => EncodingResult {
             success: true,
-            encoded_code_units: Some(
-                code_units
-                    .iter()
-                    .copied()
-                    .flat_map(|cu| {
-                        if cu <= 0xff {
-                            vec![cu]
-                        } else {
-                            vec![cu >> 8, cu & 0xff]
-                        }
-                    })
-                    .collect(),
-            ),
+            encoded_code_units: Some(code_units),
             first_invalid_codepoint: None,
         },
         Err(codepoint) => EncodingResult {
@@ -252,6 +273,12 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
         return utf_encodings::decode_ucs2_8bit_be(code_units);
     } else if encoding_name == "UCS-2 LE (8-bit code units)" {
         return utf_encodings::decode_ucs2_8bit_le(code_units);
+    } else if encoding_name == "Unicode UTF-16 (16-bit code units)" {
+        return utf_encodings::decode_utf16_16bit(code_units);
+    } else if encoding_name == "Unicode UTF-16 BE (8-bit code units)" {
+        return utf_encodings::decode_utf16_8bit_be(code_units);
+    } else if encoding_name == "Unicode UTF-16 LE (8-bit code units)" {
+        return utf_encodings::decode_utf16_8bit_le(code_units);
     } else if encoding_name == "Unicode UTF-32 BE (8-bit code units)"
         || encoding_name == "Unicode UTF-32 LE (8-bit code units)"
     {

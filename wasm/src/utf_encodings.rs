@@ -15,6 +15,28 @@ pub fn encode_ucs2_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Resul
         .collect()
 }
 
+pub fn encode_utf16_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Result<Vec<u32>, u32> {
+    Ok(codepoints
+        .map(|&cp| {
+            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff {
+                Err(cp)
+            } else {
+                Ok(cp)
+            }
+        })
+        .collect::<Result<Vec<u32>, u32>>()?
+        .into_iter()
+        .flat_map(|ch| {
+            if ch <= 0xffff {
+                vec![ch]
+            } else {
+                let x = ch - 0x10000;
+                vec![0xd800 | (x >> 10), 0xdc00 | (x & 0x3ff)]
+            }
+        })
+        .collect())
+}
+
 fn encode_16bit_to_8bit<'a>(
     code_units: Result<Vec<u32>, u32>,
     endianness: Endianness,
@@ -40,6 +62,18 @@ pub fn encode_ucs2_8bit_le<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Res
     encode_16bit_to_8bit(encode_ucs2_16bit(codepoints), Endianness::Little)
 }
 
+pub fn encode_utf16_8bit_be<'a>(
+    codepoints: impl Iterator<Item = &'a u32>,
+) -> Result<Vec<u32>, u32> {
+    encode_16bit_to_8bit(encode_utf16_16bit(codepoints), Endianness::Big)
+}
+
+pub fn encode_utf16_8bit_le<'a>(
+    codepoints: impl Iterator<Item = &'a u32>,
+) -> Result<Vec<u32>, u32> {
+    encode_16bit_to_8bit(encode_utf16_16bit(codepoints), Endianness::Little)
+}
+
 pub fn decode_ucs2_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
     code_units
         .iter()
@@ -51,6 +85,24 @@ pub fn decode_ucs2_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
             }
         })
         .collect()
+}
+
+pub fn decode_utf16_16bit<'a>(code_units: Vec<u32>) -> Option<Vec<u32>> {
+    let string = String::from_utf16(
+        code_units
+            .iter()
+            .map(|&u| {
+                if (u >= 0xd800 && u <= 0xdfff) || u > 0xffff {
+                    None
+                } else {
+                    Some(u as u16)
+                }
+            })
+            .collect::<Option<Vec<u16>>>()?
+            .as_slice(),
+    )
+    .ok()?;
+    Some(string.chars().map(|c| c as u32).collect())
 }
 
 fn decode_8bit_to_16bit(code_units: Vec<u32>, endianness: Endianness) -> Option<Vec<u32>> {
@@ -79,4 +131,22 @@ pub fn decode_ucs2_8bit_be(code_units: Vec<u32>) -> Option<Vec<u32>> {
 
 pub fn decode_ucs2_8bit_le(code_units: Vec<u32>) -> Option<Vec<u32>> {
     decode_ucs2_16bit(decode_8bit_to_16bit(code_units, Endianness::Little)?)
+}
+
+pub fn decode_utf16_8bit_be(code_units: Vec<u32>) -> Option<Vec<u32>> {
+    decode_utf16_16bit(decode_8bit_to_16bit(code_units, Endianness::Big)?)
+}
+
+pub fn decode_utf16_8bit_le(code_units: Vec<u32>) -> Option<Vec<u32>> {
+    decode_utf16_16bit(decode_8bit_to_16bit(code_units, Endianness::Little)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::utf_encodings::encode_utf16_16bit;
+
+    #[test]
+    fn test_utf16_16bit() {
+        assert_eq!(encode_utf16_16bit(vec![0x5915].iter()).unwrap().len(), 1);
+    }
 }
