@@ -1,5 +1,6 @@
 include!(concat!(env!("OUT_DIR"), "/compiled-data.rs"));
 
+mod utf_encodings;
 mod utils;
 
 use crate::utils::set_panic_hook;
@@ -132,16 +133,9 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                 }
             })
             .collect(),
-        "UCS-2 (16-bit code units)" => codepoints
-            .iter()
-            .map(|&cp| {
-                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0xffff {
-                    Err(cp)
-                } else {
-                    Ok(cp)
-                }
-            })
-            .collect(),
+        "UCS-2 (16-bit code units)" => utf_encodings::encode_ucs2_16bit(codepoints.iter()),
+        "UCS-2 BE (8-bit code units)" => utf_encodings::encode_ucs2_8bit_be(codepoints.iter()),
+        "UCS-2 LE (8-bit code units)" => utf_encodings::encode_ucs2_8bit_le(codepoints.iter()),
         "Unicode UTF-32 BE (8-bit code units)" | "Unicode UTF-32 LE (8-bit code units)" => {
             codepoints
                 .iter()
@@ -253,16 +247,11 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
             })
             .collect::<Option<Vec<u32>>>();
     } else if encoding_name == "UCS-2 (16-bit code units)" {
-        return code_units
-            .iter()
-            .map(|&u| {
-                if (u >= 0xd800 && u <= 0xdfff) || u > 0xffff {
-                    None
-                } else {
-                    Some(u)
-                }
-            })
-            .collect::<Option<Vec<u32>>>();
+        return utf_encodings::decode_ucs2_16bit(code_units);
+    } else if encoding_name == "UCS-2 BE (8-bit code units)" {
+        return utf_encodings::decode_ucs2_8bit_be(code_units);
+    } else if encoding_name == "UCS-2 LE (8-bit code units)" {
+        return utf_encodings::decode_ucs2_8bit_le(code_units);
     } else if encoding_name == "Unicode UTF-32 BE (8-bit code units)"
         || encoding_name == "Unicode UTF-32 LE (8-bit code units)"
     {
