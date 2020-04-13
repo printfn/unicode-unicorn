@@ -14,9 +14,10 @@ function updateRenderedCodepage() {
             const codepoints = encoding.decode!([byte]);
             if (codepoints && codepoints.length > 0) {
                 const codepoint = codepoints[0];
-                const color = randomColorForKey(getCharacterCategoryCode(codepoint)[0]);
+                const colorClass =
+                    'char-row-category-' + getCharacterCategoryCode(codepoint)[0].toLowerCase();
                 const displayedCodepoint = displayCodepoint(codepoint);
-                html += `<td style="cursor: pointer; background-color: ${color};" onclick="showCodepageDetail(${codepoint})">${i
+                html += `<td style="cursor: pointer" class="${colorClass}" onclick="showCodepageDetail(${codepoint})">${i
                     .toString(16)
                     .toUpperCase()}${j.toString(16).toUpperCase()}<br>${displayedCodepoint}</td>`;
             } else {

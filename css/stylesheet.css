@@ -42,23 +42,30 @@ body:not(.modal-open) {
     padding-right: 0px !important;
 }
 .char-row-category-c {
+    /* control, light gray, very slightly reddish */
     background-color: hsla(3, 16%, 90%, 1);
 }
 .char-row-category-l {
+    /* letter, light yellow */
     background-color: hsla(52, 92%, 90%, 1);
 }
 .char-row-category-m {
-    background-color: hsla(31, 97%, 70%, 1);
+    /* mark, light pink */
+    background-color: hsla(293, 92%, 91%, 1);
 }
 .char-row-category-n {
+    /* number, light green */
     background-color: hsla(90, 92%, 90%, 1);
 }
 .char-row-category-p {
+    /* punctuation, light cyan */
     background-color: hsla(175, 92%, 90%, 1);
 }
 .char-row-category-s {
+    /* symbol, light purple */
     background-color: hsla(235, 92%, 90%, 1);
 }
 .char-row-category-z {
-    background-color: white;
+    /* separator, very light grey */
+    background-color: #f5f5f5;
 }
