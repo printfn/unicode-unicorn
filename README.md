@@ -2,7 +2,7 @@
 
 **[https://unicode.website](https://unicode.website/)**
 
-### Building
+### Build
 
 `data` contains various data files that are used during compilation. See below for sources and how to update them.
 
