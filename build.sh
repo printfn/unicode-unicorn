@@ -25,7 +25,7 @@ cp node_modules/chosen-js/chosen.min.css build/css/
 cp node_modules/chosen-js/chosen-sprite.png build/css/
 cp node_modules/chosen-js/chosen-sprite@2x.png build/css/
 
-node compile-unicode-data.js
+node data/compile-unicode-data.js
 
 # this depends on compile-unicode-data
 ./node_modules/.bin/tsc
