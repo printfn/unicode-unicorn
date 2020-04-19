@@ -1,8 +1,8 @@
-## 🦄 Unicode Unicorn - Web Unicode IDE
+# 🦄 Unicode Unicorn - Web Unicode IDE
 
 **[https://unicode.website](https://unicode.website/)**
 
-### Build
+## Build
 
 `data` contains various data files that are used during compilation. See below for sources and how to update them.
 
@@ -15,7 +15,7 @@ cd build
 npx http-server
 ```
 
-### Sources
+## Sources
 
 Unicode Unicorn uses the Unicode Character Database. It can be downloaded from `http://www.unicode.org/Public/UCD/latest/ucd/`. Download `UCD.zip` and extract its contents to `data/Unicode/UCD/`. Then extract `Unihan.zip` and move the `Unihan` folder contents into `data/Unicode/Unihan/`.
 
