@@ -1,4 +1,3 @@
 data/* linguist-vendored
-docs/* linguist-documentation=false
-docs/build/* linguist-vendored
-docs/licenses.html linguist-vendored
+html/licenses.html linguist-vendored
+
