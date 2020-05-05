@@ -115,7 +115,12 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
         "Unicode UTF-8" => codepoints
             .iter()
             .map(|&cp| char::try_from(cp).map_err(|_| cp).map(|c| c as u32))
-            .collect(),
+            .collect::<Result<Vec<u32>, u32>>()
+            .and_then(|cp| {
+                ctou8(cp)
+                    .ok_or(0u32)
+                    .map(|v| v.iter().map(|&cu| cu as u32).collect())
+            }),
         "Unicode UTF-32 (32-bit code units)" => codepoints
             .iter()
             .map(|&cp| {
