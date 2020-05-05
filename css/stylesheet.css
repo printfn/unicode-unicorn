@@ -69,3 +69,12 @@ body:not(.modal-open) {
     /* separator, very light grey */
     background-color: #f5f5f5;
 }
+.trans-blue {
+    background-color: #55cdfc;
+}
+.trans-pink {
+    background-color: #f7a8b8;
+}
+.trans-white {
+    background-color: #ffffff;
+}

@@ -13,6 +13,14 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
         return;
     }
     let langAttr = global_lang ? 'lang="${global_lang}"' : '';
+    const transFlag = [127987, 65039, 8205, 9895, 65039];
+    let isTrans = false;
+    if (
+        codepoints.length == transFlag.length &&
+        codepoints.every((value, index) => value === transFlag[index])
+    ) {
+        isTrans = true;
+    }
     let html = `
   <thead>
     <tr>
@@ -44,8 +52,16 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
           class="btn btn-sm btn-outline-secondary">
       </div>`;
         }
+        let colorClass = `char-row-category-${getCharacterCategoryCode(
+            codepoint
+        )[0].toLowerCase()}`;
+        if (isTrans) {
+            if (i == 0 || i == 4) colorClass = 'trans-blue';
+            else if (i == 1 || i == 3) colorClass = 'trans-pink';
+            else if (i == 2) colorClass = 'trans-white';
+        }
         html += `
-    <tr class="char-row-category-${getCharacterCategoryCode(codepoint)[0].toLowerCase()}">
+    <tr class="${colorClass}">
       <td>${buttonStr}</td>
       <td>U+${itos(codepoint, 16, 4)}</td>
       <td>${codepoint}</td>
