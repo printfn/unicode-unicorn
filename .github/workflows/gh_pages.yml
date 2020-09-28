@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
         personal_token: ${{ secrets.MY_TOKEN }}
