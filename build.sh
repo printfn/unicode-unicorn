@@ -40,6 +40,7 @@ cp -R wasm/pkg/* build/wasm/
 {
 	cat wasm/pkg/unicode_rustwasm.js
 	cat node_modules/jquery/dist/jquery.min.js
+    cat node_modules/@popperjs/core/dist/umd/popper.min.js
 	cat node_modules/bootstrap/dist/js/bootstrap.min.js
 	cat node_modules/chosen-js/chosen.jquery.min.js
 } > build/libs.js
