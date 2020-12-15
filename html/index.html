@@ -21,6 +21,16 @@
 
             gtag('config', 'UA-36629835-6');
         </script>
+        <script
+            src="https://browser.sentry-cdn.com/5.29.0/bundle.min.js"
+            integrity="sha384-/dYT/04VSU9ItKRPTkWeVZ0kqRsVh/T/5rNCjzBwpx7sYeeueKgJzGMNXSal3xoo"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://browser.sentry-cdn.com/5.29.0/bundle.tracing.min.js"
+            integrity="sha384-XAhY32zqfuE8aJxn2jjoj70IiDlyteUPCkF97irXm5oFRdTYUHt+y6n2VLZwBPok"
+            crossorigin="anonymous"
+        ></script>
 
         <link rel="preload" href="compiled-data.json" as="fetch" crossorigin="anonymous" />
         <link
@@ -33,7 +43,7 @@
         <!-- 'unsafe-eval' required for wasm -->
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com; font-src 'self'; img-src 'self' https://www.google-analytics.com; connect-src 'self'; manifest-src 'self'"
+            content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com https://browser.sentry-cdn.com; font-src 'self'; img-src 'self' https://www.google-analytics.com; connect-src 'self' *.sentry.io; manifest-src 'self'"
         />
 
         <link href="css/stylesheet.css" rel="stylesheet" />
