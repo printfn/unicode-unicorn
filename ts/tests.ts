@@ -59,7 +59,7 @@ function testGraphemeCount() {
                 10084,
                 65039,
                 8205,
-                128104
+                128104,
             ],
             'extended'
         ),

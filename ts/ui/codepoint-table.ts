@@ -87,17 +87,17 @@ function updateCodepointList() {
         {
             displayName: `Delete`,
             functionName: `deleteAtIndex`,
-            require: () => true
+            require: () => true,
         },
         {
             displayName: `&#x2191;`,
             functionName: `moveUp`,
-            require: (i, length) => i != 0
+            require: (i, length) => i != 0,
         },
         {
             displayName: `&#x2193;`,
             functionName: `moveDown`,
-            require: (i, length) => i != length - 1
-        }
+            require: (i, length) => i != length - 1,
+        },
     ]);
 }

@@ -36,7 +36,7 @@ function updateMojibake() {
             mojibakeOutputs.push({
                 encoding1Name: encoding1Name,
                 encoding2Name: encoding2Name,
-                text: ctos(decodedString)
+                text: ctos(decodedString),
             });
         }
     }

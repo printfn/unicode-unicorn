@@ -46,7 +46,7 @@ function ideographicVariationSequencesForCodepoint(codepoint: number) {
                 ivs.item
             } in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(
                 ivs.collection
-            )}">${ivs.collection}</a>)`
+            )}">${ivs.collection}</a>)`,
         });
     }
     return results;

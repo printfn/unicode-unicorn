@@ -18,7 +18,7 @@ function updateEncodedAndDecodedStrings() {
             {
                 displayName: `Insert`,
                 functionName: `output`,
-                require: () => true
-            }
+                require: () => true,
+            },
         ]);
 }

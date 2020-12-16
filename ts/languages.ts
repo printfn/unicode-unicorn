@@ -5,7 +5,7 @@ function initLanguageData() {
     updateSelectOptions(`scriptList`, htmls[`script`]);
     updateSelectOptions(`regionList`, htmls[`region`]);
     updateSelectOptions(`variantList`, htmls[`variant`]);
-    $(`#showRareLanguages`).on(`click`, function() {
+    $(`#showRareLanguages`).on(`click`, function () {
         $(`#showRareLanguages`).attr(`disabled`, `disabled`);
         initLanguageData();
     });

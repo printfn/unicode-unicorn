@@ -58,7 +58,7 @@ async function initializeMappings() {
     let codepageOptionStrings = '';
     let outputEncodingOptionStrings = '';
     let mojibakeOptionStrings = '';
-    $.each(global_encodingNames, function(i, encodingName) {
+    $.each(global_encodingNames, function (i, encodingName) {
         if (
             global_encodings[encodingName].type == '7-bit wasm' ||
             global_encodings[encodingName].type == '8-bit wasm'
@@ -79,10 +79,10 @@ function loadEncodingFromData(type: string, name: string) {
     let encoding: Encoding = {
         type: type,
         encode: undefined,
-        decode: undefined
+        decode: undefined,
     };
     if (type == '7-bit wasm' || type == '8-bit wasm' || type == 'other wasm') {
-        encoding.encode = function(codepoints) {
+        encoding.encode = function (codepoints) {
             let res = JSON.parse(wasm_bindgen.encode_str(name, codepoints));
             if (res.success) {
                 return res.encoded_code_units;
@@ -90,7 +90,7 @@ function loadEncodingFromData(type: string, name: string) {
                 return res.first_invalid_codepoint;
             }
         };
-        encoding.decode = function(bytes) {
+        encoding.decode = function (bytes) {
             return wasm_bindgen.decode_str(name, bytes) || [];
         };
     } else {

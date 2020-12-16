@@ -15,11 +15,11 @@ function validDigitsForFormat(format: string) {
         'c',
         'd',
         'e',
-        'f'
+        'f',
     ];
     validDigitChars = validDigitChars.slice(0, numberForFormat(format));
     if (format == 'Hexadecimal (uppercase)')
-        validDigitChars = validDigitChars.map(s => s.toUpperCase());
+        validDigitChars = validDigitChars.map((s) => s.toUpperCase());
     return validDigitChars;
 }
 

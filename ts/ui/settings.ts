@@ -9,7 +9,7 @@ function updateLanguage() {
         selectedOption('languageList').getAttribute('data-code'),
         selectedOption('scriptList').getAttribute('data-code'),
         selectedOption('regionList').getAttribute('data-code'),
-        selectedOption('variantList').getAttribute('data-code')
+        selectedOption('variantList').getAttribute('data-code'),
     ];
     for (let i = 0; i < langComponentStrings.length; ++i) {
         const component = langComponentStrings[i];
