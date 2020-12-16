@@ -25,11 +25,11 @@ jobs:
         path: wasm/target
         key: build-${{ hashFiles('wasm/Cargo.lock') }}
     - name: Install node dependencies
-      run: npm install
+      run: yarn install
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Build
-      run: npm run build
+      run: yarn run build
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
