@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 mkdir -p build
 
 # Format javascript and css
-node_modules/.bin/prettier --write --loglevel warn "ts/**/*.ts" "css/**/*.css" "html/**/*.html" package.json
+yarn run prettier --write --loglevel warn "ts/**/*.ts" "css/**/*.css" "html/**/*.html" package.json
 
 # independent
 cp -R css build/ # copy dir
@@ -28,7 +28,7 @@ cp node_modules/chosen-js/chosen-sprite@2x.png build/css/
 node data/compile-unicode-data.js
 
 # this depends on compile-unicode-data
-./node_modules/.bin/tsc
+yarn run tsc
 
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml
