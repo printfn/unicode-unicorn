@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 mkdir -p dist
 
 # Format javascript and css
-yarn run prettier --write --loglevel warn "ts/**/*.ts" "src/**/*.css" "html/**/*.html" package.json
+yarn run prettier --write --loglevel warn "src/**/*.ts" "ts/**/*.ts" "src/**/*.css" "html/**/*.html" package.json
 
 # independent
 cp -R favicon/* dist/ # copy contents of dir
@@ -29,7 +29,7 @@ cp node_modules/chosen-js/chosen-sprite@2x.png dist/css/
 node data/compile-unicode-data.js
 
 # this depends on compile-unicode-data
-yarn run tsc
+yarn run tsc --outFile './dist/main.js' ./ts/*.ts ./ts/ui/*.ts ./ts/encode/*.ts
 
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml

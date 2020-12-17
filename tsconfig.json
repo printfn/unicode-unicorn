@@ -1,15 +1,12 @@
 {
 	"compilerOptions": {
-		"outFile":"./dist/main.js",
+		"outDir":"./dist/",
 		"noImplicitAny": true,
 		"allowJs": false,
 		"target": "es6",
 		"strictNullChecks": true,
 		"sourceMap": true,
 		"inlineSources": true,
-		"lib": ["dom", "es6", "es2015"]
-	},
-	"include": [
-		"./ts/**/*.ts"
-	]
+		"jsx": "react"
+	}
 }
