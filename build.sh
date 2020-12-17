@@ -17,15 +17,6 @@ yarn run prettier --write --loglevel warn "src/**/*.ts" "ts/**/*.ts" "src/**/*.c
 cp -R favicon/* dist/ # copy contents of dir
 cp -R html/* dist/
 
-mkdir -p dist/css
-
-cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/
-cp node_modules/bootstrap/dist/css/bootstrap.min.css.map dist/css/
-cp node_modules/chosen-js/chosen.min.css dist/css/
-
-cp node_modules/chosen-js/chosen-sprite.png dist/css/
-cp node_modules/chosen-js/chosen-sprite@2x.png dist/css/
-
 node data/compile-unicode-data.js
 
 # this depends on compile-unicode-data
