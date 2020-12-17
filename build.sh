@@ -43,3 +43,5 @@ cp -R wasm/pkg/* dist/wasm/
 	cat node_modules/bootstrap/dist/js/bootstrap.min.js
 	cat node_modules/chosen-js/chosen.jquery.min.js
 } > dist/libs.js
+
+yarn run webpack

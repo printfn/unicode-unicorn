@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outFile":"./dist/main.js",
+		"outFile":"./dist/main-manual.js",
 		"noImplicitAny": true,
 		"allowJs": false,
 		"target": "es6",

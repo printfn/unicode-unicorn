@@ -2,7 +2,7 @@
     "name": "unicode-unicorn",
     "version": "1.0.0",
     "description": "A JavaScript Unicode IDE",
-    "main": "index.js",
+    "private": true,
     "dependencies": {
         "bootstrap": "^4.5.3",
         "chosen-js": "^1.8.7",
@@ -12,7 +12,9 @@
     },
     "devDependencies": {
         "@types/jquery": "^3.5.5",
-        "prettier": "2.2.1"
+        "prettier": "^2.2.1",
+        "webpack": "^5.10.3",
+        "webpack-cli": "^4.2.0"
     },
     "scripts": {
         "clean": "rm -r dist wasm/pkg wasm/target",
