@@ -8,22 +8,22 @@ set -euo pipefail
 # This makes the script work even when invoked from elsewhere
 cd "$(dirname "$0")"
 
-mkdir -p build
+mkdir -p dist
 
 # Format javascript and css
 yarn run prettier --write --loglevel warn "ts/**/*.ts" "css/**/*.css" "html/**/*.html" package.json
 
 # independent
-cp -R css build/ # copy dir
-cp -R favicon/* build/ # copy contents of dir
-cp -R html/* build/
+cp -R css dist/ # copy dir
+cp -R favicon/* dist/ # copy contents of dir
+cp -R html/* dist/
 
-cp node_modules/bootstrap/dist/css/bootstrap.min.css build/css/
-cp node_modules/bootstrap/dist/css/bootstrap.min.css.map build/css/
-cp node_modules/chosen-js/chosen.min.css build/css/
+cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/
+cp node_modules/bootstrap/dist/css/bootstrap.min.css.map dist/css/
+cp node_modules/chosen-js/chosen.min.css dist/css/
 
-cp node_modules/chosen-js/chosen-sprite.png build/css/
-cp node_modules/chosen-js/chosen-sprite@2x.png build/css/
+cp node_modules/chosen-js/chosen-sprite.png dist/css/
+cp node_modules/chosen-js/chosen-sprite@2x.png dist/css/
 
 node data/compile-unicode-data.js
 
@@ -33,8 +33,8 @@ yarn run tsc
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml
 wasm-pack build --target no-modules wasm
-mkdir -p build/wasm
-cp -R wasm/pkg/* build/wasm/
+mkdir -p dist/wasm
+cp -R wasm/pkg/* dist/wasm/
 
 # depends on cargo/wasm build
 {
@@ -42,4 +42,4 @@ cp -R wasm/pkg/* build/wasm/
 	cat node_modules/jquery/dist/jquery.min.js
 	cat node_modules/bootstrap/dist/js/bootstrap.min.js
 	cat node_modules/chosen-js/chosen.jquery.min.js
-} > build/libs.js
+} > dist/libs.js

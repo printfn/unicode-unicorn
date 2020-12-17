@@ -15,7 +15,7 @@
         "prettier": "2.2.1"
     },
     "scripts": {
-        "clean": "rm -r build wasm/pkg wasm/target",
+        "clean": "rm -r dist wasm/pkg wasm/target",
         "build": "./build.sh"
     },
     "repository": {
