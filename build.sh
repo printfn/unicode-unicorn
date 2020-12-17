@@ -11,12 +11,13 @@ cd "$(dirname "$0")"
 mkdir -p dist
 
 # Format javascript and css
-yarn run prettier --write --loglevel warn "ts/**/*.ts" "css/**/*.css" "html/**/*.html" package.json
+yarn run prettier --write --loglevel warn "ts/**/*.ts" "src/**/*.css" "html/**/*.html" package.json
 
 # independent
-cp -R css dist/ # copy dir
 cp -R favicon/* dist/ # copy contents of dir
 cp -R html/* dist/
+
+mkdir -p dist/css
 
 cp node_modules/bootstrap/dist/css/bootstrap.min.css dist/css/
 cp node_modules/bootstrap/dist/css/bootstrap.min.css.map dist/css/
