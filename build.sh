@@ -19,9 +19,6 @@ cp -R html/* dist/
 
 node data/compile-unicode-data.js
 
-# this depends on compile-unicode-data
-yarn run tsc --outFile './dist/main.js' ./ts/*.ts ./ts/ui/*.ts ./ts/encode/*.ts
-
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml
 wasm-pack build --target no-modules wasm
