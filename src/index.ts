@@ -105,15 +105,15 @@ function getCharacterCategoryCode(codepoint: number): string {
     return categoryCode || 'Cn'; // Cn = unassigned
 }
 
-function getCharacterCategoryName(codepoint: number): string {
+function getCharacterCategoryName(codepoint: number): string | undefined {
     const categoryCode = getCharacterCategoryCode(codepoint);
-    const name: string = wasm_bindgen.long_category_name_for_short_name(categoryCode);
+    const name: string | undefined = wasm.long_category_name_for_short_name(categoryCode);
     return name;
 }
 
-function getCharacterBasicType(codepoint: number): string {
+function getCharacterBasicType(codepoint: number): string | undefined {
     const categoryCode = getCharacterCategoryCode(codepoint);
-    const basicType: string = wasm_bindgen.basic_type_for_codepoint(categoryCode, codepoint);
+    const basicType: string | undefined = wasm.basic_type_for_codepoint(categoryCode, codepoint);
     return basicType;
 }
 
@@ -360,27 +360,27 @@ function escapeHtml(unsafeString: string): string {
 }
 
 function ctos(codepoints: number[]): string {
-    return wasm_bindgen.ctos(codepoints);
+    return wasm.ctos(new Uint32Array(codepoints)) as string;
 }
 
 function stoc(string: string): number[] {
-    return Array.from(wasm_bindgen.stoc(string));
+    return Array.from(wasm.stoc(string));
 }
 
 function nextCodepoint(codepoint: number): number {
-    return wasm_bindgen.next_codepoint(codepoint);
+    return wasm.next_codepoint(codepoint);
 }
 
 function previousCodepoint(codepoint: number): number {
-    return wasm_bindgen.previous_codepoint(codepoint);
+    return wasm.previous_codepoint(codepoint);
 }
 
 function ctou8(codepoints: Uint32Array): Uint8Array | undefined {
-    return wasm_bindgen.ctou8(codepoints);
+    return wasm.ctou8(codepoints);
 }
 
 function u8toc(bytes: Uint8Array): Uint32Array | undefined {
-    return wasm_bindgen.u8toc(bytes);
+    return wasm.u8toc(bytes);
 }
 
 function itos(int: number, base: number, padding: number = 0) {
@@ -424,7 +424,7 @@ function loadEncodingFromData(type: string, name: string) {
     };
     if (type == '7-bit wasm' || type == '8-bit wasm' || type == 'other wasm') {
         encoding.encode = function (codepoints) {
-            let res = JSON.parse(wasm_bindgen.encode_str(name, codepoints));
+            let res = JSON.parse(wasm.encode_str(name, new Uint32Array(codepoints)));
             if (res.success) {
                 return res.encoded_code_units;
             } else {
@@ -432,7 +432,7 @@ function loadEncodingFromData(type: string, name: string) {
             }
         };
         encoding.decode = function (bytes) {
-            return wasm_bindgen.decode_str(name, bytes) || [];
+            return Array.from(wasm.decode_str(name, new Uint32Array(bytes)) || []);
         };
     } else {
         throw `Unknown encoding type: ${type}`;
@@ -775,11 +775,11 @@ function initGlobalVariables(data: any) {
     global_commonLanguageTagsHTML = data['global_commonLanguageTagsHTML'];
 }
 
-declare let wasm_bindgen: any;
+let wasm: any;
 
 async function initWasm() {
-    await wasm_bindgen('wasm/unicode_rustwasm_bg.wasm');
-    await wasm_bindgen.init();
+    wasm = await import('unicode-rustwasm');
+    await wasm.init();
 }
 
 async function initData() {
@@ -1631,7 +1631,7 @@ function urlForIdeographicCollection(name: string) {
 
 function ideographicVariationSequencesForCodepoint(codepoint: number) {
     const results: VariationSequence[] = [];
-    const seqs_from_wasm = JSON.parse(wasm_bindgen.variation_sequences_for_codepoint(codepoint));
+    const seqs_from_wasm = JSON.parse(wasm.variation_sequences_for_codepoint(codepoint));
     for (let i = 0; i < seqs_from_wasm.length; ++i) {
         var ivs = seqs_from_wasm[i];
         results.push({

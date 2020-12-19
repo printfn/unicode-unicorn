@@ -21,13 +21,6 @@ node data/compile-unicode-data.js
 
 # also depends only on compile-unicode-data
 cargo fmt --manifest-path wasm/Cargo.toml
-wasm-pack build --target no-modules wasm
-mkdir -p dist/wasm
-cp -R wasm/pkg/* dist/wasm/
-
-# depends on cargo/wasm build
-{
-	cat wasm/pkg/unicode_rustwasm.js
-} > dist/libs.js
+wasm-pack build wasm
 
 yarn run webpack

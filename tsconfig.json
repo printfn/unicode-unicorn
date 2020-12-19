@@ -8,6 +8,7 @@
 		"sourceMap": true,
 		"inlineSources": true,
 		"jsx": "react",
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"module": "ES2020"
 	}
 }

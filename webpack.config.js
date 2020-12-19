@@ -7,6 +7,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   devtool: 'source-map',
+  experiments: {
+    syncWebAssembly: true,
+  },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
