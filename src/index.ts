@@ -229,10 +229,18 @@ function validDigitsForFormat(format: string) {
         'd',
         'e',
         'f',
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
     ];
-    validDigitChars = validDigitChars.slice(0, numberForFormat(format));
-    if (format == 'Hexadecimal (uppercase)')
-        validDigitChars = validDigitChars.map((s) => s.toUpperCase());
+    let numDigits = numberForFormat(format);
+    if (numDigits < 16) {
+        validDigitChars = validDigitChars.slice(0, numberForFormat(format));
+    }
+    // for hex, always allow upper-case and lower-case letters
     return validDigitChars;
 }
 
