@@ -1,7 +1,12 @@
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'chosen-js/chosen.min.css';
-import './sentry'
+import './sentry';
+import * as $ from 'jquery';
+import 'bootstrap';
+import './chosen/chosen-sprite.png'
+import './chosen/chosen-sprite@2x.png'
+import './chosen/chosen.css'
+import './chosen/chosen.jquery.js'
 
 async function initBlockData() {
     for (let i = 0; i < global_blockRanges.length; ++i) {
