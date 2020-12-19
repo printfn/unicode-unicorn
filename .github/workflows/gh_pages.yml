@@ -25,7 +25,9 @@ jobs:
         path: wasm/target
         key: build-${{ hashFiles('wasm/Cargo.lock') }}
     - name: Install node dependencies
-      run: yarn install
+      run: |
+        wasm-pack build wasm
+        yarn install
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Build
