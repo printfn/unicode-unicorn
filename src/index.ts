@@ -23,7 +23,7 @@ function getBlockForCodepoint(codepoint: number): string {
             return global_blockRanges[i].blockName;
         }
     }
-    return `No_Block`;
+    return 'No_Block';
 }
 
 function getSyllableTypeForCodepoint(codepoint: number): string {
@@ -32,7 +32,7 @@ function getSyllableTypeForCodepoint(codepoint: number): string {
             return global_syllableRanges[i].v;
         }
     }
-    return `Not_Applicable`;
+    return 'Not_Applicable';
 }
 
 function getShortJamoName(codepoint: number): string {
@@ -45,7 +45,7 @@ function getScriptForCodepoint(codepoint: number): string {
             return global_scriptRanges[i].v;
         }
     }
-    return `Unknown`;
+    return 'Unknown';
 }
 var global_data: { [codepoint: number]: string };
 var global_ranges: {
@@ -118,7 +118,7 @@ function getCharacterBasicType(codepoint: number): string | undefined {
 }
 
 function getCodepointDescription(codepoint: number | string, name: string): string {
-    if (typeof codepoint == `string`) {
+    if (typeof codepoint == 'string') {
         codepoint = parseInt(codepoint);
     }
     return `${name} ${ctos([codepoint])}`;
@@ -126,7 +126,7 @@ function getCodepointDescription(codepoint: number | string, name: string): stri
 
 function decompomposeHangulSyllable(codepoint: number): number[] {
     const syllableType = getSyllableTypeForCodepoint(codepoint);
-    if (syllableType == `Not_Applicable`) return [codepoint];
+    if (syllableType == 'Not_Applicable') return [codepoint];
 
     // see Unicode Standard, section 3.12 "Conjoining Jamo Behavior", "Hangul Syllable Decomposition"
     const SBase = 0xac00;
@@ -157,47 +157,47 @@ function decompomposeHangulSyllable(codepoint: number): number[] {
 function getName(codepoint: number, search: boolean = false): string {
     let d = global_data[codepoint];
     if (d) {
-        if (d[0] != `<`) return d;
-        else return ``;
+        if (d[0] != '<') return d;
+        else return '';
     }
     if (0xac00 <= codepoint && codepoint <= 0xd7af) {
         const decomposedSyllables = decompomposeHangulSyllable(codepoint);
         const shortJamoNames: string[] = [];
         for (let i = 0; i < decomposedSyllables.length; ++i)
             shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
-        return `HANGUL SYLLABLE ${shortJamoNames.join(``)}`;
+        return `HANGUL SYLLABLE ${shortJamoNames.join('')}`;
     }
     if (
         (0x3400 <= codepoint && codepoint <= 0x4dbf) ||
         (0x4e00 <= codepoint && codepoint <= 0x9fff)
     ) {
-        if (search) return `CJK UNIFIED IDEOGRAPH`;
+        if (search) return 'CJK UNIFIED IDEOGRAPH';
         return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
     }
     for (let i = 0; i < global_ranges.length; ++i) {
         const range = global_ranges[i];
         if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
-            if (range.rangeName.startsWith(`CJK Ideograph`)) {
-                if (search) return `CJK UNIFIED IDEOGRAPH`;
+            if (range.rangeName.startsWith('CJK Ideograph')) {
+                if (search) return 'CJK UNIFIED IDEOGRAPH';
                 return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
             }
         }
     }
-    return ``;
+    return '';
 }
 
 function getHtmlNameDescription(codepoint: number): string {
-    if (getName(codepoint) !== ``) return getName(codepoint);
-    if (global_data[codepoint] == `<control>`) {
+    if (getName(codepoint) !== '') return getName(codepoint);
+    if (global_data[codepoint] == '<control>') {
         const name: string[] = [];
         for (let i = 0; i < global_aliases.length; ++i) {
             if (global_aliases[i].codepoint == codepoint) {
-                if (global_aliases[i].type != `control` && name.length > 0) break;
+                if (global_aliases[i].type != 'control' && name.length > 0) break;
                 name.push(global_aliases[i].alias);
-                if (global_aliases[i].type != `control`) break;
+                if (global_aliases[i].type != 'control') break;
             }
         }
-        if (name.length > 0) return `<i>${name.join(` / `)}</i>`;
+        if (name.length > 0) return `<i>${name.join(' / ')}</i>`;
     }
     return `<i>Unknown-${itos(codepoint, 16, 4)}</i>`;
 }
@@ -209,7 +209,7 @@ function getUnicodeDataTxtNameField(codepoint: number): string {
         if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint)
             return range.rangeName;
     }
-    return `Unknown`;
+    return 'Unknown';
 }
 function validDigitsForFormat(format: string) {
     let validDigitChars: string[] = [
@@ -507,7 +507,7 @@ function isExtendedPictographic(codepoint: number): boolean {
 
 function graphemeBreakValueForCodepoint(codepoint: number): string {
     if (global_graphemeBreakData[codepoint]) return global_graphemeBreakData[codepoint];
-    return `Other`;
+    return 'Other';
 }
 
 // Updated for revision 37
@@ -532,12 +532,12 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
 
     let breaks = 0;
     for (let i = 1; i < codepoints.length; ++i) {
-        // increment `breaks` if we should break between codepoints[i-1] and codepoints[i]
+        // increment 'breaks' if we should break between codepoints[i-1] and codepoints[i]
         const value1 = graphemeBreakValueForCodepoint(codepoints[i - 1]);
         const value2 = graphemeBreakValueForCodepoint(codepoints[i]);
 
         // see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
-        // skip rules GB1 and GB2 as they deal with SOT and EOT and thus don`t affect the number of graphemes in a string
+        // skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string
 
         // Nontrivial rules:
 
@@ -545,40 +545,40 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
         //   GB12:     ^ (RI RI)* RI × ...
         //   GB13: [^RI] (RI RI)* RI × ...
         // they match if there is an odd number of Regional_Indicator codepoints on the left-hand side
-        if (value1 == `Regional_Indicator`) {
+        if (value1 == 'Regional_Indicator') {
             ++numberOfContinuousRegionalIndicatorSymbols;
         } else {
             numberOfContinuousRegionalIndicatorSymbols = 0;
         }
 
-        if (value1 == `CR` && value2 == `LF`) {
+        if (value1 == 'CR' && value2 == 'LF') {
             // GB3
-        } else if (value1 == `Control` || value1 == `CR` || value1 == `LF`) {
+        } else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') {
             // GB4
             ++breaks;
-        } else if (value2 == `Control` || value2 == `CR` || value2 == `LF`) {
+        } else if (value2 == 'Control' || value2 == 'CR' || value2 == 'LF') {
             // GB5
             ++breaks;
         } else if (
-            value1 == `L` &&
-            (value2 == `L` || value2 == `V` || value2 == `LV` || value2 == `LVT`)
+            value1 == 'L' &&
+            (value2 == 'L' || value2 == 'V' || value2 == 'LV' || value2 == 'LVT')
         ) {
             // GB6
-        } else if ((value1 == `LV` || value1 == `V`) && (value2 == `V` || value2 == `T`)) {
+        } else if ((value1 == 'LV' || value1 == 'V') && (value2 == 'V' || value2 == 'T')) {
             // GB7
-        } else if ((value1 == `LVT` || value1 == `T`) && value2 == `T`) {
+        } else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') {
             // GB8
-        } else if (value2 == `Extend` || value2 == `ZWJ`) {
+        } else if (value2 == 'Extend' || value2 == 'ZWJ') {
             // GB9
-        } else if (useExtended && value2 == `SpacingMark`) {
+        } else if (useExtended && value2 == 'SpacingMark') {
             // GB9a
-        } else if (useExtended && value1 == `Prepend`) {
+        } else if (useExtended && value1 == 'Prepend') {
             // GB9b
-        } else if (value1OfGB11 && value1 == `ZWJ` && isExtendedPictographic(codepoints[i])) {
+        } else if (value1OfGB11 && value1 == 'ZWJ' && isExtendedPictographic(codepoints[i])) {
             // GB11
         } else if (
             numberOfContinuousRegionalIndicatorSymbols % 2 == 1 &&
-            value2 == `Regional_Indicator`
+            value2 == 'Regional_Indicator'
         ) {
             // GB12 and GB13
         } else {
@@ -589,7 +589,7 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
         // GB10 LHS: (E_Base | E_Base_GAZ) Extend* × ...
         if (isExtendedPictographic(codepoints[i - 1])) {
             value1OfGB11 = true;
-        } else if (value1 == `Extend` && value1OfGB11 === true) {
+        } else if (value1 == 'Extend' && value1OfGB11 === true) {
             // do nothing
         } else {
             value1OfGB11 = false;
@@ -598,14 +598,15 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
     return breaks + 1;
 }
 function initLanguageData() {
-    const showAllLanguages = $(`#showRareLanguages`)[0].hasAttribute(`disabled`);
+    let showRareLanguagesButton = document.getElementById('showRareLanguages')!;
+    const showAllLanguages = showRareLanguagesButton.hasAttribute('disabled');
     const htmls = showAllLanguages ? global_allLanguageTagsHTML : global_commonLanguageTagsHTML;
-    updateSelectOptions(`languageList`, htmls[`language`]);
-    updateSelectOptions(`scriptList`, htmls[`script`]);
-    updateSelectOptions(`regionList`, htmls[`region`]);
-    updateSelectOptions(`variantList`, htmls[`variant`]);
-    $(`#showRareLanguages`).on(`click`, function () {
-        $(`#showRareLanguages`).attr(`disabled`, `disabled`);
+    updateSelectOptions('languageList', htmls['language']);
+    updateSelectOptions('scriptList', htmls['script']);
+    updateSelectOptions('regionList', htmls['region']);
+    updateSelectOptions('variantList', htmls['variant']);
+    showRareLanguagesButton.addEventListener('click', () => {
+        showRareLanguagesButton.setAttribute('disabled', 'disabled');
         initLanguageData();
     });
 }
@@ -626,38 +627,38 @@ interface TextListener {
 }
 let global_event_listeners: TextListener[] = [
     {
-        tabId: `settings`,
-        elementId: `output`,
+        tabId: 'settings',
+        elementId: 'output',
         f: updateUseInternalString,
     },
     {
-        tabId: `mojibake`,
-        elementId: `output`,
+        tabId: 'mojibake',
+        elementId: 'output',
         f: updateMojibake,
     },
     {
-        tabId: `codepages`,
-        elementId: `output`,
+        tabId: 'codepages',
+        elementId: 'output',
         f: updateRenderedCodepage,
     },
     {
-        tabId: `stats`,
-        elementId: `output`,
+        tabId: 'stats',
+        elementId: 'output',
         f: updateEncodedLengths,
     },
     {
-        tabId: `codepoints`,
-        elementId: `output`,
+        tabId: 'codepoints',
+        elementId: 'output',
         f: updateCodepointList,
     },
     {
-        tabId: `encode`,
-        elementId: `output`,
+        tabId: 'encode',
+        elementId: 'output',
         f: updateEncodedAndDecodedStrings,
     },
     {
-        tabId: `settings`,
-        elementId: `output`,
+        tabId: 'settings',
+        elementId: 'output',
         f: updateLanguage,
     },
 ];
@@ -695,8 +696,8 @@ function output(codepoint: number) {
 function updateSuggestions() {
     const input = (getElementById('input') as HTMLInputElement).value;
     const results = searchCodepoints(input);
-    renderCodepointsInTable(results, `searchResults`, [
-        { displayName: `Insert`, functionName: `output`, require: () => true },
+    renderCodepointsInTable(results, 'searchResults', [
+        { displayName: 'Insert', functionName: 'output', require: () => true },
     ]);
 }
 
@@ -710,16 +711,16 @@ function updateInfo() {
     const codepoints = getStr();
     setStr(codepoints);
 
-    callEventListenersForElemId(`output`);
+    callEventListenersForElemId('output');
 
     let url =
-        location.href.indexOf(`?`) == -1
+        location.href.indexOf('?') == -1
             ? location.href
-            : location.href.substring(0, location.href.indexOf(`?`));
+            : location.href.substring(0, location.href.indexOf('?'));
     if (codepoints.length > 0) {
-        url += `?c=${codepoints.join(`,`)}`;
+        url += `?c=${codepoints.join(',')}`;
     }
-    history.replaceState({}, ``, url);
+    history.replaceState({}, '', url);
 }
 
 function deleteAtIndex(codepoint: number, index: number) {
@@ -797,39 +798,39 @@ function ready(fn: () => void) {
     }
 }
 ready(function () {
-    (<any>$(`select`)).chosen({ disable_search_threshold: 10, width: `100%` });
+    (<any>$('select')).chosen({ disable_search_threshold: 10, width: '100%' });
     const startTime = new Date();
     initData().then(function () {
         initializeSearchStrings();
         window.onpopstate = function () {
-            const args = location.search.substring(1).split(`&`);
+            const args = location.search.substring(1).split('&');
             for (let i = 0; i < args.length; ++i) {
-                const arg = args[i].split(`=`);
-                if (arg[0] == `c`) {
-                    setStr(arg[1].split(`,`).map((str) => parseInt(str)));
-                } else if (arg[0] == `info`) {
+                const arg = args[i].split('=');
+                if (arg[0] == 'c') {
+                    setStr(arg[1].split(',').map((str) => parseInt(str)));
+                } else if (arg[0] == 'info') {
                     showCodepageDetail(parseInt(arg[1]));
-                } else if (arg[0] == `str`) {
+                } else if (arg[0] == 'str') {
                     // search queries via the omnibox are URL-escaped (with UTF-8 encoding),
                     // and spaces are converted to '+'.
                     setStr(stoc(decodeURIComponent(arg[1].replace(/\+/g, ' '))));
                 }
             }
         };
-        window.onpopstate(new PopStateEvent(``));
+        window.onpopstate(new PopStateEvent(''));
         const loadDuration = <any>new Date() - <any>startTime; // in ms
         updateInfo();
         updateSuggestions();
         getElementById('input').addEventListener('keyup', function (e) {
             if (e.keyCode == 13) {
                 const input = (getElementById('input') as HTMLInputElement).value;
-                if (isNaN(parseInt(input.replace(`U+`, ``), 16))) {
-                    document.body.style.backgroundColor = `#fdd`;
+                if (isNaN(parseInt(input.replace('U+', ''), 16))) {
+                    document.body.style.backgroundColor = '#fdd';
                     setTimeout(function () {
-                        document.body.style.backgroundColor = `#fff`;
+                        document.body.style.backgroundColor = '#fff';
                     }, 1000);
                 } else {
-                    output(parseInt(input.replace(`U+`, ``), 16));
+                    output(parseInt(input.replace('U+', ''), 16));
                     (getElementById('input') as HTMLInputElement).value = '';
                 }
             }
@@ -851,19 +852,29 @@ ready(function () {
             let elem = getElementById(id);
             elem.addEventListener('input', () => updateInfo());
         }
-        // This doesn't work at all, the handler doesn't get called.
-        // for (let sel of Array.from(document.getElementsByTagName('select'))) {
-        //     sel.addEventListener('change', function() {
-        //         updateInfo();
-        //     });
-        // }
-        $(`select`).on(`change`, function () {
+        $('select').on('change', function () {
             updateInfo();
         });
-        $(`a[data-toggle="tab"]`).on(`shown.bs.tab`, function (e) {
+        // document.addEventListener(
+        //     'change',
+        //     function (e) {
+        //         for (
+        //             let target = e.target;
+        //             target && target != this && target instanceof HTMLElement;
+        //             target = target.parentNode
+        //         ) {
+        //             if (target.matches('select')) {
+        //                 updateInfo();
+        //                 break;
+        //             }
+        //         }
+        //     },
+        //     false
+        // );
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             callEventListenersForElemId('output');
         });
-        // This should be on `input` instead, but this doesn't fire on
+        // This should be on 'input' instead, but this doesn't fire on
         //  Safari. See https://caniuse.com/#feat=input-event (#4)
         //  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
         getElementById('useInternalString').addEventListener('change', function (e) {
@@ -908,7 +919,7 @@ function getSearchString(codepoint: number) {
         true
     )}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(codepoint).replace(
         /_/g,
-        ` `
+        ' '
     )}|category:${getCharacterCategoryName(codepoint)}`;
 
     res += getAliasSearchStringForCodepoint(codepoint);
@@ -944,7 +955,7 @@ function testSearch(searchString: string, words: string[]) {
 
 function wordsFromSearchExpression(str: string) {
     str = str.toUpperCase();
-    const words = str.split(`,`);
+    const words = str.split(',');
     for (let i = 0; i < words.length; ++i) {
         words[i] = words[i].trim();
     }
@@ -999,16 +1010,16 @@ function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
 function testBlocks() {
     for (let cp = 0; cp < 0x300; ++cp) {
         const block = getBlockForCodepoint(cp);
-        if (cp <= 0x7f) assertEqual(block, `Basic Latin`, `Codepoint ${itos(cp, 16, 4)}`);
+        if (cp <= 0x7f) assertEqual(block, 'Basic Latin', `Codepoint ${itos(cp, 16, 4)}`);
         else if (cp <= 0xff)
-            assertEqual(block, `Latin-1 Supplement`, `Codepoint ${itos(cp, 16, 4)}`);
+            assertEqual(block, 'Latin-1 Supplement', `Codepoint ${itos(cp, 16, 4)}`);
         else if (cp <= 0x17f)
-            assertEqual(block, `Latin Extended-A`, `Codepoint ${itos(cp, 16, 4)}`);
+            assertEqual(block, 'Latin Extended-A', `Codepoint ${itos(cp, 16, 4)}`);
         else if (cp <= 0x24f)
-            assertEqual(block, `Latin Extended-B`, `Codepoint ${itos(cp, 16, 4)}`);
-        else if (cp <= 0x2af) assertEqual(block, `IPA Extensions`, `Codepoint ${itos(cp, 16, 4)}`);
+            assertEqual(block, 'Latin Extended-B', `Codepoint ${itos(cp, 16, 4)}`);
+        else if (cp <= 0x2af) assertEqual(block, 'IPA Extensions', `Codepoint ${itos(cp, 16, 4)}`);
         else if (cp <= 0x2ff)
-            assertEqual(block, `Spacing Modifier Letters`, `Codepoint ${itos(cp, 16, 4)}`);
+            assertEqual(block, 'Spacing Modifier Letters', `Codepoint ${itos(cp, 16, 4)}`);
     }
 }
 
@@ -1143,10 +1154,10 @@ function showCodepageDetail(codepoint: number) {
         codepoint
     )} (${getCharacterCategoryName(codepoint)})`;
     getElementById('detail-basic-type').textContent = `${getCharacterBasicType(codepoint)}`;
-    getElementById('detail-block').textContent = getBlockForCodepoint(codepoint).replace(/_/g, ` `);
+    getElementById('detail-block').textContent = getBlockForCodepoint(codepoint).replace(/_/g, ' ');
     getElementById('detail-script').textContent = getScriptForCodepoint(codepoint).replace(
         /_/g,
-        ` `
+        ' '
     );
     const matchingAliases: string[] = [];
     for (let i = 0; i < global_aliases.length; ++i) {
@@ -1164,10 +1175,10 @@ function showCodepageDetail(codepoint: number) {
         getElementById('detail-variation-sequences').style.display = 'none';
     } else {
         getElementById('detail-variation-sequences').style.display = '';
-        let variationsString = ``;
+        let variationsString = '';
         for (let i = 0; i < variationSequences.length; ++i) {
             let vs = variationSequences[i];
-            if (variationsString !== ``) variationsString += `<br>`;
+            if (variationsString !== '') variationsString += '<br>';
             if (!vs.shapingEnvironments) vs.shapingEnvironments = [];
             variationsString += `U+${itos(vs.baseCodepoint, 16, 4)} U+${itos(
                 vs.variationSelector,
@@ -1175,15 +1186,15 @@ function showCodepageDetail(codepoint: number) {
                 4
             )}: ${escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector]))} <i>${vs.description}`;
             if (vs.shapingEnvironments.length > 0) {
-                variationsString += ` (${vs.shapingEnvironments.join(`, `)})</i>`;
+                variationsString += ` (${vs.shapingEnvironments.join(', ')})</i>`;
             } else {
-                variationsString += `</i>`;
+                variationsString += '</i>';
             }
         }
         getElementById('detail-variation-sequences-content').innerHTML = variationsString;
     }
 
-    let encodingsString = ``;
+    let encodingsString = '';
     for (let elem of Array.from((getElementById('outputEncoding') as HTMLSelectElement).options)) {
         let encoding = elem.textContent;
         if (!encoding) {
@@ -1195,7 +1206,7 @@ function showCodepageDetail(codepoint: number) {
             selectedOption('outputFormat').textContent!,
             [codepoint]
         );
-        if (html.startsWith(`<span`)) {
+        if (html.startsWith('<span')) {
             continue;
         }
         encodingsString += `${encoding}: ${html}\n`;
@@ -1209,7 +1220,7 @@ function showCodepageDetail(codepoint: number) {
     );
     getElementById('detail-next-cp').setAttribute('data-cp', itos(nextCodepoint(codepoint), 10));
 
-    jQueryModal(`#codepoint-detail`, `show`);
+    jQueryModal('#codepoint-detail', 'show');
 }
 (window as any).showCodepageDetail = showCodepageDetail;
 
@@ -1262,12 +1273,12 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
     let i = 0;
     for (i = 0; i < codepoints.length; ++i) {
         const codepoint = codepoints[i];
-        let buttonStr = ``;
+        let buttonStr = '';
         for (const j in buttons) {
             const buttonDescription = buttons[j];
-            let disabled = ``;
+            let disabled = '';
             if (!buttonDescription.require(i, codepoints.length)) {
-                disabled = `disabled style="visibility:hidden;"`;
+                disabled = 'disabled style="visibility:hidden;"';
             }
             buttonStr += `
       <div class="btn-group" role="group">
@@ -1299,9 +1310,9 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
     </tr>`;
     }
     if (i >= 256) {
-        html += `<tr><td colspan="6">Showing only the first 256 rows.</td></tr>`;
+        html += '<tr><td colspan="6">Showing only the first 256 rows.</td></tr>';
     }
-    html += `</tbody>`;
+    html += '</tbody>';
     table.style.display = 'none';
     table.innerHTML = html;
     table.style.display = '';
@@ -1309,20 +1320,20 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
 
 function updateCodepointList() {
     const codepoints = getStr();
-    renderCodepointsInTable(codepoints, `codepointlist`, [
+    renderCodepointsInTable(codepoints, 'codepointlist', [
         {
-            displayName: `Delete`,
-            functionName: `deleteAtIndex`,
+            displayName: 'Delete',
+            functionName: 'deleteAtIndex',
             require: () => true,
         },
         {
-            displayName: `&#x2191;`,
-            functionName: `moveUp`,
+            displayName: '&#x2191;',
+            functionName: 'moveUp',
             require: (i, length) => i != 0,
         },
         {
-            displayName: `&#x2193;`,
-            functionName: `moveDown`,
+            displayName: '&#x2193;',
+            functionName: 'moveDown',
             require: (i, length) => i != length - 1,
         },
     ]);
@@ -1343,10 +1354,10 @@ function updateEncodedAndDecodedStrings() {
         (getElementById('encodedInput') as HTMLInputElement).value
     );
     if (decodedOutput)
-        renderCodepointsInTable(decodedOutput, `decodedCodepoints`, [
+        renderCodepointsInTable(decodedOutput, 'decodedCodepoints', [
             {
-                displayName: `Insert`,
-                functionName: `output`,
+                displayName: 'Insert',
+                functionName: 'output',
                 require: () => true,
             },
         ]);
@@ -1377,8 +1388,8 @@ function loadFromSlot(slotNumber: number) {
 (window as any).loadFromSlot = loadFromSlot;
 
 function hexadecimalPaddingFromEncoding(encoding: string) {
-    if (encoding.includes(`16-bit code units`)) return 4;
-    if (encoding.includes(`32-bit code units`)) return 8;
+    if (encoding.includes('16-bit code units')) return 4;
+    if (encoding.includes('32-bit code units')) return 8;
     return 2;
 }
 
@@ -1394,13 +1405,13 @@ function updateEncodedLengths() {
     ).toString();
     getElementById('numCodepoints').textContent = codepoints.length.toString();
     let encodingLengthsStr =
-        `<thead><tr>` +
-        `<th>Encoding</th>` +
-        `<th>Number of code units</th>` +
-        `<th>Number of bytes</th>` +
-        `<th>Number of code units (incl. BOM)</th>` +
-        `<th>Number of bytes (incl. BOM)</th>` +
-        `</tr></thead><tbody>`;
+        '<thead><tr>' +
+        '<th>Encoding</th>' +
+        '<th>Number of code units</th>' +
+        '<th>Number of bytes</th>' +
+        '<th>Number of code units (incl. BOM)</th>' +
+        '<th>Number of bytes (incl. BOM)</th>' +
+        '</tr></thead><tbody>';
     let bomCodepoints = [0xfeff];
     for (let i = 0; i < codepoints.length; ++i) {
         bomCodepoints.push(codepoints[i]);
@@ -1408,8 +1419,8 @@ function updateEncodedLengths() {
     for (const name in global_encodings) {
         const encoding = global_encodings[name];
         const codeUnits = encoding.encode!(codepoints);
-        const cellEntries = [``, ``, ``, ``];
-        if (typeof codeUnits === `number`) {
+        const cellEntries = ['', '', '', ''];
+        if (typeof codeUnits === 'number') {
             cellEntries[0] = `<span style="color:red">Unable to encode U+${itos(
                 codeUnits,
                 16,
@@ -1422,8 +1433,9 @@ function updateEncodedLengths() {
                 (codeUnits.length * hexadecimalPaddingFromEncoding(name)) / 2
             } bytes`;
             let bomCodeUnits = encoding.encode!(bomCodepoints);
-            if (typeof bomCodeUnits === `number`) {
-                cellEntries[3] = cellEntries[2] = `<span style="color:red">Unable to encode BOM (U+FEFF)</span>`;
+            if (typeof bomCodeUnits === 'number') {
+                cellEntries[3] = cellEntries[2] =
+                    '<span style="color:red">Unable to encode BOM (U+FEFF)</span>';
             } else {
                 cellEntries[2] = `${bomCodeUnits.length} code units`;
                 cellEntries[3] = `${
@@ -1431,10 +1443,10 @@ function updateEncodedLengths() {
                 } bytes`;
             }
         }
-        encodingLengthsStr += `<tr><td>${name}</td><td>${cellEntries.join(`</td><td>`)}</td></tr>`;
+        encodingLengthsStr += `<tr><td>${name}</td><td>${cellEntries.join('</td><td>')}</td></tr>`;
     }
-    getElementById('encodingLengths').innerHTML = encodingLengthsStr + `</tbody>`;
-    getElementById('string').innerHTML = escapeHtml(ctos(getStr())).replace(/\n/g, `<br>`);
+    getElementById('encodingLengths').innerHTML = encodingLengthsStr + '</tbody>';
+    getElementById('string').innerHTML = escapeHtml(ctos(getStr())).replace(/\n/g, '<br>');
 }
 function updateMojibake() {
     const codepoints = getStr();
@@ -1450,24 +1462,24 @@ function updateMojibake() {
         const e = mojibakeEncodings[i];
         if (!e.selected) continue;
         const encoding1Name = e.textContent!;
-        if (global_encodings[encoding1Name].type == `text function`) continue;
+        if (global_encodings[encoding1Name].type == 'text function') continue;
         const encodedString = encodeOutput(
-            `Don't use a byte order mark`,
+            "Don't use a byte order mark",
             encoding1Name,
-            `Decimal`,
+            'Decimal',
             codepoints
         );
-        if (encodedString.startsWith(`<`)) continue;
+        if (encodedString.startsWith('<')) continue;
         for (const j in mojibakeEncodings) {
             const f = mojibakeEncodings[j];
             if (i == j) continue;
             if (!f.selected) continue;
             const encoding2Name = f.textContent!;
-            if (global_encodings[encoding2Name].type == `text function`) continue;
+            if (global_encodings[encoding2Name].type == 'text function') continue;
             const decodedString = decodeOutput(
-                `Don't use a byte order mark`,
+                "Don't use a byte order mark",
                 encoding2Name,
-                `Decimal`,
+                'Decimal',
                 encodedString
             );
             if (!decodedString) continue;
@@ -1478,8 +1490,8 @@ function updateMojibake() {
             });
         }
     }
-    let mojibakeOutputStr = ``;
-    let lastEncoding1 = ``;
+    let mojibakeOutputStr = '';
+    let lastEncoding1 = '';
     for (let i = 0; i < mojibakeOutputs.length; ++i) {
         const o = mojibakeOutputs[i];
         if (o.encoding1Name != lastEncoding1) {
@@ -1493,10 +1505,10 @@ function updateMojibake() {
 let global_lang: string = '';
 
 function updateLanguage() {
-    let lang = ``;
+    let lang = '';
     const languageCodeElem = getElementById('languageCode') as HTMLInputElement;
     let textboxCode = languageCodeElem.value;
-    let dropdownCode = ``;
+    let dropdownCode = '';
     const langComponentStrings = [
         selectedOption('languageList').getAttribute('data-code'),
         selectedOption('scriptList').getAttribute('data-code'),
@@ -1506,7 +1518,7 @@ function updateLanguage() {
     for (let i = 0; i < langComponentStrings.length; ++i) {
         const component = langComponentStrings[i];
         if (!component) continue;
-        if (dropdownCode != ``) dropdownCode += `-`;
+        if (dropdownCode != '') dropdownCode += '-';
         dropdownCode += component;
     }
     // valid states:
@@ -1519,14 +1531,14 @@ function updateLanguage() {
         textboxCode = languageCodeElem.value;
     }
 
-    if (textboxCode == `` && dropdownCode == ``) {
+    if (textboxCode == '' && dropdownCode == '') {
         languageCodeElem.removeAttribute('disabled');
         getElementById('languageList').removeAttribute('disabled');
         getElementById('scriptList').removeAttribute('disabled');
         getElementById('regionList').removeAttribute('disabled');
         getElementById('variantList').removeAttribute('disabled');
-        lang = ``;
-    } else if (textboxCode == `` && dropdownCode != ``) {
+        lang = '';
+    } else if (textboxCode == '' && dropdownCode != '') {
         languageCodeElem.setAttribute('disabled', 'disabled');
         getElementById('languageList').removeAttribute('disabled');
         getElementById('scriptList').removeAttribute('disabled');
@@ -1534,7 +1546,7 @@ function updateLanguage() {
         getElementById('variantList').removeAttribute('disabled');
         lang = dropdownCode;
         languageCodeElem.value = lang;
-    } else if (textboxCode != `` && dropdownCode == ``) {
+    } else if (textboxCode != '' && dropdownCode == '') {
         languageCodeElem.removeAttribute('disabled');
         getElementById('languageList').setAttribute('disabled', 'disabled');
         getElementById('scriptList').setAttribute('disabled', 'disabled');
