@@ -443,7 +443,7 @@ function loadEncodingFromData(type: string, name: string) {
             return Array.from(wasm.decode_str(name, new Uint32Array(bytes)) || []);
         };
     } else {
-        throw `Unknown encoding type: ${type}`;
+        throw new Error(`Unknown encoding type: ${type}`);
     }
     global_encodings[name] = encoding;
 }
@@ -491,7 +491,7 @@ function numberForFormat(format: string) {
         case 'Hexadecimal (lowercase)':
             return 16;
         default:
-            throw `Invalid format: ${format}`;
+            throw new Error(`Invalid format: ${format}`);
     }
 }
 
@@ -531,7 +531,7 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
             useExtended = false;
             break;
         default:
-            throw 'You need to specify whether to use extended or legacy grapheme clusters';
+            throw new Error('You need to specify whether to use extended or legacy grapheme clusters');
     }
 
     // for GB12 and GB13
@@ -996,11 +996,11 @@ function searchCodepoints(str: string) {
     return results;
 }
 function assert(expr: boolean, message: string) {
-    if (!expr) throw message;
+    if (!expr) throw new Error(message);
 }
 
 function assertEqual(actual: any, expected: any, otherInfo?: string) {
-    if (actual != expected) throw `Expected ${actual} to be equal to ${expected}: ${otherInfo}`;
+    if (actual != expected) throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
 }
 
 function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
@@ -1012,7 +1012,7 @@ function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
         }
         return true;
     }
-    throw `Expected ${actual} to be equal to ${expected}: ${otherInfo}`;
+    throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
 }
 
 function testBlocks() {
@@ -1128,7 +1128,7 @@ function updateRenderedCodepage() {
 function getElementById(id: string) {
     let element = document.getElementById(id);
     if (!element) {
-        throw `Unable to find element #${id}`;
+        throw new Error(`Unable to find element #${id}`);
     }
     return element;
 }
@@ -1136,7 +1136,7 @@ function getElementById(id: string) {
 function selectedOption(selectId: string) {
     let elem = getElementById(selectId) as HTMLSelectElement;
     let options = elem.selectedOptions;
-    if (options.length != 1) throw 'The number of selected options is not 1';
+    if (options.length != 1) throw new Error('The number of selected options is not 1');
     return options[0];
 }
 
@@ -1206,7 +1206,7 @@ function showCodepageDetail(codepoint: number) {
     for (let elem of Array.from((getElementById('outputEncoding') as HTMLSelectElement).options)) {
         let encoding = elem.textContent;
         if (!encoding) {
-            throw 'Unable to get encoding (via textContent) from element';
+            throw new Error('Unable to get encoding (via textContent) from element');
         }
         const html = encodeOutput(
             selectedOption('byteOrderMark').textContent!,
@@ -1237,7 +1237,7 @@ function changeDetail(elem: HTMLElement) {
     elem.blur(); // remove focus
     const attr = elem.getAttribute('data-cp');
     if (!attr) {
-        throw "Unable to find 'data-cp' attribute to find codepoint to jump to";
+        throw new Error("Unable to find 'data-cp' attribute to find codepoint to jump to");
     }
     const codepointToShow = parseInt(attr, 10);
     showCodepageDetail(codepointToShow);

@@ -349,7 +349,7 @@ function iterateOverFileWithRanges(path, globalArray) {
 		if (fields[`Deprecated`]) continue;
 
 		if (!fields[`Subtag`] || !fields[`Description`])
-			throw `Invalid Format`;
+			throw new Error("Invalid Format");
 
 		const languageTag = {
 			code: fields[`Subtag`],
