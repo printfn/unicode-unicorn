@@ -26,8 +26,24 @@ jobs:
         npm ci
     - name: Build
       run: npm run build
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: |
+          dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: "build"
+    environment: production
+    concurrency: production
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: dist
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
         personal_token: ${{ secrets.MY_TOKEN }}
