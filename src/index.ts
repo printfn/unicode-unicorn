@@ -620,12 +620,6 @@ function initLanguageData() {
         initLanguageData();
     });
 }
-interface ModalJQuery {
-    modal(operation: string): void;
-}
-function jQueryModal(sel: string, operation: string) {
-    (<ModalJQuery>(<any>$(sel))).modal(operation);
-}
 
 let global_useInternalString = false;
 let global_internalString: number[] = [];
