@@ -1042,24 +1042,8 @@ function testGraphemeCount() {
     assertEqual(
         countGraphemesForCodepoints(
             [
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
+                128104, 8205, 10084, 65039, 8205, 128104, 128104, 8205, 10084, 65039, 8205, 128104,
+                128104, 8205, 10084, 65039, 8205, 128104,
             ],
             'extended'
         ),
@@ -1118,9 +1102,9 @@ function updateRenderedCodepage() {
                     .toString(16)
                     .toUpperCase()}${j.toString(16).toUpperCase()}<br>${displayedCodepoint}</td>`;
             } else {
-                html += `<td style="background-color: white">${i
+                html += `<td style="background-color: white">${i.toString(16).toUpperCase()}${j
                     .toString(16)
-                    .toUpperCase()}${j.toString(16).toUpperCase()}<br>&nbsp;</td>`;
+                    .toUpperCase()}<br>&nbsp;</td>`;
             }
         }
         html += '</tr>';

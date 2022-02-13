@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 mkdir -p dist
 
 # Format javascript and css
-yarn run prettier --write --loglevel warn "src/**/*.ts" "src/**/*.css" "html/**/*.html" package.json
+prettier --write --loglevel warn "src/**/*.ts" "src/**/*.css" "html/**/*.html" package.json
 
 # independent
 cp -R favicon/* dist/ # copy contents of dir
@@ -23,4 +23,4 @@ node data/compile-unicode-data.js
 cargo fmt --manifest-path wasm/Cargo.toml
 wasm-pack build wasm
 
-yarn run webpack
+webpack
