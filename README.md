@@ -6,11 +6,19 @@
 
 `data` contains various data files that are used during compilation. See below for sources and how to update them.
 
-Run `./build.sh` to build the project. This creates a `build/` directory which needs to be hosted at the root of a web server.
+To build execute:
 
-For example, you can execute:
 ```
-./build.sh
+wasm-pack build wasm
+npm install
+npm run build
+```
+
+This will create the built files in `dist`
+
+To serve locally you can execute:
+
+```
 cd build
 npx http-server
 ```
