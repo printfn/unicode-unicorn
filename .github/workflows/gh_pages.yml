@@ -64,7 +64,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: ['build', 'lint']
-    environment: production
+    environment:
+      name: production
+      url: https://unicode.website/
     concurrency: production
     steps:
       - uses: actions/download-artifact@v2
