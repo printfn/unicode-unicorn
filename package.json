@@ -41,5 +41,6 @@
         "tabWidth": 4,
         "singleQuote": true,
         "printWidth": 100
-    }
+    },
+    "packageManager": "yarn@3.1.1"
 }

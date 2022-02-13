@@ -531,7 +531,9 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
             useExtended = false;
             break;
         default:
-            throw new Error('You need to specify whether to use extended or legacy grapheme clusters');
+            throw new Error(
+                'You need to specify whether to use extended or legacy grapheme clusters'
+            );
     }
 
     // for GB12 and GB13
@@ -1000,7 +1002,8 @@ function assert(expr: boolean, message: string) {
 }
 
 function assertEqual(actual: any, expected: any, otherInfo?: string) {
-    if (actual != expected) throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
+    if (actual != expected)
+        throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
 }
 
 function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {

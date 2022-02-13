@@ -2,6 +2,9 @@
 #
 # History:
 #
+# 2020-11-06 Registration of additional sequences in the MSARG
+#            collection.
+#
 # 2017-12-12 Registration of additional sequences in the Adobe-Japan1
 #            collection. Combined registration of the KRName collection
 #            and of sequences in that collection. Registration of
@@ -25,14 +28,14 @@
 #
 # This file is part of the Unicode Ideographic Variation Database (IVD).
 # For more details on the IVD, see UTS #37:
-# http://www.unicode.org/reports/tr37/
+# https://www.unicode.org/reports/tr37/
 #
-# Copyright 2006-2017 Unicode, Inc.
-# For terms of use, see: http://www.unicode.org/terms_of_use.html
+# Copyright 2006-2020 Unicode, Inc.
+# For terms of use, see: https://www.unicode.org/copyright.html#8
 #
 Adobe-Japan1; CID\+[0-9]+; https://github.com/adobe-type-tools/Adobe-Japan1/
-Hanyo-Denshi; [A-Z][A-Z][0-9A-F]+S*; http://www.itscj.ipsj.or.jp/domestic/sc02/hanyo-denshi/20100331
+Hanyo-Denshi; [A-Z][A-Z][0-9A-F]+S*; https://www.unicode.org/ivd/hanyo-denshi/
 KRName; KRName_[0-9A-F]{4}_[0-9]{2}; https://github.com/adobe-type-tools/krname-ivd-collection/
-Moji_Joho; MJ[0-9]{6}; http://mojikiban.ipa.go.jp/mjc/
-MSARG; M([AB]_[0-9A-F]{4}|C_[0-9]{5}|D_[0-9A-F]{4,5}|E_[0-9A-F]{4,5}_[0-9]{3}); http://www.iso10646hk.net/ivd/MSARG/
+Moji_Joho; MJ[0-9]{6}; https://mojikiban.ipa.go.jp/mjc/
+MSARG; M([AB]_[0-9A-F]{4}|C_[0-9]{5}|D_[0-9A-F]{4,5}|E_[0-9A-F]{4,5}_[0-9]{3}); https://www.safp.gov.mo/mscs/ivs/
 # EOF
