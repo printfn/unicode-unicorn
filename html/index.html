@@ -27,7 +27,7 @@
         <!-- 'unsafe-eval' required for wasm -->
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com https://browser.sentry-cdn.com; font-src 'self'; img-src 'self' https://www.google-analytics.com; connect-src 'self' *.sentry.io; manifest-src 'self'"
+            content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com https://browser.sentry-cdn.com; font-src 'self'; img-src 'self' data: https://www.google-analytics.com; connect-src 'self' *.sentry.io; manifest-src 'self'"
         />
 
         <link
@@ -59,7 +59,7 @@
                         href="#search"
                         aria-controls="search"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Search</a
                     >
                 </li>
@@ -69,7 +69,7 @@
                         href="#stats"
                         aria-controls="stats"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Text Info</a
                     >
                 </li>
@@ -79,7 +79,7 @@
                         href="#codepoints"
                         aria-controls="codepoints"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Codepoint List</a
                     >
                 </li>
@@ -89,7 +89,7 @@
                         href="#encode"
                         aria-controls="encode"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Encodings</a
                     >
                 </li>
@@ -99,12 +99,17 @@
                         href="#mojibake"
                         aria-controls="mojibake"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Mojibake</a
                     >
                 </li>
                 <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#io" aria-controls="io" role="tab" data-toggle="tab"
+                    <a
+                        class="nav-link"
+                        href="#io"
+                        aria-controls="io"
+                        role="tab"
+                        data-bs-toggle="tab"
                         >I/O</a
                     >
                 </li>
@@ -114,7 +119,7 @@
                         href="#normalization"
                         aria-controls="normalization"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Normalization</a
                     >
                 </li>
@@ -124,7 +129,7 @@
                         href="#codepages"
                         aria-controls="codepages"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Codepages</a
                     >
                 </li>
@@ -134,7 +139,7 @@
                         href="#settings"
                         aria-controls="settings"
                         role="tab"
-                        data-toggle="tab"
+                        data-bs-toggle="tab"
                         >Help &amp; Settings</a
                     >
                 </li>
@@ -473,7 +478,12 @@ mandarin:shuǐ</pre
                             (Decimal:
                             <span id="detail-codepoint-decimal"></span>)
                         </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
                     </div>
                     <div class="modal-body">
                         <p>Name: <span id="detail-name"></span></p>
@@ -536,7 +546,7 @@ mandarin:shuǐ</pre
                         >
                             Next Codepoint
                         </button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             Close
                         </button>
                     </div>

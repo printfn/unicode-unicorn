@@ -2,7 +2,7 @@ import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './sentry';
 import * as $ from 'jquery';
-import 'bootstrap';
+import { Modal, Tab } from 'bootstrap';
 import './chosen/chosen-sprite.png';
 import './chosen/chosen-sprite@2x.png';
 import './chosen/chosen.css';
@@ -881,9 +881,14 @@ ready(function () {
         //     },
         //     false
         // );
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            callEventListenersForElemId('output');
-        });
+        var tabEl = document.querySelectorAll('a[data-bs-toggle="tab"]');
+        console.log(tabEl);
+        for (let tab of tabEl) {
+            tab.addEventListener('shown.bs.tab', function (event) {
+                console.log(event);
+                callEventListenersForElemId('output');
+            });
+        }
         // This should be on 'input' instead, but this doesn't fire on
         //  Safari. See https://caniuse.com/#feat=input-event (#4)
         //  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
@@ -1215,7 +1220,9 @@ function showCodepageDetail(codepoint: number) {
     );
     getElementById('detail-next-cp').setAttribute('data-cp', itos(nextCodepoint(codepoint), 10));
 
-    jQueryModal('#codepoint-detail', 'show');
+    const codepointDetail = getElementById('codepoint-detail');
+    let modalToggle = Modal.getOrCreateInstance(codepointDetail);
+    modalToggle.show();
 }
 (window as any).showCodepageDetail = showCodepageDetail;
 
