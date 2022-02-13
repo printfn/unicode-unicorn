@@ -1,14 +1,14 @@
 {
-	"compilerOptions": {
-		"outDir":"./dist/",
-		"noImplicitAny": true,
-		"allowJs": false,
-		"target": "es6",
-		"strictNullChecks": true,
-		"sourceMap": true,
-		"inlineSources": true,
-		"jsx": "react",
-		"moduleResolution": "node",
-		"module": "ES2020"
-	}
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "allowJs": false,
+        "target": "es6",
+        "strictNullChecks": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "jsx": "react",
+        "moduleResolution": "node",
+        "module": "ES2020"
+    }
 }
