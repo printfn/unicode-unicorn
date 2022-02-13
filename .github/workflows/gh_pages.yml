@@ -9,21 +9,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Cache cargo registry
-      uses: actions/cache@v1
+    - name: Install minimal stable rust
       with:
-        path: ~/.cargo/registry
-        key: cargo-registry-${{ hashFiles('wasm/Cargo.lock') }}
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: cargo-index-${{ hashFiles('wasm/Cargo.lock') }}
-    - name: Cache rust build
-      uses: actions/cache@v1.0.1
-      with:
-        path: wasm/target
-        key: build-${{ hashFiles('wasm/Cargo.lock') }}
+        profile: minimal
+        toolchain: stable
+    - uses: Swatinem/rust-cache@v1
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Install node dependencies
