@@ -1,7 +1,10 @@
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
+const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin')
 
 module.exports = {
   entry: './src/index.ts',
+  mode: 'production',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -13,6 +16,18 @@ module.exports = {
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "html" },
+        { from: "favicon" },
+        { from: "data/compiled-data.json"}
+      ],
+    }),
+    new WasmPackPlugin({
+      crateDirectory: path.resolve(__dirname, 'wasm'),
+    }),
+  ],
   module: {
     rules: [
       {

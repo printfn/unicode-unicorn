@@ -783,7 +783,7 @@ function initGlobalVariables(data: any) {
 let wasm: any;
 
 async function initWasm() {
-    wasm = await import('unicode-rustwasm');
+    wasm = await import('../wasm/pkg');
     await wasm.init();
 }
 
