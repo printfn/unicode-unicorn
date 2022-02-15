@@ -4,7 +4,7 @@
     "description": "A JavaScript Unicode IDE",
     "private": true,
     "dependencies": {
-        "@sentry/browser": "^6.17.7",
+        "@sentry/browser": "^6.17.8",
         "@sentry/tracing": "^6.17.8",
         "bootstrap": "^5.1.3",
         "jquery": "^3.5.1",
