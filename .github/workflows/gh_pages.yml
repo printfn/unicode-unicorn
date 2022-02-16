@@ -3,37 +3,11 @@ name: CI
 on: [push]
 
 jobs:
-  lint:
-    name: Run linters
-    runs-on: ubuntu-latest
-    permissions:
-      checks: write
-      contents: write
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
-      - name: Install minimal stable rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-      - uses: Swatinem/rust-cache@v1
-      - name: rustfmt
-        run: cargo fmt --manifest-path wasm/Cargo.toml -- --check
-      - name: Install Node.js dependencies
-        run: npm ci
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
-        with:
-          prettier: true
-          continue_on_error: false
-
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://unicode.website/
     steps:
       - uses: actions/checkout@v2
       - name: Install minimal stable rust
@@ -53,28 +27,9 @@ jobs:
           npm ci
       - name: Build
         run: npm run build
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: |
-            dist
-
-  deploy:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: ['build', 'lint']
-    environment:
-      name: production
-      url: https://unicode.website/
-    concurrency: production
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           personal_token: ${{ secrets.MY_TOKEN }}
           publish_dir: ./dist
