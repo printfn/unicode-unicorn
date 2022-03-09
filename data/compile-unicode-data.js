@@ -387,4 +387,4 @@ for (let i = 0; i < lengths.length; ++i) {
 	console.log(`${x.name}: ${x.length} (${(lengths[i].length / finalOutputString.length * 100).toFixed(2)}%)`);
 }
 
-fs.writeFileSync('dist/compiled-data.json', finalOutputString);
+fs.writeFileSync('data/compiled-data.json', finalOutputString);

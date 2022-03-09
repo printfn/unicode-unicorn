@@ -43,31 +43,31 @@ body:not(.modal-open) {
 }
 .char-row-category-c {
     /* control, light gray, very slightly reddish */
-    background-color: hsla(3, 16%, 90%, 1);
+    background-color: hsla(3, 16%, 90%, 1) !important;
 }
 .char-row-category-l {
     /* letter, light yellow */
-    background-color: hsla(52, 92%, 90%, 1);
+    background-color: hsla(52, 92%, 90%, 1) !important;
 }
 .char-row-category-m {
     /* mark, light pink */
-    background-color: hsla(293, 92%, 91%, 1);
+    background-color: hsla(293, 92%, 91%, 1) !important;
 }
 .char-row-category-n {
     /* number, light green */
-    background-color: hsla(90, 92%, 90%, 1);
+    background-color: hsla(90, 92%, 90%, 1) !important;
 }
 .char-row-category-p {
     /* punctuation, light cyan */
-    background-color: hsla(175, 92%, 90%, 1);
+    background-color: hsla(175, 92%, 90%, 1) !important;
 }
 .char-row-category-s {
     /* symbol, light purple */
-    background-color: hsla(235, 92%, 90%, 1);
+    background-color: hsla(235, 92%, 90%, 1) !important;
 }
 .char-row-category-z {
     /* separator, very light grey */
-    background-color: #f5f5f5;
+    background-color: #f5f5f5 !important;
 }
 .trans-blue {
     background-color: #55cdfc;

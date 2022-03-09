@@ -1,7 +1,7 @@
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as $ from 'jquery';
-import 'bootstrap';
+import { Modal, Tab } from 'bootstrap';
 import './chosen/chosen-sprite.png';
 import './chosen/chosen-sprite@2x.png';
 import './chosen/chosen.css';
@@ -530,7 +530,9 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
             useExtended = false;
             break;
         default:
-            throw new Error('You need to specify whether to use extended or legacy grapheme clusters');
+            throw new Error(
+                'You need to specify whether to use extended or legacy grapheme clusters'
+            );
     }
 
     // for GB12 and GB13
@@ -616,12 +618,6 @@ function initLanguageData() {
         showRareLanguagesButton.setAttribute('disabled', 'disabled');
         initLanguageData();
     });
-}
-interface ModalJQuery {
-    modal(operation: string): void;
-}
-function jQueryModal(sel: string, operation: string) {
-    (<ModalJQuery>(<any>$(sel))).modal(operation);
 }
 
 let global_useInternalString = false;
@@ -786,7 +782,7 @@ function initGlobalVariables(data: any) {
 let wasm: any;
 
 async function initWasm() {
-    wasm = await import('unicode-rustwasm');
+    wasm = await import('../wasm/pkg');
     await wasm.init();
 }
 
@@ -878,9 +874,14 @@ ready(function () {
         //     },
         //     false
         // );
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            callEventListenersForElemId('output');
-        });
+        var tabEl = document.querySelectorAll('a[data-bs-toggle="tab"]');
+        console.log(tabEl);
+        for (let tab of tabEl) {
+            tab.addEventListener('shown.bs.tab', function (event) {
+                console.log(event);
+                callEventListenersForElemId('output');
+            });
+        }
         // This should be on 'input' instead, but this doesn't fire on
         //  Safari. See https://caniuse.com/#feat=input-event (#4)
         //  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
@@ -999,7 +1000,8 @@ function assert(expr: boolean, message: string) {
 }
 
 function assertEqual(actual: any, expected: any, otherInfo?: string) {
-    if (actual != expected) throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
+    if (actual != expected)
+        throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
 }
 
 function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
@@ -1038,24 +1040,8 @@ function testGraphemeCount() {
     assertEqual(
         countGraphemesForCodepoints(
             [
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
-                128104,
-                8205,
-                10084,
-                65039,
-                8205,
-                128104,
+                128104, 8205, 10084, 65039, 8205, 128104, 128104, 8205, 10084, 65039, 8205, 128104,
+                128104, 8205, 10084, 65039, 8205, 128104,
             ],
             'extended'
         ),
@@ -1114,9 +1100,9 @@ function updateRenderedCodepage() {
                     .toString(16)
                     .toUpperCase()}${j.toString(16).toUpperCase()}<br>${displayedCodepoint}</td>`;
             } else {
-                html += `<td style="background-color: white">${i
+                html += `<td style="background-color: white">${i.toString(16).toUpperCase()}${j
                     .toString(16)
-                    .toUpperCase()}${j.toString(16).toUpperCase()}<br>&nbsp;</td>`;
+                    .toUpperCase()}<br>&nbsp;</td>`;
             }
         }
         html += '</tr>';
@@ -1227,7 +1213,9 @@ function showCodepageDetail(codepoint: number) {
     );
     getElementById('detail-next-cp').setAttribute('data-cp', itos(nextCodepoint(codepoint), 10));
 
-    jQueryModal('#codepoint-detail', 'show');
+    const codepointDetail = getElementById('codepoint-detail');
+    let modalToggle = Modal.getOrCreateInstance(codepointDetail);
+    modalToggle.show();
 }
 (window as any).showCodepageDetail = showCodepageDetail;
 

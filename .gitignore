@@ -6,3 +6,5 @@ dist/
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+pkg/
+data/compiled-data.json
