@@ -1,6 +1,5 @@
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './sentry';
 import * as $ from 'jquery';
 import 'bootstrap';
 import './chosen/chosen-sprite.png';

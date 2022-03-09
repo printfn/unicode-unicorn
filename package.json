@@ -4,8 +4,6 @@
     "description": "A JavaScript Unicode IDE",
     "private": true,
     "dependencies": {
-        "@sentry/browser": "^5.29.2",
-        "@sentry/tracing": "^5.29.2",
         "bootstrap": "^4.5.3",
         "jquery": "^3.5.1",
         "popper.js": "^1.16.1",
