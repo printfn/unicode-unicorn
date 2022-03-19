@@ -5,9 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://unicode.website/
     steps:
       - uses: actions/checkout@v2
       - name: Install minimal stable rust
@@ -16,17 +13,13 @@ jobs:
           profile: minimal
           toolchain: stable
       - uses: Swatinem/rust-cache@v1
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Install node dependencies
         run: |
-          npm ci
+          yarn
       - name: Build
-        run: npm run build
+        run: yarn run build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}

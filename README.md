@@ -10,8 +10,8 @@ To build execute:
 
 ```
 wasm-pack build wasm
-npm install
-npm run build
+yarn
+yarn run build
 ```
 
 This will create the built files in `dist`
@@ -19,7 +19,7 @@ This will create the built files in `dist`
 To serve locally you can execute:
 
 ```
-cd build
+cd dist
 npx http-server
 ```
 
