@@ -26,13 +26,13 @@ python3 -m http.server
 ## Sources
 
 Unicode Unicorn uses the Unicode Character Database. It can be
-downloaded from <http://www.unicode.org/Public/UCD/latest/ucd/>.
+downloaded from <https://www.unicode.org/Public/UCD/latest/ucd/>.
 Download `UCD.zip` and extract its contents to `data/Unicode/UCD/`.
 Then extract `Unihan.zip` and move the `Unihan` folder contents into
 `data/Unicode/Unihan/`.
 
 Codepage mapping files are from
-<ftp://ftp.unicode.org/Public/MAPPINGS/>. Move the appropriate text
+<https://www.unicode.org/Public/MAPPINGS/>. Move the appropriate text
 files into `data/Unicode/Mappings/`, and check the references in
 `data/encodings.txt`.
 
