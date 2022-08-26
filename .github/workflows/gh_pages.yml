@@ -20,12 +20,20 @@ jobs:
           yarn
       - name: Build
         run: yarn run build
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          personal_token: ${{ secrets.MY_TOKEN }}
-          publish_dir: ./dist
-          external_repository: printfn/unicode-unicorn-website
-          force_orphan: true
-          cname: unicode.website
+          path: 'dist'
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
