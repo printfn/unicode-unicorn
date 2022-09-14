@@ -1,10 +1,10 @@
 #
 # Unihan_RadicalStrokeCounts.txt
-# Date: 2021-08-06 16:32:36 GMT [JHJ]
-# Unicode version: 14.0.0
+# Date: 2022-08-01 16:36:07 GMT [JHJ]
+# Unicode version: 15.0.0
 #
 # Unicode Character Database
-# © 2021 Unicode®, Inc.
+# © 2022 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 # For documentation, see http://www.unicode.org/reports/tr38/
@@ -13042,7 +13042,7 @@ U+6C74	kRSKangXi	85.4
 U+6C75	kRSKangXi	85.4
 U+6C76	kRSAdobe_Japan1_6	C+14692+67.4.3 C+14692+85.3.4
 U+6C76	kRSKangXi	85.4
-U+6C77	kRSKangXi	85.4
+U+6C77	kRSKangXi	85.3
 U+6C78	kRSAdobe_Japan1_6	C+21850+70.4.3 C+21850+85.3.4
 U+6C78	kRSKangXi	85.4
 U+6C79	kRSAdobe_Japan1_6	C+19488+85.3.4
@@ -60557,7 +60557,7 @@ U+266B5	kRSKangXi	130.6
 U+266B6	kRSKangXi	130.6
 U+266B7	kRSKangXi	130.6
 U+266B8	kRSKangXi	130.6
-U+266B9	kRSKangXi	130.6
+U+266B9	kRSKangXi	74.6
 U+266BA	kRSKangXi	130.6
 U+266BB	kRSKangXi	130.6
 U+266BC	kRSKangXi	130.6
