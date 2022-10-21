@@ -113,13 +113,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/bootstrap@npm:^5.1.9":
-  version: 5.1.9
-  resolution: "@types/bootstrap@npm:5.1.9"
+"@types/bootstrap@npm:^5.2.5":
+  version: 5.2.5
+  resolution: "@types/bootstrap@npm:5.2.5"
   dependencies:
     "@popperjs/core": ^2.9.2
-    "@types/jquery": "*"
-  checksum: cf04f09f378c8d0de7f203873daf61c74e37e303d663197deb4cf3fa6239ff5ed3090bcb7ae8ac6d33374fc8bbbb4550ae1a67ff51f15f43d3c50f318ab62473
+  checksum: f60c97f0b8c2a445901b23f18e584bc795572bbba174c7f1482adc7ad66e4a33bebd9587997cf8fa44c7bed880f95cbaa3ab3168c054d5a77475a06eea9318a5
   languageName: node
   linkType: hard
 
@@ -201,7 +200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jquery@npm:*, @types/jquery@npm:^3.5.14":
+"@types/jquery@npm:^3.5.14":
   version: 3.5.14
   resolution: "@types/jquery@npm:3.5.14"
   dependencies:
@@ -788,12 +787,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap@npm:^5.1.3":
-  version: 5.1.3
-  resolution: "bootstrap@npm:5.1.3"
+"bootstrap@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "bootstrap@npm:5.2.2"
   peerDependencies:
-    "@popperjs/core": ^2.10.2
-  checksum: 301b5ed872efba061104cf22ac93568e3837867fb5527ab9326a51510fb752bd4883e1d488225c8be72f86d9d3a55ef5b166aa7fa62c2fdd077c3f05b65752f8
+    "@popperjs/core": ^2.11.6
+  checksum: 14e6df28feb975dc10702cac0a6c2a21132a6e4e5562e31cdae1db3970e287ed29001020066b61d96b2cea2a45ecf44c08c8c26bc84a31cdeabec0a9be6b9389
   languageName: node
   linkType: hard
 
@@ -3853,10 +3852,10 @@ __metadata:
   resolution: "unicode-unicorn@workspace:."
   dependencies:
     "@popperjs/core": ^2.11.6
-    "@types/bootstrap": ^5.1.9
+    "@types/bootstrap": ^5.2.5
     "@types/jquery": ^3.5.14
     "@wasm-tool/wasm-pack-plugin": ^1.6.0
-    bootstrap: ^5.1.3
+    bootstrap: ^5.2.2
     copy-webpack-plugin: ^10.2.4
     css-loader: ^6.7.1
     jquery: ^3.6.1
