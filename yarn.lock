@@ -66,7 +66,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@popperjs/core@npm:^2.11.4, @popperjs/core@npm:^2.9.2":
+"@popperjs/core@npm:^2.11.6":
+  version: 2.11.6
+  resolution: "@popperjs/core@npm:2.11.6"
+  checksum: 47fb328cec1924559d759b48235c78574f2d71a8a6c4c03edb6de5d7074078371633b91e39bbf3f901b32aa8af9b9d8f82834856d2f5737a23475036b16817f0
+  languageName: node
+  linkType: hard
+
+"@popperjs/core@npm:^2.9.2":
   version: 2.11.4
   resolution: "@popperjs/core@npm:2.11.4"
   checksum: 36168d274aa164368a50aef2e7b2f858e1b9145d9250af9dc1315ff719d874a367177760f8285efb75c8cf48267194a50e7dc9cdb41bf0b1958c38805c13564c
@@ -3990,7 +3997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "unicode-unicorn@workspace:."
   dependencies:
-    "@popperjs/core": ^2.11.4
+    "@popperjs/core": ^2.11.6
     "@types/bootstrap": ^5.1.9
     "@types/jquery": ^3.5.14
     "@wasm-tool/wasm-pack-plugin": ^1.6.0
