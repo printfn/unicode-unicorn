@@ -37,7 +37,7 @@ wee_alloc = { version = "0.4.2", optional = true }
 wasm-bindgen-test = "0.2"
 
 [build-dependencies]
-proc-macro2 = "1.0.9"
+proc-macro2 = "1.0.47"
 quote = "1.0.2"
 
 [profile.release]
