@@ -3,19 +3,20 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     assignees:
       - "rhysmdnz"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     assignees:
       - "rhysmdnz"
+
   - package-ecosystem: "cargo"
     directory: "/wasm"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     assignees:
       - "rhysmdnz"
