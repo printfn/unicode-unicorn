@@ -38,7 +38,7 @@ wasm-bindgen-test = "0.2"
 
 [build-dependencies]
 proc-macro2 = "1.0.9"
-quote = "1.0.2"
+quote = "1.0.21"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
