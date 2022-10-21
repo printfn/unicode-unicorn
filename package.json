@@ -14,7 +14,7 @@
         "@types/bootstrap": "^5.2.5",
         "@types/jquery": "^3.5.14",
         "@wasm-tool/wasm-pack-plugin": "^1.6.0",
-        "copy-webpack-plugin": "^10.2.4",
+        "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.1",
         "mini-css-extract-plugin": "^2.6.1",
         "prettier": "^2.6.0",
