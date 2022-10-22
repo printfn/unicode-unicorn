@@ -18,6 +18,10 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+fn is_surrogate(cp: u32) -> bool {
+    (0xd800..=0xdfff).contains(&cp)
+}
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
@@ -56,7 +60,7 @@ pub fn variation_sequences_for_codepoint(codepoint: u32) -> String {
     let mut result = Vec::<IdeographicVariationSequence>::new();
     for ivd in data::IVD_SEQUENCES.iter() {
         if ivd.base_codepoint == codepoint {
-            result.push(ivd.clone());
+            result.push(*ivd);
         }
     }
     serde_json::to_string(&result).unwrap()
@@ -124,7 +128,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
         "Unicode UTF-32 (32-bit code units)" => codepoints
             .iter()
             .map(|&cp| {
-                if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
+                if is_surrogate(cp) || cp > 0x10_ffff {
                     Err(cp)
                 } else {
                     Ok(cp)
@@ -147,7 +151,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
             codepoints
                 .iter()
                 .map(|&cp| {
-                    if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
+                    if is_surrogate(cp) || cp > 0x10_ffff {
                         Err(cp)
                     } else {
                         Ok(cp)
@@ -258,7 +262,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
         return code_units
             .iter()
             .map(|&u| {
-                if (u >= 0xd800 && u <= 0xdfff) || u > 0x10_ffff {
+                if is_surrogate(u) || u > 0x10_ffff {
                     None
                 } else {
                     Some(u)
@@ -296,7 +300,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
             } else {
                 u32::from_le_bytes(be_or_le_bytes)
             };
-            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
+            if is_surrogate(cp) || cp > 0x10_ffff {
                 return None;
             }
             v.push(cp);

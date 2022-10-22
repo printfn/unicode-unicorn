@@ -1,3 +1,5 @@
+use crate::is_surrogate;
+
 enum Endianness {
     Big,
     Little,
@@ -6,7 +8,7 @@ enum Endianness {
 pub fn encode_ucs2_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Result<Vec<u32>, u32> {
     codepoints
         .map(|&cp| {
-            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0xffff {
+            if is_surrogate(cp) || cp > 0xffff {
                 Err(cp)
             } else {
                 Ok(cp)
@@ -18,7 +20,7 @@ pub fn encode_ucs2_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Resul
 pub fn encode_utf16_16bit<'a>(codepoints: impl Iterator<Item = &'a u32>) -> Result<Vec<u32>, u32> {
     Ok(codepoints
         .map(|&cp| {
-            if (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10_ffff {
+            if is_surrogate(cp) || cp > 0x10_ffff {
                 Err(cp)
             } else {
                 Ok(cp)
@@ -78,7 +80,7 @@ pub fn decode_ucs2_16bit(code_units: Vec<u32>) -> Option<Vec<u32>> {
     code_units
         .iter()
         .map(|&u| {
-            if (u >= 0xd800 && u <= 0xdfff) || u > 0xffff {
+            if is_surrogate(u) || u > 0xffff {
                 None
             } else {
                 Some(u)
@@ -92,7 +94,7 @@ pub fn decode_utf16_16bit(code_units: Vec<u32>) -> Option<Vec<u32>> {
         code_units
             .iter()
             .map(|&u| {
-                if (u >= 0xd800 && u <= 0xdfff) || u > 0xffff {
+                if is_surrogate(u) || u > 0xffff {
                     None
                 } else {
                     Some(u as u16)
