@@ -1,0 +1,37 @@
+name: Update Data
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update UCD
+        run: |
+          rm -rf data/Unicode/UCD
+          curl https://www.unicode.org/Public/UCD/latest/ucd/UCD.zip -o /tmp/UCD.zip
+          unzip /tmp/UCD.zip -d data/Unicode/UCD
+      - name: Update Unihan
+        run: |
+          rm -rf data/Unicode/Unihan
+          curl https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip -o /tmp/Unihan.zip
+          unzip /tmp/Unihan.zip -d data/Unicode/Unihan
+      - name: Update language-subtag-registry
+        run: |
+          curl https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry -o data/language-subtag-registry
+      - name: Update IVD data
+        run: |
+          date=$(curl https://unicode.org/ivd/data/ | grep -E "[0-9]{4}-[0-9]{2}-[0-9]{2}" | sort -n | tail -n1 | grep -oEi "[0-9]{4}-[0-9]{2}-[0-9]{2}" | tail -n1)
+          curl "https://unicode.org/ivd/data/$date/IVD_Collections.txt" -o data/Unicode/IVD/IVD_Collections.txt
+          curl "https://unicode.org/ivd/data/$date/IVD_Sequences.txt" -o data/Unicode/IVD/IVD_Sequences.txt
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Update Unicode data
+          title: Update Unicode data
+          branch: update-data
