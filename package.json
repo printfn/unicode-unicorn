@@ -5,13 +5,13 @@
     "private": true,
     "dependencies": {
         "@popperjs/core": "^2.11.6",
-        "bootstrap": "^5.2.2",
+        "bootstrap": "^5.2.3",
         "jquery": "^3.6.1",
         "typescript": "~4.8.4",
         "util": "^0.12.5"
     },
     "devDependencies": {
-        "@types/bootstrap": "^5.2.5",
+        "@types/bootstrap": "^5.2.6",
         "@types/jquery": "^3.5.14",
         "@wasm-tool/wasm-pack-plugin": "^1.6.0",
         "copy-webpack-plugin": "^11.0.0",
