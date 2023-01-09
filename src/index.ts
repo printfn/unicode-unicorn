@@ -1,11 +1,7 @@
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import * as $ from 'jquery';
 import { Modal, Tab } from 'bootstrap';
-import './chosen/chosen-sprite.png';
-import './chosen/chosen-sprite@2x.png';
-import './chosen/chosen.css';
-import './chosen/chosen.jquery.js';
+import Chosen from './chosen/chosen';
 
 async function initBlockData() {
     for (let i = 0; i < global_blockRanges.length; ++i) {
@@ -406,7 +402,7 @@ async function initializeMappings() {
     let codepageOptionStrings = '';
     let outputEncodingOptionStrings = '';
     let mojibakeOptionStrings = '';
-    $.each(global_encodingNames, function (i, encodingName) {
+    global_encodingNames.forEach((encodingName) => {
         if (
             global_encodings[encodingName].type == '7-bit wasm' ||
             global_encodings[encodingName].type == '8-bit wasm'
@@ -801,7 +797,10 @@ function ready(fn: () => void) {
     }
 }
 ready(function () {
-    (<any>$('select')).chosen({ disable_search_threshold: 10, width: '100%' });
+    const selects = document.getElementsByTagName('select');
+    for (const select of selects) {
+        new Chosen(select, { disable_search_threshold: 10, width: '100%' });
+    }
     const startTime = new Date();
     initData().then(function () {
         initializeSearchStrings();
@@ -855,9 +854,12 @@ ready(function () {
             let elem = getElementById(id);
             elem.addEventListener('input', () => updateInfo());
         }
-        $('select').on('change', function () {
-            updateInfo();
-        });
+        const selects = document.querySelectorAll('select');
+        for (const select of selects) {
+            select.addEventListener('change', () => {
+                updateInfo();
+            });
+        }
         // document.addEventListener(
         //     'change',
         //     function (e) {
@@ -875,7 +877,6 @@ ready(function () {
         //     false
         // );
         var tabEl = document.querySelectorAll('a[data-bs-toggle="tab"]');
-        console.log(tabEl);
         for (let tab of tabEl) {
             tab.addEventListener('shown.bs.tab', function (event) {
                 console.log(event);

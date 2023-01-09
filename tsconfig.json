@@ -3,7 +3,7 @@
         "outDir": "./dist/",
         "noImplicitAny": true,
         "allowJs": false,
-        "target": "es6",
+        "target": "es2021",
         "strictNullChecks": true,
         "sourceMap": true,
         "inlineSources": true,
