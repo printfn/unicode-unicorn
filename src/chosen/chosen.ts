@@ -236,6 +236,9 @@ abstract class AbstractChosen {
     constructor(form_field: HTMLSelectElement, options: ChosenOptions) {
         this.form_field = form_field;
         this.options = options != null ? options : {};
+        if (!AbstractChosen.browser_is_supported()) {
+            return;
+        }
         this.is_multiple = this.form_field.multiple;
         this.set_default_text();
         this.set_default_values();
@@ -295,7 +298,7 @@ abstract class AbstractChosen {
     }
 
     set_default_text(): void {
-        const placeholder = this.form_field.getAttribute('data-placeholder');
+        const placeholder = this.form_field.dataset.placeholder;
         if (placeholder) {
             this.default_text = placeholder;
         } else if (this.is_multiple) {
@@ -309,7 +312,6 @@ abstract class AbstractChosen {
                 this.options.placeholder_text ||
                 AbstractChosen.default_single_text;
         }
-        this.default_text = escapeHtml(this.default_text);
         this.results_none_found =
             this.form_field.getAttribute('data-no_results_text') ||
             this.options.no_results_text ||
@@ -366,9 +368,7 @@ abstract class AbstractChosen {
     results_option_build(first: boolean = false): string {
         let content = '';
         let shown_results = 0;
-        const ref = this.results_data;
-        for (let i = 0, len = ref.length; i < len; i++) {
-            const data = ref[i];
+        for (const data of this.results_data) {
             let data_content = '';
             if ((data as SelectParserGroupItem).group) {
                 data_content = this.result_add_group(data as SelectParserGroupItem);
@@ -423,7 +423,7 @@ abstract class AbstractChosen {
         if (option.style) {
             option_el.style.cssText = option.style;
         }
-        option_el.setAttribute('data-option-array-index', option.array_index.toString());
+        option_el.dataset.optionArrayIndex = option.array_index.toString();
         option_el.innerHTML = (option.highlighted_html || option.html) as string;
         if (option.title) {
             option_el.title = option.title;
@@ -595,9 +595,7 @@ abstract class AbstractChosen {
             return this.selected_option_count;
         }
         this.selected_option_count = 0;
-        const ref = this.form_field.options;
-        for (let i = 0, len = ref.length; i < len; i++) {
-            const option = ref[i];
+        for (const option of this.form_field.options) {
             if (option.selected) {
                 this.selected_option_count += 1;
             }
@@ -753,20 +751,70 @@ abstract class AbstractChosen {
         return tmp.innerHTML;
     }
 
-    get_single_html(): string {
-        return (
-            '<a class="chosen-single chosen-default">\n  <span>' +
-            this.default_text +
-            '</span>\n  <div><b></b></div>\n</a>\n<div class="chosen-drop">\n  <div class="chosen-search">\n    <input class="chosen-search-input" type="text" autocomplete="off" />\n  </div>\n  <ul class="chosen-results"></ul>\n</div>'
-        );
+    get_single_children(): Node {
+        const fragment = new DocumentFragment();
+
+        const link = document.createElement('a');
+        link.className = 'chosen-single chosen-default';
+
+        const span = document.createElement('span');
+        span.innerText = this.default_text;
+        link.appendChild(span);
+
+        const wrapper = document.createElement('div');
+        const b = document.createElement('b');
+        wrapper.appendChild(b);
+        link.appendChild(wrapper);
+
+        const chosen_drop = document.createElement('div');
+        chosen_drop.className = 'chosen-drop';
+
+        const chosen_search = document.createElement('div');
+        chosen_search.className = 'chosen-search';
+
+        const chosen_search_input = document.createElement('input');
+        chosen_search_input.className = 'chosen-search-input';
+        chosen_search_input.type = 'text';
+        chosen_search_input.autocomplete = 'off';
+        chosen_search.appendChild(chosen_search_input);
+        chosen_drop.appendChild(chosen_search);
+
+        const chosen_results = document.createElement('ul');
+        chosen_results.className = 'chosen-results';
+        chosen_drop.appendChild(chosen_results);
+
+        fragment.appendChild(link);
+        fragment.appendChild(chosen_drop);
+        return fragment;
     }
 
-    get_multi_html(): string {
-        return (
-            '<ul class="chosen-choices">\n  <li class="search-field">\n    <input class="chosen-search-input" type="text" autocomplete="off" value="' +
-            this.default_text +
-            '" />\n  </li>\n</ul>\n<div class="chosen-drop">\n  <ul class="chosen-results"></ul>\n</div>'
-        );
+    get_multi_children(): Node {
+        const fragment = new DocumentFragment();
+
+        const chosen_choices = document.createElement('ul');
+        chosen_choices.className = 'chosen-choices';
+        fragment.appendChild(chosen_choices);
+
+        const search_field = document.createElement('li');
+        search_field.className = 'search-field';
+        chosen_choices.appendChild(search_field);
+
+        const chosen_search_input = document.createElement('input');
+        chosen_search_input.className = 'chosen-search-input';
+        chosen_search_input.type = 'text';
+        chosen_search_input.autocomplete = 'off';
+        chosen_search_input.value = this.default_text;
+        search_field.appendChild(chosen_search_input);
+
+        const chosen_drop = document.createElement('div');
+        chosen_drop.className = 'chosen-drop';
+        fragment.appendChild(chosen_drop);
+
+        const chosen_results = document.createElement('ul');
+        chosen_results.className = 'chosen-results';
+        chosen_drop.appendChild(chosen_results);
+
+        return fragment;
     }
 
     get_no_results_html(terms: string): string {
@@ -777,6 +825,20 @@ abstract class AbstractChosen {
             escapeHtml(terms) +
             '</span>\n</li>'
         );
+    }
+
+    static browser_is_supported() {
+        if (
+            /iP(od|hone)/i.test(window.navigator.userAgent) ||
+            /IEMobile/i.test(window.navigator.userAgent) ||
+            /Windows Phone/i.test(window.navigator.userAgent) ||
+            /BlackBerry/i.test(window.navigator.userAgent) ||
+            /BB10/i.test(window.navigator.userAgent) ||
+            /Android.*Mobile/i.test(window.navigator.userAgent)
+        ) {
+            return false;
+        }
+        return true;
     }
 
     abstract setup(): void;
@@ -846,9 +908,9 @@ export default class Chosen extends AbstractChosen {
         }
         this.container.style.width = this.container_width();
         if (this.is_multiple) {
-            this.container.innerHTML = this.get_multi_html();
+            this.container.appendChild(this.get_multi_children());
         } else {
-            this.container.innerHTML = this.get_single_html();
+            this.container.appendChild(this.get_single_children());
         }
         this.form_field.style.display = 'none';
         this.form_field.parentNode?.insertBefore(
@@ -991,13 +1053,9 @@ export default class Chosen extends AbstractChosen {
     }
 
     search_field_disabled(): void {
-        let ref;
+        const ref = getParent(this.form_field, 'fieldset') as HTMLFieldSetElement;
         this.is_disabled =
-            this.form_field.disabled ||
-            ((ref = getParent(this.form_field, 'fieldset') as HTMLFieldSetElement) != null
-                ? ref.disabled
-                : void 0) ||
-            false;
+            this.form_field.disabled || (ref !== undefined ? ref.disabled : undefined) || false;
         if (this.is_disabled) {
             this.container.classList.add('chosen-disabled');
         } else {
@@ -1368,7 +1426,7 @@ export default class Chosen extends AbstractChosen {
     }
 
     single_set_selected_text(text?: string): void {
-        if (text == null) {
+        if (text === undefined) {
             text = this.default_text;
         }
         if (text === this.default_text) {
@@ -1377,7 +1435,7 @@ export default class Chosen extends AbstractChosen {
             this.single_deselect_control_build();
             this.selected_item.classList.remove('chosen-default');
         }
-        this.selected_item.querySelector('span')!.innerText = text;
+        this.selected_item.querySelector('span')!.innerHTML = text;
     }
 
     result_deselect(pos: number): boolean {
