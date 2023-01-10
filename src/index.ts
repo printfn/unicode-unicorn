@@ -83,8 +83,8 @@ var global_blockRanges: {
 var global_syllableRanges: { s: number; e: number; v: string }[];
 var global_shortJamoNames: { [codepoint: number]: string };
 var global_scriptRanges: { s: number; e: number; v: string }[];
-var global_allLanguageTagsHTML: { [key: string]: string };
-var global_commonLanguageTagsHTML: { [key: string]: string };
+var global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
+var global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 
 function getCharacterCategoryCode(codepoint: number): string {
     let categoryCode = global_category[codepoint];
@@ -605,11 +605,18 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
 function initLanguageData() {
     let showRareLanguagesButton = document.getElementById('showRareLanguages')!;
     const showAllLanguages = showRareLanguagesButton.hasAttribute('disabled');
-    const htmls = showAllLanguages ? global_allLanguageTagsHTML : global_commonLanguageTagsHTML;
-    updateSelectOptions('languageList', htmls['language']);
-    updateSelectOptions('scriptList', htmls['script']);
-    updateSelectOptions('regionList', htmls['region']);
-    updateSelectOptions('variantList', htmls['variant']);
+    const tagsToHTMLString = function (languageTags: { code: string; name: string }[]) {
+        let html = `<option data-code="">None / Default</option>`;
+        for (let i = 0; i < languageTags.length; ++i) {
+            html += `<option data-code="${languageTags[i].code}">${languageTags[i].name} (${languageTags[i].code})</option>`;
+        }
+        return html;
+    };
+    const languageTags = showAllLanguages ? global_allLanguageTags : global_commonLanguageTags;
+    updateSelectOptions('languageList', tagsToHTMLString(languageTags['language']));
+    updateSelectOptions('scriptList', tagsToHTMLString(languageTags['script']));
+    updateSelectOptions('regionList', tagsToHTMLString(languageTags['region']));
+    updateSelectOptions('variantList', tagsToHTMLString(languageTags['variant']));
     showRareLanguagesButton.addEventListener('click', () => {
         showRareLanguagesButton.setAttribute('disabled', 'disabled');
         initLanguageData();
@@ -771,8 +778,8 @@ function initGlobalVariables(data: any) {
     global_syllableRanges = data['global_syllableRanges'];
     global_shortJamoNames = data['global_shortJamoNames'];
     global_scriptRanges = data['global_scriptRanges'];
-    global_allLanguageTagsHTML = data['global_allLanguageTagsHTML'];
-    global_commonLanguageTagsHTML = data['global_commonLanguageTagsHTML'];
+    global_allLanguageTags = data['global_allLanguageTags'];
+    global_commonLanguageTags = data['global_commonLanguageTags'];
 }
 
 let wasm: any;

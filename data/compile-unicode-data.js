@@ -327,8 +327,8 @@ function iterateOverFileWithRanges(path, globalArray) {
 // Language subtag registry
 (function() {
 	const subtagRegistryFileContents = fs.readFileSync('data/language-subtag-registry', 'utf8');
-	const allLanguageTags = [];
-	const commonLanguageTags = [];
+	const allLanguageTags = {};
+	const commonLanguageTags = {};
 	const entries = subtagRegistryFileContents.split(`\n%%\n`);
 	for (let i = 0; i < entries.length; ++i) {
 		const fieldsStrings = entries[i].split(`\n`);
@@ -354,28 +354,30 @@ function iterateOverFileWithRanges(path, globalArray) {
 		const languageTag = {
 			code: fields[`Subtag`],
 			name: fields[`Description`],
-			type: fields[`Type`]
 		};
 
-		allLanguageTags.push(languageTag);
+    if(allLanguageTags[fields[`Type`]] === undefined){
+      allLanguageTags[fields[`Type`]] = []
+    }
+
+		allLanguageTags[fields[`Type`]].push(languageTag);
 
 		if (fields[`Type`] != `language` || fields[`Subtag`].length <= 2){
-			commonLanguageTags.push(languageTag);
+      if(commonLanguageTags[fields[`Type`]] === undefined){
+        commonLanguageTags[fields[`Type`]] = []
+      }
+  
+      commonLanguageTags[fields[`Type`]].push(languageTag);
 		}
 	}
-	commonLanguageTags.sortByProperty('name');
-	allLanguageTags.sortByProperty('name');
-	let tagsToHTMLStrings = function(languageTags) {
-		const htmls = {};
-		for (let i = 0; i < languageTags.length; ++i) {
-			if (!htmls[languageTags[i].type])
-				htmls[languageTags[i].type] = `<option data-code="">None / Default</option>`;
-			htmls[languageTags[i].type] += `<option data-code="${languageTags[i].code}">${languageTags[i].name} (${languageTags[i].code})</option>`;
-		}
-		return htmls;
-	}
-	out(`global_allLanguageTagsHTML`, tagsToHTMLStrings(allLanguageTags));
-	out(`global_commonLanguageTagsHTML`, tagsToHTMLStrings(commonLanguageTags));
+  for(const type of Object.values(commonLanguageTags)){
+    type.sortByProperty('name')
+  }
+  for(const type of Object.values(allLanguageTags)){
+    type.sortByProperty('name')
+  }
+	out(`global_allLanguageTags`, allLanguageTags);
+	out(`global_commonLanguageTags`, commonLanguageTags);
 })();
 
 lengths.sortByProperty('length');
