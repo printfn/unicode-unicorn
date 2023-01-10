@@ -1,4 +1,5 @@
-data/
+data/Unicode
+data/compiled-data.json
 wasm/pkg/
 wasm/target/
 dist/

@@ -1,6 +1,9 @@
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { CompiledData, VariationCollection, VariationSequence } from '../data/data-types';
 import { Modal, Tab } from 'bootstrap';
+
 import Chosen from './chosen/chosen';
 
 async function initBlockData() {
@@ -51,7 +54,6 @@ var global_ranges: {
 var global_all_assigned_ranges: {
     startCodepoint: number;
     endCodepoint: number;
-    rangeName: string;
 }[];
 var global_category: { [codepoint: number]: string };
 var global_categoryRanges: {
@@ -304,7 +306,10 @@ function encodeOutput(
         const outputString = bytes;
         return escapeHtml(outputString);
     }
-    let minLength = parseInt((document.getElementById('minCodeUnitLength')! as any).value, 10);
+    let minLength = parseInt(
+        (document.getElementById('minCodeUnitLength')! as HTMLInputElement).value,
+        10
+    );
     if (minLength == 0) {
         let bytesPerCodeUnit = 1;
         // set minLength automatically based on code unit size and base (hex, binary, etc.)
@@ -324,7 +329,10 @@ function encodeOutput(
         }
     }
     const chars = bytesToText(format, bytes, minLength);
-    let grouping = parseInt((document.getElementById('groupingCount')! as any).value, 10);
+    let grouping = parseInt(
+        (document.getElementById('groupingCount')! as HTMLInputElement).value,
+        10
+    );
     if (grouping == 0) grouping = 1;
     let groups: string[] = [];
     for (let i = 0; i < chars.length; ++i) {
@@ -334,12 +342,13 @@ function encodeOutput(
             groups[groups.length - 1] += chars[i];
         }
     }
-    const groupPrefix = (document.getElementById('groupPrefix')! as any).value || '';
-    const groupSuffix = (document.getElementById('groupSuffix')! as any).value || '';
+    const groupPrefix = (document.getElementById('groupPrefix')! as HTMLInputElement).value || '';
+    const groupSuffix = (document.getElementById('groupSuffix')! as HTMLInputElement).value || '';
     for (let i = 0; i < groups.length; ++i) {
         groups[i] = groupPrefix + groups[i] + groupSuffix;
     }
-    const groupSeparator = (document.getElementById('outputJoinerText')! as any).value || '';
+    const groupSeparator =
+        (document.getElementById('outputJoinerText')! as HTMLTextAreaElement).value || '';
     return escapeHtml(groups.join(groupSeparator));
 }
 interface Encoding {
@@ -349,9 +358,6 @@ interface Encoding {
 }
 
 let global_encodings: { [encodingName: string]: Encoding } = {};
-
-declare let punycode: any;
-declare let utf8: any;
 
 function escapeHtml(unsafeString: string): string {
     return unsafeString
@@ -399,24 +405,29 @@ async function initializeMappings() {
         let encodingData = global_encodingData[i];
         loadEncodingFromData(encodingData.type, encodingData.name);
     }
-    let codepageOptionStrings = '';
-    let outputEncodingOptionStrings = '';
-    let mojibakeOptionStrings = '';
+    let codepageOptions: Node[] = [];
+    let outputEncodingOptions: Node[] = [];
+    let mojibakeOptions: Node[] = [];
     global_encodingNames.forEach((encodingName) => {
         if (
             global_encodings[encodingName].type == '7-bit wasm' ||
             global_encodings[encodingName].type == '8-bit wasm'
         ) {
-            codepageOptionStrings += `<option${
-                encodingName == 'ISO-8859-1 (Latin-1 Western European)' ? ' selected' : ''
-            }>${encodingName}</option>`;
+            const option = document.createElement('option');
+            option.selected = encodingName == 'ISO-8859-1 (Latin-1 Western European)';
+            option.innerText = encodingName;
+            codepageOptions.push(option);
         }
-        outputEncodingOptionStrings += `<option>${encodingName}</option>`;
-        mojibakeOptionStrings += `<option>${encodingName}</option>`;
+        const outputEncodingOption = document.createElement('option');
+        outputEncodingOption.innerText = encodingName;
+        outputEncodingOptions.push(outputEncodingOption);
+        const mojibakeOption = document.createElement('option');
+        mojibakeOption.innerText = encodingName;
+        mojibakeOptions.push(mojibakeOption);
     });
-    updateSelectOptions('codepageEncoding', codepageOptionStrings);
-    updateSelectOptions('outputEncoding', outputEncodingOptionStrings);
-    updateSelectOptions('mojibakeEncodings', mojibakeOptionStrings);
+    updateSelectOptions('codepageEncoding', codepageOptions);
+    updateSelectOptions('outputEncoding', outputEncodingOptions);
+    updateSelectOptions('mojibakeEncodings', mojibakeOptions);
 }
 
 function loadEncodingFromData(type: string, name: string) {
@@ -447,7 +458,7 @@ function codepointsToEncoding(encoding: string, codepoints: number[]) {
     return global_encodings[encoding].encode!(codepoints);
 }
 
-function codeUnitsToCodepoints(encoding: string, codeUnits: number[]): number[] | undefined {
+function codeUnitsToCodepoints(encoding: string, codeUnits: number[]): number[] {
     return global_encodings[encoding].decode!(codeUnits);
 }
 
@@ -458,8 +469,8 @@ function bytesToText(format: string, bytes: number[], minLength?: number) {
         const b = bytes[i];
         let str = numberToStringWithFormat(b, format);
         while (str.length < minLength) str = '0' + str;
-        str = ((document.getElementById('codeUnitPrefix')! as any).value || '') + str;
-        str = str + ((document.getElementById('codeUnitSuffix')! as any).value || '');
+        str = ((document.getElementById('codeUnitPrefix')! as HTMLInputElement).value || '') + str;
+        str = str + ((document.getElementById('codeUnitSuffix')! as HTMLInputElement).value || '');
         chars.push(str);
     }
     return chars;
@@ -605,18 +616,25 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
 function initLanguageData() {
     let showRareLanguagesButton = document.getElementById('showRareLanguages')!;
     const showAllLanguages = showRareLanguagesButton.hasAttribute('disabled');
-    const tagsToHTMLString = function (languageTags: { code: string; name: string }[]) {
-        let html = `<option data-code="">None / Default</option>`;
-        for (let i = 0; i < languageTags.length; ++i) {
-            html += `<option data-code="${languageTags[i].code}">${languageTags[i].name} (${languageTags[i].code})</option>`;
+    const tagsToNodes = function (languageTags: { code: string; name: string }[]) {
+        let nodes: Node[] = [];
+        const defaultOption = document.createElement('option');
+        defaultOption.dataset.code = '';
+        defaultOption.innerText = 'None / Default';
+        nodes.push(defaultOption);
+        for (const tag of languageTags) {
+            const option = document.createElement('option');
+            option.dataset.code = tag.code;
+            option.innerText = `${tag.name} (${tag.code})`;
+            nodes.push(option);
         }
-        return html;
+        return nodes;
     };
     const languageTags = showAllLanguages ? global_allLanguageTags : global_commonLanguageTags;
-    updateSelectOptions('languageList', tagsToHTMLString(languageTags['language']));
-    updateSelectOptions('scriptList', tagsToHTMLString(languageTags['script']));
-    updateSelectOptions('regionList', tagsToHTMLString(languageTags['region']));
-    updateSelectOptions('variantList', tagsToHTMLString(languageTags['variant']));
+    updateSelectOptions('languageList', tagsToNodes(languageTags['language']));
+    updateSelectOptions('scriptList', tagsToNodes(languageTags['script']));
+    updateSelectOptions('regionList', tagsToNodes(languageTags['region']));
+    updateSelectOptions('variantList', tagsToNodes(languageTags['variant']));
     showRareLanguagesButton.addEventListener('click', () => {
         showRareLanguagesButton.setAttribute('disabled', 'disabled');
         initLanguageData();
@@ -757,7 +775,7 @@ function moveDown(codepoint: number, index: number) {
 }
 (window as any).moveDown = moveDown;
 
-function initGlobalVariables(data: any) {
+function initGlobalVariables(data: CompiledData) {
     global_data = data['global_data'];
     global_ranges = data['global_ranges'];
     global_all_assigned_ranges = data['global_all_assigned_ranges'];
@@ -808,9 +826,12 @@ ready(function () {
     for (const select of selects) {
         new Chosen(select, { disable_search_threshold: 10, width: '100%' });
     }
+    initBindings();
     const startTime = new Date();
     initData().then(function () {
+        console.log(new Date().getTime() - startTime.getTime()); // in ms
         initializeSearchStrings();
+        console.log(new Date().getTime() - startTime.getTime()); // in ms
         window.onpopstate = function () {
             const args = location.search.substring(1).split('&');
             for (let i = 0; i < args.length; ++i) {
@@ -827,7 +848,7 @@ ready(function () {
             }
         };
         window.onpopstate(new PopStateEvent(''));
-        const loadDuration = <any>new Date() - <any>startTime; // in ms
+        const loadDuration = new Date().getTime() - startTime.getTime(); // in ms
         updateInfo();
         updateSuggestions();
         getElementById('input').addEventListener('keyup', function (e) {
@@ -952,8 +973,7 @@ function getSearchString(codepoint: number) {
 }
 
 function initializeSearchStrings() {
-    for (let i = 0; i < global_all_assigned_ranges.length; ++i) {
-        const range = global_all_assigned_ranges[i];
+    for (const range of global_all_assigned_ranges) {
         const end = range.endCodepoint;
         for (let c = range.startCodepoint; c <= end; ++c) {
             global_search_strings[c] = getSearchString(c);
@@ -1012,7 +1032,7 @@ function assertEqual(actual: any, expected: any, otherInfo?: string) {
         throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
 }
 
-function assertEqualArrays(actual: any, expected: any, otherInfo?: string) {
+function assertEqualArrays(actual: any[], expected: any[], otherInfo?: string) {
     if (actual.length == expected.length) {
         for (let i = 0; i < actual.length; ++i) {
             if (actual[i] != expected[i]) {
@@ -1084,7 +1104,6 @@ function runTests() {
     }
     alert(`All ${tests.length} tests passed.`);
 }
-(window as any).runTests = runTests;
 function updateRenderedCodepage() {
     const encodingName = selectedOption('codepageEncoding').textContent!;
     const encoding = global_encodings[encodingName];
@@ -1147,8 +1166,8 @@ function tryFillElement(id: string, value: string) {
 function showCodepageDetail(codepoint: number) {
     getElementById('detail-codepoint-hex').textContent = itos(codepoint, 16, 4);
     getElementById('detail-codepoint-decimal').textContent = codepoint.toString();
-    getElementById('detail-name').innerHTML = `"${getName(codepoint)}"`;
-    getElementById('detail-character').innerHTML = displayCodepoint(codepoint);
+    getElementById('detail-name').innerText = `"${getName(codepoint)}"`;
+    getElementById('detail-character').innerText = displayCodepoint(codepoint);
     getElementById('detail-character-raw').textContent = ctos([codepoint]);
     (getElementById('detail-character-textbox') as HTMLInputElement).value = ctos([codepoint]);
     getElementById('detail-category').textContent = `${getCharacterCategoryCode(
@@ -1215,11 +1234,8 @@ function showCodepageDetail(codepoint: number) {
 
     getElementById('detail-encoding-outputs').innerHTML = encodingsString;
 
-    getElementById('detail-previous-cp').setAttribute(
-        'data-cp',
-        itos(previousCodepoint(codepoint), 10)
-    );
-    getElementById('detail-next-cp').setAttribute('data-cp', itos(nextCodepoint(codepoint), 10));
+    getElementById('detail-previous-cp').dataset.cp = itos(previousCodepoint(codepoint), 10);
+    getElementById('detail-next-cp').dataset.cp = itos(nextCodepoint(codepoint), 10);
 
     const codepointDetail = getElementById('codepoint-detail');
     let modalToggle = Modal.getOrCreateInstance(codepointDetail);
@@ -1230,7 +1246,7 @@ function showCodepageDetail(codepoint: number) {
 // called from button in modal dialog to navigate to a different codepoint
 function changeDetail(elem: HTMLElement) {
     elem.blur(); // remove focus
-    const attr = elem.getAttribute('data-cp');
+    const attr = elem.dataset.cp;
     if (!attr) {
         throw new Error("Unable to find 'data-cp' attribute to find codepoint to jump to");
     }
@@ -1513,10 +1529,10 @@ function updateLanguage() {
     let textboxCode = languageCodeElem.value;
     let dropdownCode = '';
     const langComponentStrings = [
-        selectedOption('languageList').getAttribute('data-code'),
-        selectedOption('scriptList').getAttribute('data-code'),
-        selectedOption('regionList').getAttribute('data-code'),
-        selectedOption('variantList').getAttribute('data-code'),
+        selectedOption('languageList').dataset.code,
+        selectedOption('scriptList').dataset.code,
+        selectedOption('regionList').dataset.code,
+        selectedOption('variantList').dataset.code,
     ];
     for (let i = 0; i < langComponentStrings.length; ++i) {
         const component = langComponentStrings[i];
@@ -1603,28 +1619,10 @@ function triggerChosenUpdate(id: string) {
     elem.dispatchEvent(event);
 }
 
-function updateSelectOptions(id: string, html: string) {
+function updateSelectOptions(id: string, options: Node[]) {
     let elem = getElementById(id);
-    elem.innerHTML = html;
+    elem.replaceChildren(...options);
     triggerChosenUpdate(id);
-}
-interface VariationSequence {
-    baseCodepoint: number;
-    variationSelector: number; // codepoint
-    description?: string;
-    shapingEnvironments?: string[];
-}
-
-interface IdeographicVariationSequence {
-    b: number; // base codepoint
-    v: number; // variation selector
-    c: string; // collection
-    i: string; // item, i.e. index into collection
-}
-
-interface VariationCollection {
-    name: string;
-    url: string;
 }
 
 function variationSequencesForCodepoint(codepoint: number) {
@@ -1660,4 +1658,9 @@ function ideographicVariationSequencesForCodepoint(codepoint: number) {
         });
     }
     return results;
+}
+
+function initBindings() {
+    const runTestsButton = document.getElementById('runTests');
+    runTestsButton?.addEventListener('click', runTests);
 }
