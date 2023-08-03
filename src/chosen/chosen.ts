@@ -384,7 +384,7 @@ abstract class AbstractChosen {
                     this.choice_build(data as SelectParserOptionItem);
                 } else if ((data as SelectParserOptionItem).selected && !this.is_multiple) {
                     this.single_set_selected_text(
-                        this.choice_label(data as SelectParserOptionItem)
+                        this.choice_label(data as SelectParserOptionItem),
                     );
                 }
             }
@@ -915,7 +915,7 @@ export default class Chosen extends AbstractChosen {
         this.form_field.style.display = 'none';
         this.form_field.parentNode?.insertBefore(
             this.container,
-            this.form_field.nextElementSibling
+            this.form_field.nextElementSibling,
         );
         this.dropdown = this.container.querySelector('div.chosen-drop') as HTMLElement;
         this.search_field = this.container.querySelector('input') as HTMLInputElement;
@@ -927,7 +927,7 @@ export default class Chosen extends AbstractChosen {
             this.search_container = this.container.querySelector('li.search-field') as HTMLElement;
         } else {
             this.search_container = this.container.querySelector(
-                'div.chosen-search'
+                'div.chosen-search',
             ) as HTMLElement;
             this.selected_item = this.container.querySelector('.chosen-single') as HTMLElement;
         }
@@ -940,7 +940,7 @@ export default class Chosen extends AbstractChosen {
         this.form_field.dispatchEvent(
             new ChosenEvent('chosen:ready', {
                 chosen: this,
-            })
+            }),
         );
     }
 
@@ -1216,7 +1216,7 @@ export default class Chosen extends AbstractChosen {
             this.form_field.dispatchEvent(
                 new ChosenEvent('chosen:maxselected', {
                     chosen: this,
-                })
+                }),
             );
             return;
         }
@@ -1228,7 +1228,7 @@ export default class Chosen extends AbstractChosen {
         this.form_field.dispatchEvent(
             new ChosenEvent('chosen:showing_dropdown', {
                 chosen: this,
-            })
+            }),
         );
     }
 
@@ -1243,7 +1243,7 @@ export default class Chosen extends AbstractChosen {
             this.form_field.dispatchEvent(
                 new ChosenEvent('chosen:hiding_dropdown', {
                     chosen: this,
-                })
+                }),
             );
         }
         this.results_showing = false;
@@ -1261,7 +1261,7 @@ export default class Chosen extends AbstractChosen {
         this.form_field_label = getParent(this.form_field, 'label') as HTMLLabelElement;
         if (this.form_field_label == null) {
             this.form_field_label = document.querySelector(
-                "label[for='" + this.form_field.id + "']"
+                "label[for='" + this.form_field.id + "']",
             ) as HTMLLabelElement;
         }
         if (this.form_field_label != null) {
@@ -1379,7 +1379,7 @@ export default class Chosen extends AbstractChosen {
                 this.form_field.dispatchEvent(
                     new ChosenEvent('chosen:maxselected', {
                         chosen: this,
-                    })
+                    }),
                 );
                 return;
             }
@@ -1493,12 +1493,12 @@ export default class Chosen extends AbstractChosen {
 
     no_results(terms: string): void {
         this.search_results.appendChild(
-            document.createRange().createContextualFragment(this.get_no_results_html(terms))
+            document.createRange().createContextualFragment(this.get_no_results_html(terms)),
         );
         this.form_field.dispatchEvent(
             new ChosenEvent('chosen:no_results', {
                 chosen: this,
-            })
+            }),
         );
     }
 

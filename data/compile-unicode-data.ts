@@ -405,8 +405,8 @@ for (let i = 0; i < lengths.length; ++i) {
     const x = lengths[i];
     console.log(
         `${x.name}: ${x.length} (${((lengths[i].length / finalOutputString.length) * 100).toFixed(
-            2
-        )}%)`
+            2,
+        )}%)`,
     );
 }
 

@@ -1,6 +1,6 @@
 name: Update Data
 
-on: 
+on:
   workflow_dispatch:
   schedule:
     - cron: '0 8 * * *'

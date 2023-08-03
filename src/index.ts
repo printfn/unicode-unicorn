@@ -279,7 +279,7 @@ function encodeOutput(
     byteOrderMark: string,
     encoding: string,
     format: string,
-    codepoints: number[]
+    codepoints: number[],
 ) {
     const useBOM = byteOrderMark.startsWith('Use');
     if (useBOM) {
@@ -298,9 +298,9 @@ function encodeOutput(
         return `<span style="color: red">Text cannot be encoded in ${encoding} because it contains incompatible characters.\nThe first such incompatible character is U+${itos(
             invalidCodepoint,
             16,
-            4
+            4,
         )} - ${getHtmlNameDescription(invalidCodepoint)} (${displayCodepoint(
-            invalidCodepoint
+            invalidCodepoint,
         )}).</span>`;
     } else if (typeof bytes == 'string') {
         const outputString = bytes;
@@ -308,7 +308,7 @@ function encodeOutput(
     }
     let minLength = parseInt(
         (document.getElementById('minCodeUnitLength')! as HTMLInputElement).value,
-        10
+        10,
     );
     if (minLength == 0) {
         let bytesPerCodeUnit = 1;
@@ -331,7 +331,7 @@ function encodeOutput(
     const chars = bytesToText(format, bytes, minLength);
     let grouping = parseInt(
         (document.getElementById('groupingCount')! as HTMLInputElement).value,
-        10
+        10,
     );
     if (grouping == 0) grouping = 1;
     let groups: string[] = [];
@@ -538,7 +538,7 @@ function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'ext
             break;
         default:
             throw new Error(
-                'You need to specify whether to use extended or legacy grapheme clusters'
+                'You need to specify whether to use extended or legacy grapheme clusters',
             );
     }
 
@@ -928,7 +928,7 @@ let global_search_strings: { [codepoint: number]: string } = [];
 function getTermsForSearchString(
     array: { [codepoint: number]: string },
     codepoint: number,
-    prefix: string
+    prefix: string,
 ) {
     let entry = array[codepoint];
     if (!entry) {
@@ -953,10 +953,10 @@ function getAliasSearchStringForCodepoint(codepoint: number) {
 function getSearchString(codepoint: number) {
     let res = `${ctos([codepoint])}|U+${itos(codepoint, 16, 4)}|cp:${codepoint}|name:${getName(
         codepoint,
-        true
+        true,
     )}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(codepoint).replace(
         /_/g,
-        ' '
+        ' ',
     )}|category:${getCharacterCategoryName(codepoint)}`;
 
     res += getAliasSearchStringForCodepoint(codepoint);
@@ -1063,7 +1063,7 @@ function testBlocks() {
 function testGraphemeCount() {
     assertEqual(
         countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], 'extended'),
-        1
+        1,
     );
     assertEqual(
         countGraphemesForCodepoints(
@@ -1071,16 +1071,16 @@ function testGraphemeCount() {
                 128104, 8205, 10084, 65039, 8205, 128104, 128104, 8205, 10084, 65039, 8205, 128104,
                 128104, 8205, 10084, 65039, 8205, 128104,
             ],
-            'extended'
+            'extended',
         ),
-        3
+        3,
     );
     assertEqual(
         countGraphemesForCodepoints(
             [127464, 127467, 127470, 127464, 127463, 127481, 127464],
-            'extended'
+            'extended',
         ),
-        4
+        4,
     );
 }
 
@@ -1171,13 +1171,13 @@ function showCodepageDetail(codepoint: number) {
     getElementById('detail-character-raw').textContent = ctos([codepoint]);
     (getElementById('detail-character-textbox') as HTMLInputElement).value = ctos([codepoint]);
     getElementById('detail-category').textContent = `${getCharacterCategoryCode(
-        codepoint
+        codepoint,
     )} (${getCharacterCategoryName(codepoint)})`;
     getElementById('detail-basic-type').textContent = `${getCharacterBasicType(codepoint)}`;
     getElementById('detail-block').textContent = getBlockForCodepoint(codepoint).replace(/_/g, ' ');
     getElementById('detail-script').textContent = getScriptForCodepoint(codepoint).replace(
         /_/g,
-        ' '
+        ' ',
     );
     const matchingAliases: string[] = [];
     for (let i = 0; i < global_aliases.length; ++i) {
@@ -1189,7 +1189,7 @@ function showCodepageDetail(codepoint: number) {
     tryFillElement('detail-kun', global_kun_readings[codepoint]);
     tryFillElement('detail-on', global_on_readings[codepoint]);
     const variationSequences = variationSequencesForCodepoint(codepoint).concat(
-        ideographicVariationSequencesForCodepoint(codepoint)
+        ideographicVariationSequencesForCodepoint(codepoint),
     );
     if (variationSequences.length === 0) {
         getElementById('detail-variation-sequences').style.display = 'none';
@@ -1203,7 +1203,7 @@ function showCodepageDetail(codepoint: number) {
             variationsString += `U+${itos(vs.baseCodepoint, 16, 4)} U+${itos(
                 vs.variationSelector,
                 16,
-                4
+                4,
             )}: ${escapeHtml(ctos([vs.baseCodepoint, vs.variationSelector]))} <i>${vs.description}`;
             if (vs.shapingEnvironments.length > 0) {
                 variationsString += ` (${vs.shapingEnvironments.join(', ')})</i>`;
@@ -1224,7 +1224,7 @@ function showCodepageDetail(codepoint: number) {
             selectedOption('byteOrderMark').textContent!,
             encoding,
             selectedOption('outputFormat').textContent!,
-            [codepoint]
+            [codepoint],
         );
         if (html.startsWith('<span')) {
             continue;
@@ -1309,7 +1309,7 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
       </div>`;
         }
         let colorClass = `char-row-category-${getCharacterCategoryCode(
-            codepoint
+            codepoint,
         )[0].toLowerCase()}`;
         if (isTrans) {
             if (i == 0 || i == 4) colorClass = 'trans-blue';
@@ -1324,8 +1324,8 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
       <td class="lang-attr" ${langAttr}>${displayCodepoint(codepoint)}</td>
       <td>${getCharacterCategoryName(codepoint)}</td>
       <td style="cursor: pointer;" onclick="showCodepageDetail(${codepoint})">${getHtmlNameDescription(
-            codepoint
-        )}</td>
+          codepoint,
+      )}</td>
     </tr>`;
     }
     if (i >= 256) {
@@ -1363,14 +1363,14 @@ function updateEncodedAndDecodedStrings() {
         selectedOption('byteOrderMark').textContent!,
         selectedOption('outputEncoding').textContent!,
         selectedOption('outputFormat').textContent!,
-        codepoints
+        codepoints,
     );
 
     const decodedOutput = decodeOutput(
         selectedOption('byteOrderMark').textContent!,
         selectedOption('outputEncoding').textContent!,
         selectedOption('outputFormat').textContent!,
-        (getElementById('encodedInput') as HTMLInputElement).value
+        (getElementById('encodedInput') as HTMLInputElement).value,
     );
     if (decodedOutput)
         renderCodepointsInTable(decodedOutput, 'decodedCodepoints', [
@@ -1416,11 +1416,11 @@ function updateEncodedLengths() {
     const codepoints = getStr();
     getElementById('extendedGraphemeClusters').textContent = countGraphemesForCodepoints(
         codepoints,
-        'extended'
+        'extended',
     ).toString();
     getElementById('legacyGraphemeClusters').textContent = countGraphemesForCodepoints(
         codepoints,
-        'legacy'
+        'legacy',
     ).toString();
     getElementById('numCodepoints').textContent = codepoints.length.toString();
     let encodingLengthsStr =
@@ -1443,7 +1443,7 @@ function updateEncodedLengths() {
             cellEntries[0] = `<span style="color:red">Unable to encode U+${itos(
                 codeUnits,
                 16,
-                4
+                4,
             )}</span>`;
             cellEntries[3] = cellEntries[2] = cellEntries[1] = cellEntries[0];
         } else {
@@ -1475,7 +1475,7 @@ function updateMojibake() {
         text: string;
     }[] = [];
     const mojibakeEncodings = Array.from(
-        (getElementById('mojibakeEncodings') as HTMLSelectElement).options
+        (getElementById('mojibakeEncodings') as HTMLSelectElement).options,
     );
     for (const i in mojibakeEncodings) {
         const e = mojibakeEncodings[i];
@@ -1486,7 +1486,7 @@ function updateMojibake() {
             "Don't use a byte order mark",
             encoding1Name,
             'Decimal',
-            codepoints
+            codepoints,
         );
         if (encodedString.startsWith('<')) continue;
         for (const j in mojibakeEncodings) {
@@ -1499,7 +1499,7 @@ function updateMojibake() {
                 "Don't use a byte order mark",
                 encoding2Name,
                 'Decimal',
-                encodedString
+                encodedString,
             );
             if (!decodedString) continue;
             mojibakeOutputs.push({
@@ -1653,7 +1653,7 @@ function ideographicVariationSequencesForCodepoint(codepoint: number) {
             description: `ideographic (entry ${
                 ivs.item
             } in collection <a target="_blank" rel="noopener" href="${urlForIdeographicCollection(
-                ivs.collection
+                ivs.collection,
             )}">${ivs.collection}</a>)`,
         });
     }
