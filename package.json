@@ -5,15 +5,14 @@
     "private": true,
     "dependencies": {
         "@popperjs/core": "^2.11.8",
-        "@types/node": "^20.4.6",
-        "bootstrap": "^5.3.1",
-        "ts-node": "^10.9.1",
-        "typescript": "~5.1.6"
+        "@types/node": "^20.10.4",
+        "bootstrap": "^5.3.2",
+        "ts-node": "^10.9.2",
+        "typescript": ">=5.3.3"
     },
     "devDependencies": {
-        "@types/bootstrap": "^5.2.6",
-        "prettier": "^3.0.1",
-        "ts-loader": "^9.4.4",
+        "@types/bootstrap": "^5.2.10",
+        "prettier": "^3.1.1",
         "vite": "^5.0.10"
     },
     "scripts": {
@@ -27,7 +26,7 @@
         "url": "git+https://github.com/printfn/unicode-unicorn.git"
     },
     "author": "printfn",
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-or-later",
     "bugs": {
         "url": "https://github.com/printfn/unicode-unicorn/issues"
     },
