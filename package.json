@@ -12,21 +12,15 @@
     },
     "devDependencies": {
         "@types/bootstrap": "^5.2.6",
-        "@wasm-tool/wasm-pack-plugin": "^1.7.0",
-        "copy-webpack-plugin": "^11.0.0",
-        "css-loader": "^6.8.1",
-        "mini-css-extract-plugin": "^2.7.6",
         "prettier": "^3.0.1",
-        "style-loader": "^3.3.3",
         "ts-loader": "^9.4.4",
-        "webpack": "^5.88.2",
-        "webpack-cli": "^5.1.4",
-        "webpack-dev-server": "^4.15.1"
+        "vite": "^5.0.10"
     },
     "scripts": {
         "clean": "rm -r dist wasm/pkg wasm/target",
-        "build": "ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && webpack",
-        "start": "ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && webpack serve --mode=development"
+        "build": "(cd wasm && wasm-pack build -t web) && ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && vite build",
+        "start": "(cd wasm && wasm-pack build -t web) && ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && vite",
+        "server": "vite preview"
     },
     "repository": {
         "type": "git",
@@ -50,6 +44,5 @@
                 }
             }
         ]
-    },
-    "packageManager": "yarn@3.6.1"
+    }
 }

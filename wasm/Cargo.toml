@@ -5,7 +5,7 @@ authors = ["printfn <printfn@users.noreply.github.com>"]
 edition = "2021"
 description = "Rust Web Assembly module for Unicode Unicorn"
 repository = "https://github.com/printfn/unicode-unicorn"
-license = "MIT OR Apache-2.0 OR CC0-1.0"
+license = "AGPL-3.0-or-later"
 publish = false
 
 [lib]

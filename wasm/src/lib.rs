@@ -33,7 +33,7 @@ pub fn greet() {
 }
 
 #[wasm_bindgen]
-pub fn init() {
+pub fn init_panic_hook() {
     set_panic_hook();
 }
 

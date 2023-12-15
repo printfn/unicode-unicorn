@@ -804,13 +804,13 @@ let wasm: any;
 
 async function initWasm() {
     wasm = await import('../wasm/pkg');
-    await wasm.init();
+    await wasm.default();
+    await wasm.init_panic_hook();
 }
 
 async function initData() {
-    const res = await fetch('compiled-data.json');
-    const compiledData = await res.json();
-    initGlobalVariables(compiledData);
+    const compiledData = await import('../data/compiled-data.json');
+    initGlobalVariables(compiledData as any);
     await Promise.all([initializeMappings(), initBlockData(), initLanguageData(), initWasm()]);
 }
 
