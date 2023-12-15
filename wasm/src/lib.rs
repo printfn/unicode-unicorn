@@ -1,4 +1,6 @@
+mod codepoint_type;
 mod data;
+mod general_category;
 mod utf_encodings;
 mod utils;
 
@@ -332,7 +334,7 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
 #[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
     use std::str::FromStr;
-    use unicode_rs::general_category::GeneralCategory;
+    use crate::general_category::GeneralCategory;
 
     Some(
         GeneralCategory::from_str(short_name)
@@ -348,7 +350,7 @@ pub fn basic_type_for_codepoint(
     codepoint: u32,
 ) -> Option<String> {
     use std::str::FromStr;
-    use unicode_rs::general_category::GeneralCategory;
+    use crate::general_category::GeneralCategory;
 
     Some(
         GeneralCategory::from_str(short_general_category_name)
