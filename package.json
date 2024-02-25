@@ -7,7 +7,7 @@
         "@popperjs/core": "^2.11.8",
         "@types/node": "^20.11.20",
         "bootstrap": "^5.3.3",
-        "ts-node": "^10.9.2",
+        "tsx": "^4.7.1",
         "typescript": ">=5.3.3"
     },
     "devDependencies": {
@@ -17,8 +17,8 @@
     },
     "scripts": {
         "clean": "rm -r dist wasm/pkg wasm/target",
-        "build": "(cd wasm && wasm-pack build -t web) && ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && vite build",
-        "start": "(cd wasm && wasm-pack build -t web) && ts-node -O '{\"module\": \"commonjs\"}' data/compile-unicode-data.ts && vite",
+        "build": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite build",
+        "start": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite",
         "server": "vite preview",
         "format": "prettier --write ."
     },
