@@ -1,48 +1,49 @@
 {
-    "name": "unicode-unicorn",
-    "version": "1.0.0",
-    "description": "A JavaScript Unicode IDE",
-    "private": true,
-    "dependencies": {
-        "@popperjs/core": "^2.11.8",
-        "@types/node": "^20.11.20",
-        "bootstrap": "^5.3.3",
-        "tsx": "^4.7.1",
-        "typescript": ">=5.3.3"
-    },
-    "devDependencies": {
-        "@types/bootstrap": "^5.2.10",
-        "prettier": "^3.2.5",
-        "vite": "^5.1.4"
-    },
-    "scripts": {
-        "clean": "rm -r dist wasm/pkg wasm/target",
-        "build": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite build",
-        "start": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite",
-        "server": "vite preview",
-        "format": "prettier --write ."
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/printfn/unicode-unicorn.git"
-    },
-    "author": "printfn",
-    "license": "AGPL-3.0-or-later",
-    "bugs": {
-        "url": "https://github.com/printfn/unicode-unicorn/issues"
-    },
-    "homepage": "https://github.com/printfn/unicode-unicorn#readme",
-    "prettier": {
-        "tabWidth": 4,
-        "singleQuote": true,
-        "printWidth": 100,
-        "overrides": [
-            {
-                "files": "**/*.yml",
-                "options": {
-                    "tabWidth": 2
-                }
-            }
-        ]
-    }
+	"name": "unicode-unicorn",
+	"version": "1.0.0",
+	"description": "A JavaScript Unicode IDE",
+	"private": true,
+	"dependencies": {
+		"@popperjs/core": "^2.11.8",
+		"@types/node": "^20.11.20",
+		"bootstrap": "^5.3.3",
+		"tsx": "^4.7.1",
+		"typescript": ">=5.3.3"
+	},
+	"devDependencies": {
+		"@types/bootstrap": "^5.2.10",
+		"prettier": "^3.2.5",
+		"vite": "^5.1.4"
+	},
+	"scripts": {
+		"clean": "rm -r dist wasm/pkg wasm/target",
+		"build": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite build",
+		"start": "(cd wasm && wasm-pack build -t web) && tsx data/compile-unicode-data.ts && vite",
+		"server": "vite preview",
+		"format": "prettier --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/printfn/unicode-unicorn.git"
+	},
+	"author": "printfn",
+	"license": "AGPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/printfn/unicode-unicorn/issues"
+	},
+	"homepage": "https://github.com/printfn/unicode-unicorn#readme",
+	"prettier": {
+		"tabWidth": 4,
+		"useTabs": true,
+		"singleQuote": true,
+		"printWidth": 100,
+		"overrides": [
+			{
+				"files": "**/*.yml",
+				"options": {
+					"tabWidth": 2
+				}
+			}
+		]
+	}
 }
