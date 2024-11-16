@@ -821,107 +821,105 @@ function ready(fn: () => void) {
 		document.addEventListener('DOMContentLoaded', fn);
 	}
 }
-ready(function () {
+ready(async function () {
 	const selects = document.getElementsByTagName('select');
 	for (const select of selects) {
 		new Chosen(select, { disable_search_threshold: 10, width: '100%' });
 	}
 	initBindings();
 	const startTime = new Date();
-	initData().then(function () {
-		console.log(new Date().getTime() - startTime.getTime()); // in ms
-		initializeSearchStrings();
-		console.log(new Date().getTime() - startTime.getTime()); // in ms
-		window.onpopstate = function () {
-			const args = location.search.substring(1).split('&');
-			for (let i = 0; i < args.length; ++i) {
-				const arg = args[i].split('=');
-				if (arg[0] == 'c') {
-					setStr(arg[1].split(',').map((str) => parseInt(str)));
-				} else if (arg[0] == 'info') {
-					showCodepageDetail(parseInt(arg[1]));
-				} else if (arg[0] == 'str') {
-					// search queries via the omnibox are URL-escaped (with UTF-8 encoding),
-					// and spaces are converted to '+'.
-					setStr(stoc(decodeURIComponent(arg[1].replace(/\+/g, ' '))));
-				}
+	await initData();
+	console.log(new Date().getTime() - startTime.getTime()); // in ms
+	initializeSearchStrings();
+	console.log(new Date().getTime() - startTime.getTime()); // in ms
+	window.onpopstate = function () {
+		const args = location.search.substring(1).split('&');
+		for (let i = 0; i < args.length; ++i) {
+			const arg = args[i].split('=');
+			if (arg[0] == 'c') {
+				setStr(arg[1].split(',').map((str) => parseInt(str)));
+			} else if (arg[0] == 'info') {
+				showCodepageDetail(parseInt(arg[1]));
+			} else if (arg[0] == 'str') {
+				// search queries via the omnibox are URL-escaped (with UTF-8 encoding),
+				// and spaces are converted to '+'.
+				setStr(stoc(decodeURIComponent(arg[1].replace(/\+/g, ' '))));
 			}
-		};
-		window.onpopstate(new PopStateEvent(''));
-		const loadDuration = new Date().getTime() - startTime.getTime(); // in ms
-		updateInfo();
-		updateSuggestions();
-		getElementById('input').addEventListener('keyup', function (e) {
-			if (e.keyCode == 13) {
-				const input = (getElementById('input') as HTMLInputElement).value;
-				if (isNaN(parseInt(input.replace('U+', ''), 16))) {
-					document.body.style.backgroundColor = '#fdd';
-					setTimeout(function () {
-						document.body.style.backgroundColor = '#fff';
-					}, 1000);
-				} else {
-					output(parseInt(input.replace('U+', ''), 16));
-					(getElementById('input') as HTMLInputElement).value = '';
-				}
+		}
+	};
+	window.onpopstate(new PopStateEvent(''));
+	const loadDuration = new Date().getTime() - startTime.getTime(); // in ms
+	updateInfo();
+	updateSuggestions();
+	getElementById('input').addEventListener('keyup', function (e) {
+		if (e.keyCode == 13) {
+			const input = (getElementById('input') as HTMLInputElement).value;
+			if (isNaN(parseInt(input.replace('U+', ''), 16))) {
+				document.body.style.backgroundColor = '#fdd';
+				setTimeout(function () {
+					document.body.style.backgroundColor = '#fff';
+				}, 1000);
+			} else {
+				output(parseInt(input.replace('U+', ''), 16));
+				(getElementById('input') as HTMLInputElement).value = '';
 			}
-		});
-		getElementById('input').addEventListener('input', function (e) {
-			updateSuggestions();
-		});
-		for (let id of [
-			'output',
-			'encodedInput',
-			'minCodeUnitLength',
-			'codeUnitPrefix',
-			'codeUnitSuffix',
-			'groupingCount',
-			'groupPrefix',
-			'groupSuffix',
-			'outputJoinerText',
-		]) {
-			let elem = getElementById(id);
-			elem.addEventListener('input', () => updateInfo());
 		}
-		const selects = document.querySelectorAll('select');
-		for (const select of selects) {
-			select.addEventListener('change', () => {
-				updateInfo();
-			});
-		}
-		// document.addEventListener(
-		//     'change',
-		//     function (e) {
-		//         for (
-		//             let target = e.target;
-		//             target && target != this && target instanceof HTMLElement;
-		//             target = target.parentNode
-		//         ) {
-		//             if (target.matches('select')) {
-		//                 updateInfo();
-		//                 break;
-		//             }
-		//         }
-		//     },
-		//     false
-		// );
-		var tabEl = document.querySelectorAll('a[data-bs-toggle="tab"]');
-		for (let tab of tabEl) {
-			tab.addEventListener('shown.bs.tab', function (event) {
-				console.log(event);
-				callEventListenersForElemId('output');
-			});
-		}
-		// This should be on 'input' instead, but this doesn't fire on
-		//  Safari. See https://caniuse.com/#feat=input-event (#4)
-		//  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
-		getElementById('useInternalString').addEventListener('change', function (e) {
-			updateUseInternalString();
-		});
-		getElementById('languageCode').addEventListener('input', function (e) {
-			updateLanguage();
-		});
-		console.log(`Loaded in ${loadDuration}ms`);
 	});
+	getElementById('input').addEventListener('input', function (e) {
+		updateSuggestions();
+	});
+	for (let id of [
+		'output',
+		'encodedInput',
+		'minCodeUnitLength',
+		'codeUnitPrefix',
+		'codeUnitSuffix',
+		'groupingCount',
+		'groupPrefix',
+		'groupSuffix',
+		'outputJoinerText',
+	]) {
+		let elem = getElementById(id);
+		elem.addEventListener('input', () => updateInfo());
+	}
+	for (const select of selects) {
+		select.addEventListener('change', () => {
+			updateInfo();
+		});
+	}
+	// document.addEventListener(
+	//     'change',
+	//     function (e) {
+	//         for (
+	//             let target = e.target;
+	//             target && target != this && target instanceof HTMLElement;
+	//             target = target.parentNode
+	//         ) {
+	//             if (target.matches('select')) {
+	//                 updateInfo();
+	//                 break;
+	//             }
+	//         }
+	//     },
+	//     false
+	// );
+	var tabEl = document.querySelectorAll('a[data-bs-toggle="tab"]');
+	for (let tab of tabEl) {
+		tab.addEventListener('shown.bs.tab', function (event) {
+			console.log(event);
+			callEventListenersForElemId('output');
+		});
+	}
+	// This should be on 'input' instead, but this doesn't fire on
+	//  Safari. See https://caniuse.com/#feat=input-event (#4)
+	//  and specifically https://bugs.webkit.org/show_bug.cgi?id=149398
+	getElementById('useInternalString').addEventListener('change', function (e) {
+		updateUseInternalString();
+	});
+	getElementById('languageCode').addEventListener('input', function (e) {
+		updateLanguage();
+	});
+	console.log(`Loaded in ${loadDuration}ms`);
 });
 let global_search_strings: { [codepoint: number]: string } = [];
 
