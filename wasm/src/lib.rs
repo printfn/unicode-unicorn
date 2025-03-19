@@ -327,6 +327,15 @@ pub fn get_character_category_code(codepoint: u32) -> String {
 }
 
 #[wasm_bindgen]
+pub fn get_script(codepoint: u32) -> String {
+	let script = icu::properties::maps::script().get32(codepoint);
+	icu::properties::Script::enum_to_long_name_mapper()
+		.get(script)
+		.unwrap_or("Unknown")
+		.to_string()
+}
+
+#[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
 	use icu::properties::GeneralCategory;
 	let category = GeneralCategory::name_to_enum_mapper().get_strict(short_name)?;

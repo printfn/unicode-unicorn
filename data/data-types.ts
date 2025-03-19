@@ -28,7 +28,6 @@ export type CompiledData = {
 	}[];
 	global_syllableRanges: { s: number; e: number; v: string }[];
 	global_shortJamoNames: { [codepoint: number]: string };
-	global_scriptRanges: { s: number; e: number; v: string }[];
 	global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
 	global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 };

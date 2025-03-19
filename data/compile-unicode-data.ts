@@ -289,7 +289,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 	}[] = [];
 	let global_syllableRanges: { s: number; e: number; v: string }[] = [];
 	let global_shortJamoNames: { [codepoint: number]: string } = {};
-	let global_scriptRanges: { s: number; e: number; v: string }[] = [];
 
 	iterateOverFile(`data/Unicode/UCD/Blocks.txt`, function (line) {
 		const splitLine = line.split(`;`);
@@ -312,12 +311,9 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 		global_shortJamoNames[codepoint] = shortJamoName;
 	});
 
-	iterateOverFileWithRanges(`data/Unicode/UCD/Scripts.txt`, global_scriptRanges);
-
 	finalOutputObject.global_blockRanges = global_blockRanges;
 	finalOutputObject.global_syllableRanges = global_syllableRanges;
 	finalOutputObject.global_shortJamoNames = global_shortJamoNames;
-	finalOutputObject.global_scriptRanges = global_scriptRanges;
 })();
 
 // Language subtag registry

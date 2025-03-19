@@ -37,14 +37,6 @@ function getShortJamoName(codepoint: number): string {
 	return global_shortJamoNames[codepoint];
 }
 
-function getScriptForCodepoint(codepoint: number): string {
-	for (let i = 0; i < global_scriptRanges.length; ++i) {
-		if (codepoint >= global_scriptRanges[i].s && codepoint <= global_scriptRanges[i].e) {
-			return global_scriptRanges[i].v;
-		}
-	}
-	return 'Unknown';
-}
 var global_data: { [codepoint: number]: string };
 var global_ranges: {
 	startCodepoint: number;
@@ -55,7 +47,6 @@ var global_all_assigned_ranges: {
 	startCodepoint: number;
 	endCodepoint: number;
 }[];
-var global_generalCategoryNames: { [categoryCode: string]: string };
 var global_aliases: {
 	codepoint: number;
 	alias: string;
@@ -78,7 +69,6 @@ var global_blockRanges: {
 }[];
 var global_syllableRanges: { s: number; e: number; v: string }[];
 var global_shortJamoNames: { [codepoint: number]: string };
-var global_scriptRanges: { s: number; e: number; v: string }[];
 var global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
 var global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 
@@ -93,12 +83,6 @@ function getCharacterBasicType(codepoint: number): string | undefined {
 	return basicType;
 }
 
-function getCodepointDescription(codepoint: number | string, name: string): string {
-	if (typeof codepoint == 'string') {
-		codepoint = parseInt(codepoint);
-	}
-	return `${name} ${ctos([codepoint])}`;
-}
 
 function decompomposeHangulSyllable(codepoint: number): number[] {
 	const syllableType = getSyllableTypeForCodepoint(codepoint);
@@ -763,7 +747,6 @@ function initGlobalVariables(data: CompiledData) {
 	global_blockRanges = data['global_blockRanges'];
 	global_syllableRanges = data['global_syllableRanges'];
 	global_shortJamoNames = data['global_shortJamoNames'];
-	global_scriptRanges = data['global_scriptRanges'];
 	global_allLanguageTags = data['global_allLanguageTags'];
 	global_commonLanguageTags = data['global_commonLanguageTags'];
 }
@@ -920,7 +903,7 @@ function getSearchString(codepoint: number) {
 	let res = `${ctos([codepoint])}|U+${itos(codepoint, 16, 4)}|cp:${codepoint}|name:${getName(
 		codepoint,
 		true,
-	)}|block:${getBlockForCodepoint(codepoint)}|script:${getScriptForCodepoint(codepoint).replace(
+	)}|block:${getBlockForCodepoint(codepoint)}|script:${wasm.get_script(codepoint).replace(
 		/_/g,
 		' ',
 	)}|category:${getCharacterCategoryName(codepoint)}`;
@@ -1141,7 +1124,7 @@ function showCodepageDetail(codepoint: number) {
 	)} (${getCharacterCategoryName(codepoint)})`;
 	getElementById('detail-basic-type').textContent = `${getCharacterBasicType(codepoint)}`;
 	getElementById('detail-block').textContent = getBlockForCodepoint(codepoint).replace(/_/g, ' ');
-	getElementById('detail-script').textContent = getScriptForCodepoint(codepoint).replace(
+	getElementById('detail-script').textContent = wasm.get_script(codepoint).replace(
 		/_/g,
 		' ',
 	);
