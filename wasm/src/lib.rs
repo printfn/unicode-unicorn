@@ -1,5 +1,4 @@
 mod data;
-mod general_category;
 mod utf_encodings;
 mod utils;
 
@@ -353,4 +352,19 @@ pub fn basic_type_for_codepoint(codepoint: u32) -> Option<String> {
         _ => "Graphic",
     };
     Some(ty.to_string())
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn category_name() {
+        assert_eq!(
+            crate::long_category_name_for_short_name("Lu").unwrap(),
+            "Uppercase_Letter"
+        );
+        assert_eq!(
+            crate::long_category_name_for_short_name("Sc").unwrap(),
+            "Currency_Symbol"
+        );
+    }
 }
