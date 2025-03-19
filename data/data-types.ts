@@ -5,12 +5,6 @@ export type CompiledData = {
 		startCodepoint: number;
 		endCodepoint: number;
 	}[];
-	global_category: { [codepoint: number]: string };
-	global_categoryRanges: {
-		startCodepoint: number;
-		endCodepoint: number;
-		categoryCode: string;
-	}[];
 	global_aliases: {
 		codepoint: number;
 		alias: string;

@@ -55,12 +55,6 @@ var global_all_assigned_ranges: {
 	startCodepoint: number;
 	endCodepoint: number;
 }[];
-var global_category: { [codepoint: number]: string };
-var global_categoryRanges: {
-	startCodepoint: number;
-	endCodepoint: number;
-	categoryCode: string;
-}[];
 var global_generalCategoryNames: { [categoryCode: string]: string };
 var global_aliases: {
 	codepoint: number;
@@ -88,22 +82,8 @@ var global_scriptRanges: { s: number; e: number; v: string }[];
 var global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
 var global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 
-function getCharacterCategoryCode(codepoint: number): string {
-	let categoryCode = global_category[codepoint];
-	if (!categoryCode) {
-		for (let i = 0; i < global_categoryRanges.length; ++i) {
-			const range = global_categoryRanges[i];
-			if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
-				categoryCode = range.categoryCode;
-				break;
-			}
-		}
-	}
-	return categoryCode || 'Cn'; // Cn = unassigned
-}
-
 function getCharacterCategoryName(codepoint: number): string | undefined {
-	const categoryCode = getCharacterCategoryCode(codepoint);
+	const categoryCode = wasm.get_character_category_code(codepoint);
 	const name: string | undefined = wasm.long_category_name_for_short_name(categoryCode);
 	return name;
 }
@@ -778,8 +758,6 @@ function initGlobalVariables(data: CompiledData) {
 	global_data = data['global_data'];
 	global_ranges = data['global_ranges'];
 	global_all_assigned_ranges = data['global_all_assigned_ranges'];
-	global_category = data['global_category'];
-	global_categoryRanges = data['global_categoryRanges'];
 	global_aliases = data['global_aliases'];
 	global_han_meanings = data['global_han_meanings'];
 	global_mandarin_readings = data['global_mandarin_readings'];
@@ -799,12 +777,12 @@ function initGlobalVariables(data: CompiledData) {
 	global_commonLanguageTags = data['global_commonLanguageTags'];
 }
 
-let wasm: any;
+let wasm: typeof import('../wasm/pkg');
 
 async function initWasm() {
 	wasm = await import('../wasm/pkg');
 	await wasm.default();
-	await wasm.init_panic_hook();
+	wasm.init_panic_hook();
 }
 
 async function initData() {
@@ -1118,7 +1096,7 @@ function updateRenderedCodepage() {
 			if (codepoints && codepoints.length > 0) {
 				const codepoint = codepoints[0];
 				const colorClass =
-					'char-row-category-' + getCharacterCategoryCode(codepoint)[0].toLowerCase();
+					'char-row-category-' + wasm.get_character_category_code(codepoint)[0].toLowerCase();
 				const displayedCodepoint = displayCodepoint(codepoint);
 				html += `<td style="cursor: pointer" class="${colorClass}" onclick="showCodepageDetail(${codepoint})">${i
 					.toString(16)
@@ -1167,7 +1145,7 @@ function showCodepageDetail(codepoint: number) {
 	getElementById('detail-character').innerText = displayCodepoint(codepoint);
 	getElementById('detail-character-raw').textContent = ctos([codepoint]);
 	(getElementById('detail-character-textbox') as HTMLInputElement).value = ctos([codepoint]);
-	getElementById('detail-category').textContent = `${getCharacterCategoryCode(
+	getElementById('detail-category').textContent = `${wasm.get_character_category_code(
 		codepoint,
 	)} (${getCharacterCategoryName(codepoint)})`;
 	getElementById('detail-basic-type').textContent = `${getCharacterBasicType(codepoint)}`;
@@ -1305,7 +1283,7 @@ function renderCodepointsInTable(codepoints: number[], tableId: string, buttons:
           class="btn btn-sm btn-outline-secondary">
       </div>`;
 		}
-		let colorClass = `char-row-category-${getCharacterCategoryCode(
+		let colorClass = `char-row-category-${wasm.get_character_category_code(
 			codepoint,
 		)[0].toLowerCase()}`;
 		if (isTrans) {

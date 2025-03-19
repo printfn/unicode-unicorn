@@ -64,12 +64,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 		startCodepoint: number;
 		endCodepoint: number;
 	}[] = [{ startCodepoint: 0, endCodepoint: 0 }];
-	let global_category: { [codepoint: number]: string } = {};
-	let global_categoryRanges: {
-		startCodepoint: number;
-		endCodepoint: number;
-		categoryCode: string;
-	}[] = [];
 	let global_aliases: {
 		codepoint: number;
 		alias: string;
@@ -117,15 +111,9 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 					endCodepoint: endCodepoint,
 				});
 			}
-			global_categoryRanges.push({
-				startCodepoint: startCodepoint,
-				endCodepoint: endCodepoint,
-				categoryCode: data_line[2],
-			});
 		} else {
 			const codepoint = parseInt(data_line[0], 16);
 			global_data[codepoint] = data_line[1];
-			global_category[codepoint] = data_line[2];
 			if (
 				global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint >=
 				codepoint - 1
@@ -156,8 +144,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 	finalOutputObject.global_data = global_data;
 	finalOutputObject.global_ranges = global_ranges;
 	finalOutputObject.global_all_assigned_ranges = global_all_assigned_ranges;
-	finalOutputObject.global_category = global_category;
-	finalOutputObject.global_categoryRanges = global_categoryRanges;
 
 	finalOutputObject.global_aliases = global_aliases;
 

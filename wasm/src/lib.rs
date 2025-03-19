@@ -313,6 +313,19 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
     Some(res)
 }
 
+fn get_category(codepoint: u32) -> icu::properties::GeneralCategory {
+    icu::properties::maps::general_category().get32(codepoint)
+}
+
+#[wasm_bindgen]
+pub fn get_character_category_code(codepoint: u32) -> String {
+    let category = get_category(codepoint);
+    icu::properties::GeneralCategory::enum_to_short_name_mapper()
+        .get(category)
+        .unwrap()
+        .to_string()
+}
+
 #[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
     use icu::properties::GeneralCategory;
@@ -326,12 +339,11 @@ pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
 
 #[wasm_bindgen]
 pub fn basic_type_for_codepoint(codepoint: u32) -> Option<String> {
-    use icu::properties::{GeneralCategory, maps, sets};
+    use icu::properties::{GeneralCategory, sets};
     if sets::noncharacter_code_point().contains32(codepoint) {
         return Some("Noncharacter".to_string());
     }
-    let category = maps::general_category().get32(codepoint);
-    let ty = match category {
+    let ty = match get_category(codepoint) {
         GeneralCategory::Control => "Control",
         GeneralCategory::PrivateUse => "PrivateUse",
         GeneralCategory::Surrogate => "Surrogate",
