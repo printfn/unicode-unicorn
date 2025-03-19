@@ -56,9 +56,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 
 // Unicode data, han & search
 (function () {
-	let global_data: { [codepoint: number]: string } = {};
-	let global_ranges: { startCodepoint: number; endCodepoint: number; rangeName: string }[] = [];
-
 	// this element is modified as data is loaded, so don't change it
 	let global_all_assigned_ranges: {
 		startCodepoint: number;
@@ -97,11 +94,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 			startCodepoint = parseInt(data_line[0], 16);
 		} else if (data_line[1].endsWith(`, Last>`)) {
 			const endCodepoint = parseInt(data_line[0], 16);
-			global_ranges.push({
-				startCodepoint: startCodepoint,
-				endCodepoint: endCodepoint,
-				rangeName: data_line[1].substring(1, data_line[1].length - 7),
-			});
 			if (
 				data_line[1].startsWith(`<CJK Ideograph`) ||
 				data_line[1].startsWith(`<Hangul Syllable`)
@@ -113,7 +105,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 			}
 		} else {
 			const codepoint = parseInt(data_line[0], 16);
-			global_data[codepoint] = data_line[1];
 			if (
 				global_all_assigned_ranges[global_all_assigned_ranges.length - 1].endCodepoint >=
 				codepoint - 1
@@ -141,8 +132,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 		return a.alias > b.alias ? 1 : 0;
 	});
 
-	finalOutputObject.global_data = global_data;
-	finalOutputObject.global_ranges = global_ranges;
 	finalOutputObject.global_all_assigned_ranges = global_all_assigned_ranges;
 
 	finalOutputObject.global_aliases = global_aliases;
@@ -213,8 +202,6 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 		endCodepoint: number;
 		blockName: string;
 	}[] = [];
-	let global_syllableRanges: { s: number; e: number; v: string }[] = [];
-	let global_shortJamoNames: { [codepoint: number]: string } = {};
 
 	iterateOverFile(`data/Unicode/UCD/Blocks.txt`, function (line) {
 		const splitLine = line.split(`;`);
@@ -228,18 +215,7 @@ function iterateOverFileWithRanges(path: string, globalArray: any[]) {
 		});
 	});
 
-	iterateOverFileWithRanges(`data/Unicode/UCD/HangulSyllableType.txt`, global_syllableRanges);
-
-	iterateOverFile(`data/Unicode/UCD/Jamo.txt`, function (line) {
-		const splitLine = line.split(`;`);
-		const codepoint = parseInt(splitLine[0].trim(), 16);
-		const shortJamoName = splitLine[1].trim();
-		global_shortJamoNames[codepoint] = shortJamoName;
-	});
-
 	finalOutputObject.global_blockRanges = global_blockRanges;
-	finalOutputObject.global_syllableRanges = global_syllableRanges;
-	finalOutputObject.global_shortJamoNames = global_shortJamoNames;
 })();
 
 // Language subtag registry

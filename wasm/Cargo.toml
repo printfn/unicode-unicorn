@@ -23,6 +23,7 @@ lazy_static = "1.5.0"
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7" }
 icu = { version = "1.5.0", features = ["compiled_data", "std"] }
+unicode_names2 = "1.3.0"
 
 [build-dependencies]
 proc-macro2 = "1.0.94"

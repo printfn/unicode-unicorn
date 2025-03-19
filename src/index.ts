@@ -24,25 +24,6 @@ function getBlockForCodepoint(codepoint: number): string {
 	return 'No_Block';
 }
 
-function getSyllableTypeForCodepoint(codepoint: number): string {
-	for (let i = 0; i < global_syllableRanges.length; ++i) {
-		if (codepoint >= global_syllableRanges[i].s && codepoint <= global_syllableRanges[i].e) {
-			return global_syllableRanges[i].v;
-		}
-	}
-	return 'Not_Applicable';
-}
-
-function getShortJamoName(codepoint: number): string {
-	return global_shortJamoNames[codepoint];
-}
-
-var global_data: { [codepoint: number]: string };
-var global_ranges: {
-	startCodepoint: number;
-	endCodepoint: number;
-	rangeName: string;
-}[];
 var global_all_assigned_ranges: {
 	startCodepoint: number;
 	endCodepoint: number;
@@ -65,8 +46,6 @@ var global_blockRanges: {
 	endCodepoint: number;
 	blockName: string;
 }[];
-var global_syllableRanges: { s: number; e: number; v: string }[];
-var global_shortJamoNames: { [codepoint: number]: string };
 var global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
 var global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 
@@ -81,72 +60,13 @@ function getCharacterBasicType(codepoint: number): string | undefined {
 	return basicType;
 }
 
-
-function decompomposeHangulSyllable(codepoint: number): number[] {
-	const syllableType = getSyllableTypeForCodepoint(codepoint);
-	if (syllableType == 'Not_Applicable') return [codepoint];
-
-	// see Unicode Standard, section 3.12 "Conjoining Jamo Behavior", "Hangul Syllable Decomposition"
-	const SBase = 0xac00;
-	const LBase = 0x1100;
-	const VBase = 0x1161;
-	const TBase = 0x11a7;
-	const LCount = 19;
-	const VCount = 21;
-	const TCount = 28;
-	const NCount = VCount * TCount; // 588
-	const SCount = LCount * NCount; // 11172
-
-	const SIndex = codepoint - SBase;
-
-	const LIndex = Math.floor(SIndex / NCount);
-	const VIndex = Math.floor((SIndex % NCount) / TCount);
-	const TIndex = SIndex % TCount;
-
-	const LPart = LBase + LIndex;
-	const VPart = VBase + VIndex;
-	if (TIndex > 0) {
-		return [LPart, VPart, TBase + TIndex];
-	} else {
-		return [LPart, VPart];
-	}
-}
-
 function getName(codepoint: number, search: boolean = false): string {
-	let d = global_data[codepoint];
-	if (d) {
-		if (d[0] != '<') return d;
-		else return '';
-	}
-	if (0xac00 <= codepoint && codepoint <= 0xd7af) {
-		const decomposedSyllables = decompomposeHangulSyllable(codepoint);
-		const shortJamoNames: string[] = [];
-		for (let i = 0; i < decomposedSyllables.length; ++i)
-			shortJamoNames.push(getShortJamoName(decomposedSyllables[i]));
-		return `HANGUL SYLLABLE ${shortJamoNames.join('')}`;
-	}
-	if (
-		(0x3400 <= codepoint && codepoint <= 0x4dbf) ||
-		(0x4e00 <= codepoint && codepoint <= 0x9fff)
-	) {
-		if (search) return 'CJK UNIFIED IDEOGRAPH';
-		return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
-	}
-	for (let i = 0; i < global_ranges.length; ++i) {
-		const range = global_ranges[i];
-		if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint) {
-			if (range.rangeName.startsWith('CJK Ideograph')) {
-				if (search) return 'CJK UNIFIED IDEOGRAPH';
-				return `CJK UNIFIED IDEOGRAPH-${itos(codepoint, 16, 4)}`;
-			}
-		}
-	}
-	return '';
+	return wasm.get_name(codepoint);
 }
 
 function getHtmlNameDescription(codepoint: number): string {
 	if (getName(codepoint) !== '') return getName(codepoint);
-	if (global_data[codepoint] == '<control>') {
+	if (getCharacterBasicType(codepoint) === 'Control') {
 		const name: string[] = [];
 		for (let i = 0; i < global_aliases.length; ++i) {
 			if (global_aliases[i].codepoint == codepoint) {
@@ -630,8 +550,6 @@ function moveDown(codepoint: number, index: number) {
 (window as any).moveDown = moveDown;
 
 function initGlobalVariables(data: CompiledData) {
-	global_data = data['global_data'];
-	global_ranges = data['global_ranges'];
 	global_all_assigned_ranges = data['global_all_assigned_ranges'];
 	global_aliases = data['global_aliases'];
 	global_han_meanings = data['global_han_meanings'];
@@ -643,8 +561,6 @@ function initGlobalVariables(data: CompiledData) {
 	global_encodingNames = data['global_encodingNames'];
 	global_encodingData = data['global_encodingData'];
 	global_blockRanges = data['global_blockRanges'];
-	global_syllableRanges = data['global_syllableRanges'];
-	global_shortJamoNames = data['global_shortJamoNames'];
 	global_allLanguageTags = data['global_allLanguageTags'];
 	global_commonLanguageTags = data['global_commonLanguageTags'];
 }

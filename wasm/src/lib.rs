@@ -361,6 +361,14 @@ pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
 }
 
 #[wasm_bindgen]
+pub fn get_name(codepoint: u32) -> String {
+	let Ok(ch) = codepoint.try_into() else {
+		return "".to_string();
+	};
+	unicode_names2::name(ch).map_or("".to_string(), |n| n.to_string())
+}
+
+#[wasm_bindgen]
 pub fn basic_type_for_codepoint(codepoint: u32) -> Option<String> {
 	use icu::properties::{GeneralCategory, sets};
 	if sets::noncharacter_code_point().contains32(codepoint) {

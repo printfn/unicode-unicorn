@@ -1,6 +1,4 @@
 export type CompiledData = {
-	global_data: { [codepoint: number]: string };
-	global_ranges: { startCodepoint: number; endCodepoint: number; rangeName: string }[];
 	global_all_assigned_ranges: {
 		startCodepoint: number;
 		endCodepoint: number;
@@ -24,8 +22,6 @@ export type CompiledData = {
 		endCodepoint: number;
 		blockName: string;
 	}[];
-	global_syllableRanges: { s: number; e: number; v: string }[];
-	global_shortJamoNames: { [codepoint: number]: string };
 	global_allLanguageTags: { [type: string]: { code: string; name: string }[] };
 	global_commonLanguageTags: { [type: string]: { code: string; name: string }[] };
 };
