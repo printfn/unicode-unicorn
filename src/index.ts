@@ -256,14 +256,6 @@ function previousCodepoint(codepoint: number): number {
 	return wasm.previous_codepoint(codepoint);
 }
 
-function ctou8(codepoints: Uint32Array): Uint8Array | undefined {
-	return wasm.ctou8(codepoints);
-}
-
-function u8toc(bytes: Uint8Array): Uint32Array | undefined {
-	return wasm.u8toc(bytes);
-}
-
 function itos(int: number, base: number, padding: number = 0) {
 	let res = int.toString(base).toUpperCase();
 	while (res.length < padding) {

@@ -33,27 +33,6 @@ function iterateOverFile(path: string, each: (s: string) => void) {
 	}
 }
 
-function iterateOverFileWithRanges(path: string, globalArray: any[]) {
-	iterateOverFile(path, function (line) {
-		const splitLine = line.split(`;`);
-		let startCodepoint = 0,
-			endCodepoint = 0;
-		if (splitLine[0].trim().split(`..`).length == 2) {
-			startCodepoint = parseInt(splitLine[0].trim().split(`..`)[0], 16);
-			endCodepoint = parseInt(splitLine[0].trim().split(`..`)[1], 16);
-		} else {
-			startCodepoint = parseInt(splitLine[0].trim(), 16);
-			endCodepoint = startCodepoint;
-		}
-		const value = splitLine[1].trim();
-		globalArray.push({
-			s: startCodepoint,
-			e: endCodepoint,
-			v: value,
-		});
-	});
-}
-
 // Unicode data, han & search
 (function () {
 	// this element is modified as data is loaded, so don't change it
