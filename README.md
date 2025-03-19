@@ -1,6 +1,6 @@
 # 🦄 Unicode Unicorn - Web Unicode IDE
 
-**[https://unicode.website](https://unicode.website/)**
+**[https://unicode-unicorn.pages.dev](https://unicode-unicorn.pages.dev/)**
 
 ## Build
 
