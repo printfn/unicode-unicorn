@@ -178,15 +178,6 @@ function getHtmlNameDescription(codepoint: number): string {
 	return `<i>Unknown-${itos(codepoint, 16, 4)}</i>`;
 }
 
-function getUnicodeDataTxtNameField(codepoint: number): string {
-	if (global_data[codepoint]) return global_data[codepoint];
-	for (let i = 0; i < global_ranges.length; ++i) {
-		const range = global_ranges[i];
-		if (codepoint >= range.startCodepoint && codepoint <= range.endCodepoint)
-			return range.rangeName;
-	}
-	return 'Unknown';
-}
 function validDigitsForFormat(format: string) {
 	let validDigitChars: string[] = [
 		'0',
