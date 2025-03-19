@@ -327,13 +327,11 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
 
 #[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
-    use crate::general_category::GeneralCategory;
-    use std::str::FromStr;
-
+    use icu::properties::GeneralCategory;
+    let category = GeneralCategory::name_to_enum_mapper().get_strict(short_name)?;
     Some(
-        GeneralCategory::from_str(short_name)
-            .ok()?
-            .long_name()
+        GeneralCategory::enum_to_long_name_mapper()
+            .get(category)?
             .to_string(),
     )
 }

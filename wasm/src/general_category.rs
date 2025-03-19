@@ -68,43 +68,6 @@ pub enum GeneralCategory {
 }
 
 impl GeneralCategory {
-    /// This method returns the long name (e.g. "Letter, uppercase") for the given General_Category.
-    /// The values are stable; they will not change in future Unicode versions.
-    pub fn long_name(self) -> &'static str {
-        match self {
-            GeneralCategory::Lu => "Letter, uppercase",
-            GeneralCategory::Ll => "Letter, lowercase",
-            GeneralCategory::Lt => "Letter, titlecase",
-            GeneralCategory::Lm => "Letter, modifier",
-            GeneralCategory::Lo => "Letter, other",
-            GeneralCategory::Mn => "Mark, nonspacing",
-            GeneralCategory::Mc => "Mark, spacing combining",
-            GeneralCategory::Me => "Mark, enclosing",
-            GeneralCategory::Nd => "Number, decimal digit",
-            GeneralCategory::Nl => "Number, letter",
-            GeneralCategory::No => "Number, other",
-            GeneralCategory::Pc => "Punctuation, connector",
-            GeneralCategory::Pd => "Punctuation, dash",
-            GeneralCategory::Ps => "Punctuation, open",
-            GeneralCategory::Pe => "Punctuation, close",
-            GeneralCategory::Pi => "Punctuation, initial quote",
-            GeneralCategory::Pf => "Punctuation, final quote",
-            GeneralCategory::Po => "Punctuation, other",
-            GeneralCategory::Sm => "Symbol, math",
-            GeneralCategory::Sc => "Symbol, currency",
-            GeneralCategory::Sk => "Symbol, modifier",
-            GeneralCategory::So => "Symbol, other",
-            GeneralCategory::Zs => "Separator, space",
-            GeneralCategory::Zl => "Separator, line",
-            GeneralCategory::Zp => "Separator, paragraph",
-            GeneralCategory::Cc => "Other, control",
-            GeneralCategory::Cf => "Other, format",
-            GeneralCategory::Cs => "Other, surrogate",
-            GeneralCategory::Co => "Other, private use",
-            GeneralCategory::Cn => "Other, not assigned",
-        }
-    }
-
     pub fn codepoint_type(self, codepoint: u32) -> CodepointType {
         match self {
             GeneralCategory::Cc => CodepointType::Control,
@@ -181,11 +144,15 @@ impl FromStr for GeneralCategory {
 
 #[cfg(test)]
 mod test {
-    use crate::general_category::GeneralCategory;
-
     #[test]
     fn category_name() {
-        assert_eq!(GeneralCategory::Lu.long_name(), "Letter, uppercase");
-        assert_eq!(GeneralCategory::Sc.long_name(), "Symbol, currency");
+        assert_eq!(
+            crate::long_category_name_for_short_name("Lu").unwrap(),
+            "Uppercase_Letter"
+        );
+        assert_eq!(
+            crate::long_category_name_for_short_name("Sc").unwrap(),
+            "Currency_Symbol"
+        );
     }
 }
