@@ -1,4 +1,4 @@
-# 🦄 Unicode Unicorn - Web Unicode IDE
+# 🦄 Unicode Unicorn - Web Unicode Tool
 
 **[https://unicode-unicorn.pages.dev](https://unicode-unicorn.pages.dev/)**
 
@@ -7,20 +7,20 @@
 `data` contains various data files that are used during compilation.
 See below for sources and how to update them.
 
-To build, execute:
+Unicode Unicorn is built with Vite.
 
+To create a production build, run:
+
+```sh
+npm run build
 ```
-yarn
-yarn run build
-```
 
-This will create the built files in `dist/`.
+The compiled output files will be put in `dist/`.
 
-To serve the website locally you can execute:
+To run the website locally you can execute:
 
-```
-cd dist
-python3 -m http.server
+```sh
+npm run dev
 ```
 
 ## Sources
