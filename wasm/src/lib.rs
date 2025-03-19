@@ -336,6 +336,20 @@ pub fn get_script(codepoint: u32) -> String {
 }
 
 #[wasm_bindgen]
+pub fn get_grapheme_break_data(codepoint: u32) -> Option<String> {
+	let gcb = icu::properties::maps::grapheme_cluster_break().get32(codepoint);
+	icu::properties::GraphemeClusterBreak::enum_to_long_name_mapper()
+		.get(gcb)
+		.map(|s| s.to_string())
+}
+
+#[wasm_bindgen]
+pub fn count_graphemes(input: &str) -> usize {
+	let s = icu::segmenter::GraphemeClusterSegmenter::new();
+	s.segment_str(input).filter(|&b| b != 0).count()
+}
+
+#[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
 	use icu::properties::GeneralCategory;
 	let category = GeneralCategory::name_to_enum_mapper().get_strict(short_name)?;

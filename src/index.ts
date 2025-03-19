@@ -60,8 +60,6 @@ var global_variationSequences: VariationSequence[];
 var global_ideographicVariationCollections: VariationCollection[];
 var global_encodingNames: string[];
 var global_encodingData: { name: string; type: string }[];
-var global_graphemeBreakData: { [codepoint: number]: string };
-var global_extendedPictograph: number[];
 var global_blockRanges: {
 	startCodepoint: number;
 	endCodepoint: number;
@@ -464,108 +462,10 @@ function numberToStringWithFormat(n: number, format: string) {
 function parseIntWithFormat(str: string, format: string) {
 	return parseInt(str, numberForFormat(format));
 }
-function isExtendedPictographic(codepoint: number): boolean {
-	for (const i in global_extendedPictograph) {
-		if (global_extendedPictograph[i] == codepoint) {
-			return true;
-		}
-	}
-	return false;
-}
 
-function graphemeBreakValueForCodepoint(codepoint: number): string {
-	if (global_graphemeBreakData[codepoint]) return global_graphemeBreakData[codepoint];
-	return 'Other';
-}
-
-// Updated for revision 37
-function countGraphemesForCodepoints(codepoints: number[], type: 'legacy' | 'extended') {
+function countGraphemesForCodepoints(codepoints: number[]) {
 	if (codepoints.length === 0) return 0;
-
-	let useExtended: boolean;
-	switch (type) {
-		case 'extended':
-			useExtended = true;
-			break;
-		case 'legacy':
-			useExtended = false;
-			break;
-		default:
-			throw new Error(
-				'You need to specify whether to use extended or legacy grapheme clusters',
-			);
-	}
-
-	// for GB12 and GB13
-	let numberOfContinuousRegionalIndicatorSymbols = 0;
-	let value1OfGB11 = false; // true if and only if LHS matches \p{Extended_Pictographic} Extend*
-
-	let breaks = 0;
-	for (let i = 1; i < codepoints.length; ++i) {
-		// increment 'breaks' if we should break between codepoints[i-1] and codepoints[i]
-		const value1 = graphemeBreakValueForCodepoint(codepoints[i - 1]);
-		const value2 = graphemeBreakValueForCodepoint(codepoints[i]);
-
-		// see http://unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules for descriptions of grapheme cluster boundary rules
-		// skip rules GB1 and GB2 as they deal with SOT and EOT and thus don't affect the number of graphemes in a string
-
-		// Nontrivial rules:
-
-		// handle value1 of GB12 and GB13
-		//   GB12:     ^ (RI RI)* RI × ...
-		//   GB13: [^RI] (RI RI)* RI × ...
-		// they match if there is an odd number of Regional_Indicator codepoints on the left-hand side
-		if (value1 == 'Regional_Indicator') {
-			++numberOfContinuousRegionalIndicatorSymbols;
-		} else {
-			numberOfContinuousRegionalIndicatorSymbols = 0;
-		}
-
-		if (value1 == 'CR' && value2 == 'LF') {
-			// GB3
-		} else if (value1 == 'Control' || value1 == 'CR' || value1 == 'LF') {
-			// GB4
-			++breaks;
-		} else if (value2 == 'Control' || value2 == 'CR' || value2 == 'LF') {
-			// GB5
-			++breaks;
-		} else if (
-			value1 == 'L' &&
-			(value2 == 'L' || value2 == 'V' || value2 == 'LV' || value2 == 'LVT')
-		) {
-			// GB6
-		} else if ((value1 == 'LV' || value1 == 'V') && (value2 == 'V' || value2 == 'T')) {
-			// GB7
-		} else if ((value1 == 'LVT' || value1 == 'T') && value2 == 'T') {
-			// GB8
-		} else if (value2 == 'Extend' || value2 == 'ZWJ') {
-			// GB9
-		} else if (useExtended && value2 == 'SpacingMark') {
-			// GB9a
-		} else if (useExtended && value1 == 'Prepend') {
-			// GB9b
-		} else if (value1OfGB11 && value1 == 'ZWJ' && isExtendedPictographic(codepoints[i])) {
-			// GB11
-		} else if (
-			numberOfContinuousRegionalIndicatorSymbols % 2 == 1 &&
-			value2 == 'Regional_Indicator'
-		) {
-			// GB12 and GB13
-		} else {
-			// GB999
-			++breaks;
-		}
-
-		// GB10 LHS: (E_Base | E_Base_GAZ) Extend* × ...
-		if (isExtendedPictographic(codepoints[i - 1])) {
-			value1OfGB11 = true;
-		} else if (value1 == 'Extend' && value1OfGB11 === true) {
-			// do nothing
-		} else {
-			value1OfGB11 = false;
-		}
-	}
-	return breaks + 1;
+	return wasm.count_graphemes(ctos(codepoints));
 }
 function initLanguageData() {
 	let showRareLanguagesButton = document.getElementById('showRareLanguages')!;
@@ -742,8 +642,6 @@ function initGlobalVariables(data: CompiledData) {
 	global_ideographicVariationCollections = data['global_ideographicVariationCollections'];
 	global_encodingNames = data['global_encodingNames'];
 	global_encodingData = data['global_encodingData'];
-	global_graphemeBreakData = data['global_graphemeBreakData'];
-	global_extendedPictograph = data['global_extendedPictograph'];
 	global_blockRanges = data['global_blockRanges'];
 	global_syllableRanges = data['global_syllableRanges'];
 	global_shortJamoNames = data['global_shortJamoNames'];
@@ -977,8 +875,13 @@ function assert(expr: boolean, message: string) {
 }
 
 function assertEqual(actual: any, expected: any, otherInfo?: string) {
+	if (otherInfo) {
+		otherInfo = `: ${otherInfo}`;
+	} else {
+		otherInfo = '';
+	}
 	if (actual != expected)
-		throw new Error(`Expected ${actual} to be equal to ${expected}: ${otherInfo}`);
+		throw new Error(`Expected ${actual} to be equal to ${expected}${otherInfo}`);
 }
 
 function assertEqualArrays(actual: any[], expected: any[], otherInfo?: string) {
@@ -1011,7 +914,7 @@ function testBlocks() {
 
 function testGraphemeCount() {
 	assertEqual(
-		countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104], 'extended'),
+		countGraphemesForCodepoints([128104, 8205, 10084, 65039, 8205, 128104]),
 		1,
 	);
 	assertEqual(
@@ -1020,14 +923,12 @@ function testGraphemeCount() {
 				128104, 8205, 10084, 65039, 8205, 128104, 128104, 8205, 10084, 65039, 8205, 128104,
 				128104, 8205, 10084, 65039, 8205, 128104,
 			],
-			'extended',
 		),
 		3,
 	);
 	assertEqual(
 		countGraphemesForCodepoints(
 			[127464, 127467, 127470, 127464, 127463, 127481, 127464],
-			'extended',
 		),
 		4,
 	);
@@ -1365,11 +1266,6 @@ function updateEncodedLengths() {
 	const codepoints = getStr();
 	getElementById('extendedGraphemeClusters').textContent = countGraphemesForCodepoints(
 		codepoints,
-		'extended',
-	).toString();
-	getElementById('legacyGraphemeClusters').textContent = countGraphemesForCodepoints(
-		codepoints,
-		'legacy',
 	).toString();
 	getElementById('numCodepoints').textContent = codepoints.length.toString();
 	let encodingLengthsStr =
@@ -1558,7 +1454,7 @@ function displayCodepoint(codepoint?: number): string {
 		return '';
 	}
 	let codepoints = [codepoint];
-	if (graphemeBreakValueForCodepoint(codepoint) == 'Extend') codepoints = [0x25cc, codepoint];
+	if (wasm.get_grapheme_break_data(codepoint) == 'Extend') codepoints = [0x25cc, codepoint];
 	return escapeHtml(ctos(codepoints));
 }
 

@@ -19,8 +19,6 @@ export type CompiledData = {
 	global_encodingData: { name: string; type: string }[];
 	global_variationSequences: VariationSequence[];
 	global_ideographicVariationCollections: VariationCollection[];
-	global_graphemeBreakData: { [codepoint: number]: string };
-	global_extendedPictograph: number[];
 	global_blockRanges: {
 		startCodepoint: number;
 		endCodepoint: number;
