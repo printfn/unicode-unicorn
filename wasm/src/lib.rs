@@ -17,16 +17,6 @@ fn is_surrogate(cp: u32) -> bool {
 }
 
 #[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, unicode-rustwasm!");
-}
-
-#[wasm_bindgen]
 pub fn init_panic_hook() {
     set_panic_hook();
 }
