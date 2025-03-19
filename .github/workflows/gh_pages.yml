@@ -1,43 +1,39 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 permissions: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: cloudflare-pages
+      url: ${{ steps.deployment.outputs.url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
       - name: Install minimal stable rust
-        run: |
-          rustup toolchain install stable
+        run: rustup toolchain install stable
       - uses: Swatinem/rust-cache@v2
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Install node dependencies
-        run: |
-          npm ci
+        run: npm ci
       - name: Build
         run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'dist'
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    if: ${{ github.ref == 'refs/heads/main' }}
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy
+        uses: cloudflare/pages-action@1
         id: deployment
-        uses: actions/deploy-pages@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: unicode-unicorn
+          directory: dist
+          wranglerVersion: '3'

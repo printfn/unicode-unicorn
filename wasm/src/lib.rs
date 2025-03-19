@@ -14,12 +14,6 @@ use std::collections::HashMap;
 use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 fn is_surrogate(cp: u32) -> bool {
     (0xd800..=0xdfff).contains(&cp)
 }
@@ -184,7 +178,7 @@ fn encode_str_internal(encoding_name: &str, codepoints: Vec<u32>) -> EncodingRes
                         success: false,
                         encoded_code_units: None,
                         first_invalid_codepoint: None,
-                    }
+                    };
                 }
             };
             let code_units: Result<Vec<u32>, u32> = codepoints
@@ -333,8 +327,8 @@ pub fn decode_str(encoding_name: &str, code_units: Vec<u32>) -> Option<Vec<u32>>
 
 #[wasm_bindgen]
 pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
-    use std::str::FromStr;
     use crate::general_category::GeneralCategory;
+    use std::str::FromStr;
 
     Some(
         GeneralCategory::from_str(short_name)
@@ -349,8 +343,8 @@ pub fn basic_type_for_codepoint(
     short_general_category_name: &str,
     codepoint: u32,
 ) -> Option<String> {
-    use std::str::FromStr;
     use crate::general_category::GeneralCategory;
+    use std::str::FromStr;
 
     Some(
         GeneralCategory::from_str(short_general_category_name)

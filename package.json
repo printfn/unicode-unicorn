@@ -5,15 +5,15 @@
 	"private": true,
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
-		"@types/node": "^22.9.0",
+		"@types/node": "^22.13.10",
 		"bootstrap": "^5.3.3",
-		"tsx": "^4.19.2",
-		"typescript": ">=5.6.3"
+		"tsx": "^4.19.3",
+		"typescript": ">=5.8.2"
 	},
 	"devDependencies": {
 		"@types/bootstrap": "^5.2.10",
-		"prettier": "^3.3.3",
-		"vite": "^5.4.11"
+		"prettier": "^3.5.3",
+		"vite": "^6.2.2"
 	},
 	"scripts": {
 		"clean": "rm -r dist wasm/pkg wasm/target",
