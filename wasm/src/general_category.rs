@@ -1,4 +1,3 @@
-use crate::codepoint_type::CodepointType;
 use core::str::FromStr;
 
 /// Values for the General_Category (gc) character property.
@@ -65,41 +64,6 @@ pub enum GeneralCategory {
     Co,
     /// Other, not assigned
     Cn,
-}
-
-impl GeneralCategory {
-    pub fn codepoint_type(self, codepoint: u32) -> CodepointType {
-        match self {
-            GeneralCategory::Cc => CodepointType::Control,
-            GeneralCategory::Co => CodepointType::PrivateUse,
-            GeneralCategory::Cs => CodepointType::Surrogate,
-            GeneralCategory::Cf | GeneralCategory::Zl | GeneralCategory::Zp => {
-                CodepointType::Format
-            }
-            GeneralCategory::Cn => match codepoint {
-                0x00_fdd0..=0x00_fdef => CodepointType::Noncharacter,
-                0x00_fffe..=0x00_ffff => CodepointType::Noncharacter,
-                0x01_fffe..=0x01_ffff => CodepointType::Noncharacter,
-                0x02_fffe..=0x02_ffff => CodepointType::Noncharacter,
-                0x03_fffe..=0x03_ffff => CodepointType::Noncharacter,
-                0x04_fffe..=0x04_ffff => CodepointType::Noncharacter,
-                0x05_fffe..=0x05_ffff => CodepointType::Noncharacter,
-                0x06_fffe..=0x06_ffff => CodepointType::Noncharacter,
-                0x07_fffe..=0x07_ffff => CodepointType::Noncharacter,
-                0x08_fffe..=0x08_ffff => CodepointType::Noncharacter,
-                0x09_fffe..=0x09_ffff => CodepointType::Noncharacter,
-                0x0a_fffe..=0x0a_ffff => CodepointType::Noncharacter,
-                0x0b_fffe..=0x0b_ffff => CodepointType::Noncharacter,
-                0x0c_fffe..=0x0c_ffff => CodepointType::Noncharacter,
-                0x0d_fffe..=0x0d_ffff => CodepointType::Noncharacter,
-                0x0e_fffe..=0x0e_ffff => CodepointType::Noncharacter,
-                0x0f_fffe..=0x0f_ffff => CodepointType::Noncharacter,
-                0x10_fffe..=0x10_ffff => CodepointType::Noncharacter,
-                _ => CodepointType::Reserved,
-            },
-            _ => CodepointType::Graphic,
-        }
-    }
 }
 
 impl FromStr for GeneralCategory {

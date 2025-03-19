@@ -1,4 +1,3 @@
-mod codepoint_type;
 mod data;
 mod general_category;
 mod utf_encodings;
@@ -337,17 +336,21 @@ pub fn long_category_name_for_short_name(short_name: &str) -> Option<String> {
 }
 
 #[wasm_bindgen]
-pub fn basic_type_for_codepoint(
-    short_general_category_name: &str,
-    codepoint: u32,
-) -> Option<String> {
-    use crate::general_category::GeneralCategory;
-    use std::str::FromStr;
-
-    Some(
-        GeneralCategory::from_str(short_general_category_name)
-            .ok()?
-            .codepoint_type(codepoint)
-            .to_string(),
-    )
+pub fn basic_type_for_codepoint(codepoint: u32) -> Option<String> {
+    use icu::properties::{GeneralCategory, maps, sets};
+    if sets::noncharacter_code_point().contains32(codepoint) {
+        return Some("Noncharacter".to_string());
+    }
+    let category = maps::general_category().get32(codepoint);
+    let ty = match category {
+        GeneralCategory::Control => "Control",
+        GeneralCategory::PrivateUse => "PrivateUse",
+        GeneralCategory::Surrogate => "Surrogate",
+        GeneralCategory::Format
+        | GeneralCategory::LineSeparator
+        | GeneralCategory::ParagraphSeparator => "Format",
+        GeneralCategory::Unassigned => "Reserved",
+        _ => "Graphic",
+    };
+    Some(ty.to_string())
 }

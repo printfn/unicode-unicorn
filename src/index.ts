@@ -109,8 +109,7 @@ function getCharacterCategoryName(codepoint: number): string | undefined {
 }
 
 function getCharacterBasicType(codepoint: number): string | undefined {
-	const categoryCode = getCharacterCategoryCode(codepoint);
-	const basicType: string | undefined = wasm.basic_type_for_codepoint(categoryCode, codepoint);
+	const basicType: string | undefined = wasm.basic_type_for_codepoint(codepoint);
 	return basicType;
 }
 
